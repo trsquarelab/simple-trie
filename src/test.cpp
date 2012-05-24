@@ -9,7 +9,7 @@
  *
  */
 
-#define HIGH_PERFORMANCE
+//#define HIGH_PERFORMANCE
 
 #include "trie.h"
 
