@@ -35,7 +35,8 @@ void add(rtv::Trie<char, std::string, '$', std::less<char> >  & dictionary, cons
     }
 }
 
-struct ListCallBack {
+class TrieTraverseCallBack {
+public:
     void operator()(std::vector<char> key, std::string value) const {
         key.push_back(0);
         std::cout.width(10);
@@ -138,7 +139,7 @@ int main(int argc, char ** argv) {
                     }
             case '3': {
                 std::cout << "*****************************************" << std::endl;
-                dictionary.traverse(ListCallBack());
+                dictionary.traverse(TrieTraverseCallBack());
                 std::cout << "*****************************************" << std::endl;
                 break;
                     }
