@@ -372,7 +372,9 @@ public:
     {}
 
     /*!
-     * @param max Number of elements in the key space
+     * @param max Number of elements in the key space. 
+     *            This variable will only be used if HIGH_PERFORMANCE is set,
+     *            in that case each node is an array of max elements.
      */
     Trie(int max)
         : mRoot(max)
