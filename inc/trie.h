@@ -358,14 +358,18 @@ template<typename T,
          typename Cmp=std::less<T> > class Trie
 {
 public:
+    /*!
+     * @param endSymbol The symbol which marks the end of key input
+     */
     Trie(const T & endSymbol)
         : mRoot(endSymbol)
     {}
 
     /*!
+     * @param endSymbol The symbol which marks the end of key input
      * @param max Number of elements in the key space. 
      *            This variable will only have impact if HIGH_PERFORMANCE is set,
-     *            in that case each node is an array of max elements.
+     *            in that case each node is an array of max elements
      */
     Trie(const T & endSymbol, int max)
         : mRoot(endSymbol, max)
@@ -373,7 +377,7 @@ public:
 
     /*!
      * Add a key with value in to the Trie
-     * @param key The key, should be terminated by 'end' characters
+     * @param key The key, should be terminated by 'end' symbol
      * @param value The value that is to be set with the key
      */
     void add(const T * key, V const & value) {
@@ -382,7 +386,7 @@ public:
 
     /*!
      * Retrieves the value for the given key
-     * @param key The key, should be terminated by 'end' characters
+     * @param key The key, should be terminated by 'end' symbol
      * @return Pointer to value for the given key, 0 on failure
      */
     const V * get(const T * key) {
@@ -391,7 +395,7 @@ public:
 
     /*!
      * Checks whether the given key is present in the Trie
-     * @param key The key which should be searched, should be terminated by 'end' character
+     * @param key The key which should be searched, should be terminated by 'end' symol
      * @return true if the key is present
      */
     bool hasKey(const T * key) {
@@ -400,7 +404,7 @@ public:
 
     /*!
      * Retrieves all the key value pair which starts with the given key
-     * @param key Part of the key which should be searched, should be terminated by 'end' character
+     * @param key Part of the key which should be searched, should be terminated by 'end' symbol
      * @param values Vector of key, value pair
      * @param count Number of entries that should be returned
      */

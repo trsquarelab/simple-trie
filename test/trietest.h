@@ -140,7 +140,7 @@ public:
             }
         }
         std::vector< std::pair < std::vector<char> , std::string > > result;
-        aTrie.startsWith(key.c_str(), result);
+        aTrie.startsWith(key.c_str(), result, sampleValuesCount);
         TrieTestCases::assert(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 

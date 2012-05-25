@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>Trie: rtv::Node&lt; T, V, end, Cmp &gt; Class Template Reference</title>
+<title>Trie: rtv::Node&lt; T, V, Cmp &gt; Class Template Reference</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -62,7 +62,7 @@
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">rtv::Node&lt; T, V, end, Cmp &gt; Class Template Reference</div>  </div>
+<div class="title">rtv::Node&lt; T, V, Cmp &gt; Class Template Reference</div>  </div>
 </div>
 <div class="contents">
 <!-- doxytag: class="rtv::Node" -->
@@ -70,26 +70,26 @@
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a598cf4e1850afacae0f7aa2fce17739b"></a><!-- doxytag: member="rtv::Node::Node" ref="a598cf4e1850afacae0f7aa2fce17739b" args="(int max=256)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>Node</b> (int max=256)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33e5c63a494edaead446be2860789311"></a><!-- doxytag: member="rtv::Node::add" ref="a33e5c63a494edaead446be2860789311" args="(const T *key, V const &amp;value)" -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9121f2d29dd8103fb9cd083f2778d7b"></a><!-- doxytag: member="rtv::Node::Node" ref="ab9121f2d29dd8103fb9cd083f2778d7b" args="(const T &amp;endSymbol, int max=256)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>Node</b> (const T &amp;endSymbol, int max=256)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1160b405ce7b461f35faa73d0a31167"></a><!-- doxytag: member="rtv::Node::add" ref="af1160b405ce7b461f35faa73d0a31167" args="(const T *key, V const &amp;value)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>add</b> (const T *key, V const &amp;value)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade6ef646d481fbde08cf57e271012c53"></a><!-- doxytag: member="rtv::Node::get" ref="ade6ef646d481fbde08cf57e271012c53" args="(const T *key)" -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6395f8bb7a2fb5e34091b79678ccf0c0"></a><!-- doxytag: member="rtv::Node::get" ref="a6395f8bb7a2fb5e34091b79678ccf0c0" args="(const T *key)" -->
 const V *&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> (const T *key)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a766c451b0a1ca0b9d6123ef2b489059e"></a><!-- doxytag: member="rtv::Node::hasKey" ref="a766c451b0a1ca0b9d6123ef2b489059e" args="(const T *key)" -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ee0d7856ce95091fd1c53c558ac0b4f"></a><!-- doxytag: member="rtv::Node::hasKey" ref="a2ee0d7856ce95091fd1c53c558ac0b4f" args="(const T *key)" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasKey</b> (const T *key)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a841bce811b66e54313678ce9ba7a75ca"></a><!-- doxytag: member="rtv::Node::startsWith" ref="a841bce811b66e54313678ce9ba7a75ca" args="(const T *key, std::vector&lt; std::pair&lt; std::vector&lt; T &gt;, V &gt; &gt; &amp;values, int count)" -->
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bbd450eba2531c86a4e9eb9cef4c3e0"></a><!-- doxytag: member="rtv::Node::startsWith" ref="a2bbd450eba2531c86a4e9eb9cef4c3e0" args="(const T *key, std::vector&lt; std::pair&lt; std::vector&lt; T &gt;, V &gt; &gt; &amp;values, int count)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>startsWith</b> (const T *key, std::vector&lt; std::pair&lt; std::vector&lt; T &gt;, V &gt; &gt; &amp;values, int count)</td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a5effe603bda399156c82038a9e9f5e9e"></a><!-- doxytag: member="rtv::Node::traverse" ref="a5effe603bda399156c82038a9e9f5e9e" args="(CB const &amp;cb)" -->
+<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="aabbb975369c57ce9bfd0a50adaca8c76"></a><!-- doxytag: member="rtv::Node::traverse" ref="aabbb975369c57ce9bfd0a50adaca8c76" args="(CB const &amp;cb)" -->
 template&lt;typename CB &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>traverse</b> (CB const &amp;cb)</td></tr>
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c6926bdd03cdd87564369d56e8c09e2"></a><!-- doxytag: member="rtv::Node::deleteItem" ref="a2c6926bdd03cdd87564369d56e8c09e2" args="(NodeItem&lt; T, V, end, Cmp &gt; *item)" -->
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>deleteItem</b> (<a class="el" href="classrtv_1_1_node_item.html">NodeItem</a>&lt; T, V, end, Cmp &gt; *item)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58b83c11b3d9e227f244d210e3fa84ef"></a><!-- doxytag: member="rtv::Node::deleteItem" ref="a58b83c11b3d9e227f244d210e3fa84ef" args="(NodeItem&lt; T, V, Cmp &gt; *item)" -->
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>deleteItem</b> (<a class="el" href="classrtv_1_1_node_item.html">NodeItem</a>&lt; T, V, Cmp &gt; *item)</td></tr>
 </table>
-<h3>template&lt;typename T, typename V, T end, typename Cmp&gt;<br/>
- class rtv::Node&lt; T, V, end, Cmp &gt;</h3>
+<h3>template&lt;typename T, typename V, typename Cmp&gt;<br/>
+ class rtv::Node&lt; T, V, Cmp &gt;</h3>
 
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>C:/Cygwin/home/valappil/prg/simple-trie/inc/<a class="el" href="trie_8h_source.html">trie.h</a></li>
@@ -98,7 +98,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>deleteItem</b>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 24 2012 11:47:43 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 25 2012 11:31:35 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
