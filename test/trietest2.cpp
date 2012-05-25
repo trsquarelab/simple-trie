@@ -38,9 +38,12 @@ void test2() {
     TrieTestCases::testKeyInTrie(dictionary, "Bitset$", true);
     TrieTestCases::testKeyInTrie(dictionary, "Squence$", false);
 
-    std::vector< std::pair < std::vector<char> , std::string > > result;
-    dictionary.startsWith("Multi$", result);
-    TrieTestCases::assert(result.size() == 2, "Error in Trie::startsWith functionality!!!");
+    std::string multi("Multi$");
+    TrieTestCases::teststartsWith(dictionary, multi);
+
+    std::string negTest("something which is not in the dictionary$");
+    TrieTestCases::teststartsWith(dictionary, negTest);
+    
     std::cout << "Succeeded" << std::endl;
 }
 

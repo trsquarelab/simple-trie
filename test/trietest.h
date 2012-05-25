@@ -111,7 +111,7 @@ public:
     template <typename D>
     static void populateTrieWithSampleValues(D  & aTrie) {
         for (int i=0; i<sampleValuesCount; ++i) {
-            TrieTestCases::addToTrie(aTrie, sampleValues[i].first, sampleValues[i].second);
+            TrieTestCases::testAndAddToTrie(aTrie, sampleValues[i].first, sampleValues[i].second);
         }
     }
 
@@ -125,9 +125,23 @@ public:
     }
 
     template <typename D>
-    static void addToTrie(D & aTrie, const std::string & word, const std::string & meaning) {
+    static void testAndAddToTrie(D & aTrie, const std::string & word, const std::string & meaning) {
         aTrie.add(word.c_str(), meaning.c_str());
         assert(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::add or Trie::get !!!");
+    }
+   
+    template<typename D>
+    static void teststartsWith(D & aTrie, const std::string & key) {
+        int countForKey = 0;
+        for (int i=0; i<sampleValuesCount; ++i) {
+            int cv = key.compare(0, key.length()-1, sampleValues[i].first, 0, key.length()-1);
+            if (cv == 0) {
+                ++countForKey;
+            }
+        }
+        std::vector< std::pair < std::vector<char> , std::string > > result;
+        aTrie.startsWith(key.c_str(), result);
+        TrieTestCases::assert(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 
     template <typename T>
