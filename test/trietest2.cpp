@@ -21,7 +21,7 @@ void test2() {
 
     rtv::Trie<char, std::string, std::less<char> > dictionary('$', 256);
             
-    TrieTestCases::testSuite(dictionary);
+    TrieTestCases::instance()->testSuite(dictionary);
     
     std::cout << "Succeeded" << std::endl;
 }

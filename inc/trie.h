@@ -162,8 +162,17 @@ public:
     {}
 
     ~Node() {
+        clear();
+    }
+
+    void clear() {
         std::for_each(mItems.begin(), mItems.end(), deleteItem);
+#ifdef HIGH_PERFORMANCE
+        std::fill(mItems.begin(), mItems.end(), (NodeItem<T, V, Cmp> *)0);
+#else
         mItems.clear();
+#endif
+        mSize = 0;
     }
 
     bool empty() const {
@@ -412,8 +421,9 @@ public:
 
     /*!
      * Add a key with value in to the Trie
-     * @param key The key, should be terminated by 'end' symbol
+     * @param key Key which should be inserted, should be terminated by 'end' symbol
      * @param value The value that is to be set with the key
+     * @return true if the given key is inserted in to the Trie, false otherwise
      */
     bool add(const T * key, V const & value) {
         return mRoot.add(key, value);
@@ -421,7 +431,7 @@ public:
 
     /*!
      * Retrieves the value for the given key
-     * @param key The key, should be terminated by 'end' symbol
+     * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Pointer to value for the given key, 0 on failure
      */
     const V * get(const T * key) {
@@ -430,7 +440,7 @@ public:
 
     /*!
      * Checks whether the given key is present in the Trie
-     * @param key The key which should be searched, should be terminated by 'end' symol
+     * @param key Key to be searched for, should be terminated by 'end' symol
      * @return true if the key is present
      */
     bool hasKey(const T * key) {
@@ -454,6 +464,12 @@ public:
     }
 
     /*!
+     * All the elements in the Trie are dropped, leaving the Trie with a size of 0.
+     */
+    void clear() {
+        mRoot.clear();
+    }
+    /*!
      * Retrieves all the key value pair which starts with the given key
      * @param key Part of the key which should be searched, should be terminated by 'end' symbol
      * @param values Vector of key, value pair
@@ -465,7 +481,8 @@ public:
 
     /*!
      * Traverse through the Trie
-     * @param c The functor class which will called when a node is reached
+     * @param c The functor class which will be called when a node is reached. Functor takes two arguments, 
+     *          first argument is std::vector<T> and second V
      */
     template <typename CB>
     void traverse(CB const & c) {

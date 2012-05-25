@@ -19,7 +19,7 @@ void test1() {
 
     rtv::Trie<char, std::string, TrieCompare> dictionary('$', 256);
         
-    TrieTestCases::testSuite(dictionary);
+    TrieTestCases::instance()->testSuite(dictionary);
 
     std::cout << "Succeeded" << std::endl;
 }
