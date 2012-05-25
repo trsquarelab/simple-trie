@@ -14,7 +14,6 @@
 #include "trie.h"
 #include "trietest.h"
 
-
 namespace {
 
 void test2() {

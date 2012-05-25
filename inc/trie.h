@@ -101,7 +101,7 @@ private:
     NodeItem & operator=(NodeItem const &);
 
 private:
-    const T & mEndSymbol;
+    const T mEndSymbol;
     T mKey;
     Node<T, V, Cmp> * mChilds;
 };
@@ -343,7 +343,7 @@ private:
     typedef typename ItemsContainer::iterator ItemsContainerIter;
     typedef typename ItemsContainer::const_iterator ItemsContainerConster;
 
-    const T & mEndSymbol;
+    const T mEndSymbol;
     ItemsContainer mItems;
 };
 
