@@ -1,6 +1,6 @@
 bin_PROGRAMME = trie_test
-trie_test_SOURCES = ../src/test.cpp
-trie_test_OBJ = test.o
+trie_test_SOURCES = ../test/trietest1.cpp  ../test/trietest2.cpp  ../test/trietestmain.cpp
+trie_test_OBJ = $(patsubst ../test/%.cpp, %.o, $(trie_test_SOURCES))
 CXX = g++
 CXFLAGS = -g3
 DEPS = ../inc/trie.h
@@ -8,11 +8,12 @@ DEPS = ../inc/trie.h
 all: $(bin_PROGRAMME)
 	
 
-$(bin_PROGRAMME): $(trie_test_OBJ)
-	$(CXX) -o $(bin_PROGRAMME) $(trie_test_OBJ) $(CXFLAGS)
+$(bin_PROGRAMME): $(trie_test_SOURCES)
+	$(CXX) -o $(bin_PROGRAMME) $(trie_test_SOURCES) -I../inc $(CXFLAGS)
 
-$(trie_test_OBJ): $(trie_test_SOURCES) $(DEPS)
-	$(CXX) -c -o $(trie_test_OBJ) $< $(CXFLAGS) -I../inc
+#$(trie_test_OBJ): $(trie_test_SOURCES) $(DEPS)
+#	$(CXX) -c -o $@ $< $(CXFLAGS) -I../inc
 
 clean:
 	rm -rf $(bin_PROGRAMME) $(trie_test_OBJ)
+

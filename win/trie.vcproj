@@ -172,7 +172,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\src\test.cpp"
+				RelativePath="..\test\trietest1.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\test\trietest2.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\test\trietestmain.cpp"
 				>
 			</File>
 		</Filter>
@@ -183,6 +191,10 @@
 			>
 			<File
 				RelativePath="..\inc\trie.h"
+				>
+			</File>
+			<File
+				RelativePath="..\test\trietest.h"
 				>
 			</File>
 		</Filter>

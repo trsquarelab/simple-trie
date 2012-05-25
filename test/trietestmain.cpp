@@ -9,75 +9,17 @@
  *
  */
 
-//#define HIGH_PERFORMANCE
-
+#include "trietest.h"
 #include "trie.h"
-
-#include <iostream>
-#include <vector>
-
-void test(rtv::Trie<char, std::string, '$', std::less<char> >  & dictionary, std::string const & word, bool expected) {
-    if (dictionary.hasKey(word.c_str())) {
-        if (!expected) {
-            std::cerr << "Found " << word.c_str()  << " when it should not be found !!!"<< std::endl;
-        }
-    } else {
-        if (expected) {
-            std::cerr << "Did not find " << word.c_str()  << " when it should be !!!"<< std::endl;
-        }
-    }
-}
-
-void add(rtv::Trie<char, std::string, '$', std::less<char> >  & dictionary, const char * word, const char * meaning) {
-    dictionary.add(word, meaning);
-    if (dictionary.get(word)->compare(meaning) != 0) {
-        std::cerr << "Error in Trie::add!!!" << std::endl;
-    }
-}
-
-class TrieTraverseCallBack {
-public:
-    void operator()(std::vector<char> key, std::string value) const {
-        key.push_back(0);
-        std::cout.width(10);
-        std::string k(&key[0]);
-        k.insert(0, "[");
-        k.insert(k.length(), "]");
-        std::cout << std::left << k.c_str() << " : ";
-        std::cout.width(0);
-        std::cout.width(70);
-        value.insert(0, "[");
-        value.insert(value.length(), "]");
-        std::cout << std::left << value.c_str() << std::endl;
-    }
-};
 
 int main(int argc, char ** argv) {
 
-    rtv::Trie<char, std::string, '$', std::less<char> > dictionary(256);
-    
-    add(dictionary, "Multiset$", "Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values");
-    add(dictionary, "Deque$", "Double-ended queue");
-    add(dictionary, "Multimap$", "Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value");
-    add(dictionary, "Stack$", "Stacks are a type of container adaptor, specifically designed to operate in a LIFO context");
-    add(dictionary, "Set$", "Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys");
-    add(dictionary, "Vector$", "Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence");
-    add(dictionary, "Array$", "Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence");
-    add(dictionary, "Map$", "Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value");
-    add(dictionary, "List$", "Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence");
-    add(dictionary, "Bitset$", "A bitset is a special container class that is designed to store bits");
-    
-    test(dictionary, "Map$", true);
-    test(dictionary, "List$", true);
-    test(dictionary, "Bitset$", true);
-    test(dictionary, "Squence$", false);
+    TrieTestCases::instance()->execute();
 
-    std::vector< std::pair < std::vector<char> , std::string > > result;
-    dictionary.startsWith("Multi$", result);
-    if (result.size() != 2) {
-        std::cerr << "Error in Trie::startsWith functionality!!!" << std::endl;
-    }
-
+    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('$', 256);
+    
+    TrieTestCases::populateTrieWithSampleValues(dictionary);
+    
     bool finished = false;
     while (!finished) {
         std::cout << std::endl;

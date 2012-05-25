@@ -43,20 +43,15 @@ namespace rtv
 
 template<typename T,
          typename V,
-         T end,
          typename Cmp> class Node;
 
 template<typename T,
          typename V,
-         T end,
          typename Cmp> class NodeItem {
 public:
-    NodeItem() 
-     : mKey(end),
-       mChilds(0) {}
-
-    NodeItem(T const & key) 
-     : mKey(key),
+    NodeItem(const T & endSymbol, T const & key) 
+     : mEndSymbol(endSymbol),
+       mKey(key),
        mChilds(0) {
         createChilds();
     }
@@ -65,7 +60,7 @@ public:
         delete mChilds;
     }
 
-    bool operator<(NodeItem<T, V, end, Cmp> const & oth) const {
+    bool operator<(NodeItem<T, V, Cmp> const & oth) const {
         return Cmp()(this->mKey, oth.mKey);
     }
 
@@ -77,7 +72,7 @@ public:
         return !Cmp()(this->mKey, key) && !Cmp()(key, this->mKey);
     }
 
-    bool operator==(NodeItem<T, V, end, Cmp> const & oth) const {
+    bool operator==(NodeItem<T, V, Cmp> const & oth) const {
         return !Cmp()(this->mKey, oth.mKey) && !Cmp()(oth.mKey, this->mKey);
     }
 
@@ -90,7 +85,7 @@ public:
         return mKey;
     }
 
-    Node<T, V, end, Cmp> * getChilds() {
+    Node<T, V, Cmp> * getChilds() {
         createChilds();
         return mChilds;
     }
@@ -98,7 +93,7 @@ public:
 private:
     void createChilds() {
         if (!mChilds) {
-            mChilds = new Node<T, V, end, Cmp>();
+            mChilds = new Node<T, V, Cmp>(mEndSymbol);
         }
     }
 
@@ -106,23 +101,23 @@ private:
     NodeItem & operator=(NodeItem const &);
 
 private:
+    const T & mEndSymbol;
     T mKey;
-    Node<T, V, end, Cmp> * mChilds;
+    Node<T, V, Cmp> * mChilds;
 };
 
 template<typename T,
          typename V,
-         T end,
-         typename Cmp> class EndNodeItem: public NodeItem<T, V, end, Cmp>
+         typename Cmp> class EndNodeItem: public NodeItem<T, V, Cmp>
 {
-    typedef NodeItem<T, V, end, Cmp> ParentClass;
+    typedef NodeItem<T, V, Cmp> ParentClass;
 public:
-    EndNodeItem(T const & key) 
-     : ParentClass(key)
+    EndNodeItem(const T & endSymbol, T const & key) 
+     : ParentClass(endSymbol, key)
     {}
 
-    EndNodeItem(T const & key, V const & value) 
-     : ParentClass(key),
+    EndNodeItem(const T & endSymbol, T const & key, V const & value) 
+     : ParentClass(endSymbol, key),
        mValue(value)
     {}
 
@@ -145,27 +140,26 @@ private:
 
 template<typename T,
          typename V,
-         T end,
          typename Cmp> class NodeItemPtrCompare {
 public:
-    bool operator()(const NodeItem<T, V, end, Cmp> * v1, const NodeItem<T, V, end, Cmp> * v2) {
+    bool operator()(const NodeItem<T, V, Cmp> * v1, const NodeItem<T, V, Cmp> * v2) {
         return *v1 < *v2;
     }
 };
 
 template<typename T,
          typename V,
-         T end,
          typename Cmp> class Node
 {
 public:
-    Node(int max = 256) 
+    Node(const T & endSymbol, int max = 256)
+        : mEndSymbol(endSymbol)
 #ifdef HIGH_PERFORMANCE
-        : mItems(max, 0)
+        , mItems(max, (NodeItem<T, V, Cmp> *)0)
 #endif
     {}
 
-    static void deleteItem(NodeItem<T, V, end, Cmp> * item) {
+    static void deleteItem(NodeItem<T, V, Cmp> * item) {
         delete item;
     }
 
@@ -187,7 +181,8 @@ public:
     }
 
     void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count) {
-        startsWith(key, values, count, 0);
+        std::vector<T> keySoFar;
+        startsWith(keySoFar, key, values, count, 0);
     }
 
     template <typename CB>
@@ -206,9 +201,9 @@ private:
         ItemsContainerIter iterEnd = mItems.end();
         for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
             if (*iter) {
-                NodeItem<T, V, end, Cmp> & item = *(NodeItem<T, V, end, Cmp> *) *iter;
-                if (item == end) {                    
-                    cb(key, ((EndNodeItem<T, V, end, Cmp>&)item).getValue());
+                NodeItem<T, V, Cmp> & item = *(NodeItem<T, V, Cmp> *) *iter;
+                if (item == mEndSymbol) {                    
+                    cb(key, ((EndNodeItem<T, V, Cmp>&)item).getValue());
                 } else {
                     key.push_back(item.get());
                     item.getChilds()->traverse(key, cb);
@@ -218,23 +213,19 @@ private:
         }
     }
 
-    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) {
+    void startsWith(std::vector<T> & keySoFar, const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) {
         
-        if (key[i] == end) {
-            std::vector<T> valueSoFar;
-            for (int i=0;key[i] != end;++i) {
-                valueSoFar.push_back(key[i]);
-            }
-            
-            accumulate(valueSoFar, values, count);
+        if (key[i] == mEndSymbol) {
+            accumulate(keySoFar, values, count);
             return;
         }
 
-        NodeItem<T, V, end, Cmp> * item = getItem(key[i]);
+        NodeItem<T, V, Cmp> * item = getItem(key[i]);
         if (!item) {
             return;
         } else if (*item == key[i]) {
-            item->getChilds()->startsWith(key, values, count, ++i);
+            keySoFar.push_back(item->get());
+            item->getChilds()->startsWith(keySoFar, key, values, count, ++i);
         }
     }
 
@@ -242,11 +233,11 @@ private:
         ItemsContainerIter iterEnd = mItems.end();
         for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
-                NodeItem<T, V, end, Cmp> & item = *(NodeItem<T, V, end, Cmp> *)*iter;
-                if (item == end) {
+                NodeItem<T, V, Cmp> & item = *(NodeItem<T, V, Cmp> *)*iter;
+                if (item == mEndSymbol) {
                     std::vector<T> result;
                     result.assign(key.begin(), key.end());
-                    values.push_back(std::make_pair(result, ((EndNodeItem<T, V, end, Cmp>&)item).getValue()));
+                    values.push_back(std::make_pair(result, ((EndNodeItem<T, V, Cmp>&)item).getValue()));
                     --count;
                 } else {
                     key.push_back(item.get());
@@ -258,13 +249,13 @@ private:
     }
 
     const V * get(const T * key, int i) {
-        NodeItem<T, V, end, Cmp> * itemp = getItem(key[i]);
+        NodeItem<T, V, Cmp> * itemp = getItem(key[i]);
         if (!itemp) {
             return 0;
         }
-        NodeItem<T, V, end, Cmp> & item = *itemp;
-        if (key[i] == end && item == end) {
-            return &(((EndNodeItem<T, V, end, Cmp>&)item).getValue());
+        NodeItem<T, V, Cmp> & item = *itemp;
+        if (key[i] == mEndSymbol && item == mEndSymbol) {
+            return &(((EndNodeItem<T, V, Cmp>&)item).getValue());
         } else if (item == key[i]) {
             return item.getChilds()->get(key, ++i);
         } else {
@@ -273,14 +264,14 @@ private:
     }
 
     bool hasKey(const T * key, int i) {
-        NodeItem<T, V, end, Cmp> * itemp = getItem(key[i]);
+        NodeItem<T, V, Cmp> * itemp = getItem(key[i]);
         if (!itemp) {
             return false;
         }
 
-        NodeItem<T, V, end, Cmp> & item = *itemp;
+        NodeItem<T, V, Cmp> & item = *itemp;
         
-        if (key[i] == end && item == end) {
+        if (key[i] == mEndSymbol && item == mEndSymbol) {
             return true;
         } else if (item == key[i]) {
             return item.getChilds()->hasKey(key, ++i);
@@ -291,67 +282,68 @@ private:
 
     void addData(const T * key, V const & value, int i) {
 
-        NodeItem<T, V, end, Cmp> * item = addItem(key[i]);
+        NodeItem<T, V, Cmp> * item = addItem(key[i]);
 
-        if (key[i] == end) {
-            ((EndNodeItem<T, V, end, Cmp>*)item)->set(key[i], value);
+        if (key[i] == mEndSymbol) {
+            ((EndNodeItem<T, V, Cmp>*)item)->set(key[i], value);
         } else if (*item == key[i]) {
             item->getChilds()->addData(key, value, ++i);
         }
     }
 
-
-    NodeItem<T, V, end, Cmp> * createNodeItem(T const & k) {
-        if (k == end) {
-            return new EndNodeItem<T, V, end, Cmp>(k);
+    NodeItem<T, V, Cmp> * createNodeItem(T const & k) {
+        if (k == mEndSymbol) {
+            return new EndNodeItem<T, V, Cmp>(mEndSymbol, k);
         } else {
-            return new NodeItem<T, V, end, Cmp>(k);
+            return new NodeItem<T, V, Cmp>(mEndSymbol, k);
         }
     }
 
-    NodeItem<T, V, end, Cmp> * addItem(T const & k) {
+    NodeItem<T, V, Cmp> * addItem(T const & k) {
 #ifdef HIGH_PERFORMANCE
         if (!mItems[k]) {
             mItems[k] = createNodeItem(k);
         }
-        NodeItem<T, V, end, Cmp> & item = *mItems[k];
+        NodeItem<T, V, Cmp> & item = *mItems[k];
         return &item;
 #else
-        NodeItem<T, V, end, Cmp> tmp(k);
+        NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
         ItemsContainerIter iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
-            NodeItem<T, V, end, Cmp> * v = createNodeItem(k);
+            NodeItem<T, V, Cmp> * v = createNodeItem(k);
             mItems.insert(v);
             return v;
         } else {
-            return (NodeItem<T, V, end, Cmp> *) *iter;
+            return (NodeItem<T, V, Cmp> *) *iter;
         }
 #endif
     }
 
-    NodeItem<T, V, end, Cmp> * getItem(T const & k) {
+    NodeItem<T, V, Cmp> * getItem(T const & k) {
 #ifdef HIGH_PERFORMANCE
         return mItems[k];
 #else
-        NodeItem<T, V, end, Cmp> tmp(k);
+        NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
 
         ItemsContainerIter iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
             return 0;
         }
-        return (NodeItem<T, V, end, Cmp> *) (*iter);
+        return (NodeItem<T, V, Cmp> *) (*iter);
 #endif
     }
 
 private:
 
 #ifdef HIGH_PERFORMANCE
-    typedef std::vector< NodeItem<T, V, end, Cmp>* > ItemsContainer;
+    typedef std::vector< NodeItem<T, V, Cmp>* > ItemsContainer;
 #else
-    typedef std::set< NodeItem<T, V, end, Cmp>*, NodeItemPtrCompare<T, V, end, Cmp> > ItemsContainer;
+    typedef std::set< NodeItem<T, V, Cmp>*, NodeItemPtrCompare<T, V, Cmp> > ItemsContainer;
 #endif
     typedef typename ItemsContainer::iterator ItemsContainerIter;
     typedef typename ItemsContainer::const_iterator ItemsContainerConster;
+
+    const T & mEndSymbol;
     ItemsContainer mItems;
 };
 
@@ -359,25 +351,24 @@ private:
  * @brief Trie implementation class
  * @tparam T Type for each element in the key
  * @tparam V Type of the value that the key will be representing
- * @tparam end Key element representing end of key
  * @tparam Cmp Comparison functor
  */
 template<typename T,
          typename V,
-         T end,
          typename Cmp=std::less<T> > class Trie
 {
 public:
-    Trie()
+    Trie(const T & endSymbol)
+        : mRoot(endSymbol)
     {}
 
     /*!
      * @param max Number of elements in the key space. 
-     *            This variable will only be used if HIGH_PERFORMANCE is set,
+     *            This variable will only have impact if HIGH_PERFORMANCE is set,
      *            in that case each node is an array of max elements.
      */
-    Trie(int max)
-        : mRoot(max)
+    Trie(const T & endSymbol, int max)
+        : mRoot(endSymbol, max)
     {}
 
     /*!
@@ -400,7 +391,7 @@ public:
 
     /*!
      * Checks whether the given key is present in the Trie
-     * @param key The key which should be searched, should be terminated by 'end' characters
+     * @param key The key which should be searched, should be terminated by 'end' character
      * @return true if the key is present
      */
     bool hasKey(const T * key) {
@@ -409,7 +400,7 @@ public:
 
     /*!
      * Retrieves all the key value pair which starts with the given key
-     * @param key Part of the key which should be searched
+     * @param key Part of the key which should be searched, should be terminated by 'end' character
      * @param values Vector of key, value pair
      * @param count Number of entries that should be returned
      */
@@ -431,7 +422,7 @@ private:
     Trie & operator=(Trie const &);
 
 private:
-    Node<T, V, end, Cmp> mRoot;
+    Node<T, V, Cmp> mRoot;
 };
 
 }
