@@ -16,6 +16,7 @@
 #include <vector>
 #include <cctype>
 #include <cstdlib>
+#include <ctime>
 
 class TrieCompare {
 public:
@@ -132,7 +133,7 @@ public:
    
     template<typename D>
     static void teststartsWith(D & aTrie, const std::string & key) {
-        int countForKey = 0;
+        unsigned int countForKey = 0;
         for (int i=0; i<sampleValuesCount; ++i) {
             int cv = key.compare(0, key.length()-1, sampleValues[i].first, 0, key.length()-1);
             if (cv == 0) {
@@ -142,6 +143,44 @@ public:
         std::vector< std::pair < std::vector<char> , std::string > > result;
         aTrie.startsWith(key.c_str(), result, sampleValuesCount);
         TrieTestCases::assert(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
+    }
+
+    template <typename D>
+    static void testSuite(D & aTrie) {
+        
+        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        
+        do {
+            TrieTraverseCallBack ttcb;
+            ttcb.mPrint = false;
+            aTrie.traverse(ttcb);
+            TrieTestCases::assert(ttcb.mCount == sampleValuesCount,
+                                  "Error in Trie::traverse functionality!!! Expected count",
+                                  sampleValuesCount,
+                                  "Actual count", ttcb.mCount);
+        } while (0);
+
+        std::srand((unsigned int)std::time(0));
+
+        for (int i=0; i<sampleValuesCount; ++i) {
+            int index = std::rand() % sampleValuesCount;
+            TrieTestCases::testKeyInTrie(aTrie, sampleValues[index].first, true);
+        }
+
+        TrieTestCases::testKeyInTrie(aTrie, "something which is not in the Trie$", false);
+
+        for (int i=0; i<sampleValuesCount; ++i) {
+            int index = std::rand() % sampleValuesCount;
+            std::string keyStr = sampleValues[index].first;
+            if (keyStr.length() > 0) {
+                std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
+                keyPart.insert(keyPart.length(), "$");
+                TrieTestCases::teststartsWith(aTrie, keyPart);
+            }
+        }
+
+        std::string negTest("something which is not in the Trie$");
+        TrieTestCases::teststartsWith(aTrie, negTest);        
     }
 
     template <typename T>

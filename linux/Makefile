@@ -2,7 +2,7 @@ bin_PROGRAMME = trie_test
 trie_test_SOURCES = ../test/trietest1.cpp  ../test/trietest2.cpp  ../test/trietestmain.cpp
 trie_test_OBJ = $(patsubst ../test/%.cpp, %.o, $(trie_test_SOURCES))
 CXX = g++
-CXFLAGS = -g3
+CXFLAGS = -g3 -Wall
 DEPS = ../inc/trie.h
 
 all: $(bin_PROGRAMME)
