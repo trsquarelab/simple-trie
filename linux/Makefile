@@ -3,12 +3,12 @@ trie_test_SOURCES = ../test/trietest1.cpp  ../test/trietest2.cpp  ../test/triete
 trie_test_OBJ = $(patsubst ../test/%.cpp, %.o, $(trie_test_SOURCES))
 CXX = g++
 CXFLAGS = -g3 -Wall
-DEPS = ../inc/trie.h
+DEPS = ../inc/trie.h ../test/trietest.h
 
 all: $(bin_PROGRAMME)
 	
 
-$(bin_PROGRAMME): $(trie_test_SOURCES)
+$(bin_PROGRAMME): $(trie_test_SOURCES) $(DEPS)
 	$(CXX) -o $(bin_PROGRAMME) $(trie_test_SOURCES) -I../inc $(CXFLAGS)
 
 #$(trie_test_OBJ): $(trie_test_SOURCES) $(DEPS)

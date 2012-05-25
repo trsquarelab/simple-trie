@@ -36,7 +36,7 @@ public:
 
 class TrieTraverseCallBack {
 public:
-    mutable int mCount;
+    mutable unsigned int mCount;
     bool mPrint;
     TrieTraverseCallBack() 
         : mCount(0),
@@ -84,7 +84,7 @@ static const std::pair<std::string, std::string> sampleValues[] = {
         std::string("A bitset is a special container class that is designed to store bits")),
 };
 
-static const int sampleValuesCount = sizeof(sampleValues) / sizeof(sampleValues[0]);
+static const unsigned int sampleValuesCount = sizeof(sampleValues) / sizeof(sampleValues[0]);
 
 class TrieTestCases
 {
@@ -111,7 +111,7 @@ public:
 
     template <typename D>
     static void populateTrieWithSampleValues(D  & aTrie) {
-        for (int i=0; i<sampleValuesCount; ++i) {
+        for (unsigned int i=0; i<sampleValuesCount; ++i) {
             TrieTestCases::testAndAddToTrie(aTrie, sampleValues[i].first, sampleValues[i].second);
         }
     }
@@ -134,7 +134,7 @@ public:
     template<typename D>
     static void teststartsWith(D & aTrie, const std::string & key) {
         unsigned int countForKey = 0;
-        for (int i=0; i<sampleValuesCount; ++i) {
+        for (unsigned int i=0; i<sampleValuesCount; ++i) {
             int cv = key.compare(0, key.length()-1, sampleValues[i].first, 0, key.length()-1);
             if (cv == 0) {
                 ++countForKey;
@@ -150,6 +150,10 @@ public:
         
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         
+        assert(aTrie.size() == sampleValuesCount, "Trie::size failed!!!",
+                                                  "Trie::size returned", aTrie.size(),
+                                                  "Expected", sampleValuesCount);
+
         do {
             TrieTraverseCallBack ttcb;
             ttcb.mPrint = false;
@@ -162,14 +166,14 @@ public:
 
         std::srand((unsigned int)std::time(0));
 
-        for (int i=0; i<sampleValuesCount; ++i) {
+        for (unsigned int i=0; i<sampleValuesCount; ++i) {
             int index = std::rand() % sampleValuesCount;
             TrieTestCases::testKeyInTrie(aTrie, sampleValues[index].first, true);
         }
 
         TrieTestCases::testKeyInTrie(aTrie, "something which is not in the Trie$", false);
 
-        for (int i=0; i<sampleValuesCount; ++i) {
+        for (unsigned int i=0; i<sampleValuesCount; ++i) {
             int index = std::rand() % sampleValuesCount;
             std::string keyStr = sampleValues[index].first;
             if (keyStr.length() > 0) {

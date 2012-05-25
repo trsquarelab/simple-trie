@@ -153,23 +153,33 @@ template<typename T,
 {
 public:
     Node(const T & endSymbol, int max = 256)
-        : mEndSymbol(endSymbol)
+        : 
 #ifdef HIGH_PERFORMANCE
-        , mItems(max, (NodeItem<T, V, Cmp> *)0)
+          mItems(max, (NodeItem<T, V, Cmp> *)0),
 #endif
+          mEndSymbol(endSymbol),
+          mSize(0)
     {}
-
-    static void deleteItem(NodeItem<T, V, Cmp> * item) {
-        delete item;
-    }
 
     ~Node() {
         std::for_each(mItems.begin(), mItems.end(), deleteItem);
         mItems.clear();
     }
 
-    void add(const T * key, V const & value) {
-        addData(key, value, 0);
+    bool empty() const {
+        return size() == 0;
+    }
+
+    unsigned int size() const {
+        return mSize;
+    }
+
+    bool add(const T * key, V const & value) {
+        if (addData(key, value, 0)) {
+            ++mSize;
+            return true;
+        }
+        return false;
     }
 
     const V * get(const T * key) {
@@ -194,6 +204,10 @@ public:
 private:
     Node(Node const &);
     Node & operator=(Node const &);
+
+    static void deleteItem(NodeItem<T, V, Cmp> * item) {
+        delete item;
+    }
 
     template <typename CB>
     void traverse(std::vector<T> key, CB const & cb) {
@@ -280,15 +294,21 @@ private:
         }
     }
 
-    void addData(const T * key, V const & value, int i) {
+    bool addData(const T * key, V const & value, int i) {
 
         NodeItem<T, V, Cmp> * item = addItem(key[i]);
 
-        if (key[i] == mEndSymbol) {
-            ((EndNodeItem<T, V, Cmp>*)item)->set(key[i], value);
-        } else if (*item == key[i]) {
-            item->getChilds()->addData(key, value, ++i);
+        if (!item) {
+            return false;
         }
+
+        if (key[i] == mEndSymbol) {
+            ((EndNodeItem<T, V, Cmp>*)item)->set(key[i], value);  
+            return true;
+        } else if (*item == key[i]) {
+            return item->getChilds()->addData(key, value, ++i);
+        }
+        return false;
     }
 
     NodeItem<T, V, Cmp> * createNodeItem(T const & k) {
@@ -299,14 +319,23 @@ private:
         }
     }
 
-    NodeItem<T, V, Cmp> * addItem(T const & k) {
 #ifdef HIGH_PERFORMANCE
+
+    NodeItem<T, V, Cmp> * addItem(T const & k) {
         if (!mItems[k]) {
             mItems[k] = createNodeItem(k);
+            return mItems[k];
+        } else {
+            if (k != mEndSymbol) {
+                return mItems[k];
+            }
         }
-        NodeItem<T, V, Cmp> & item = *mItems[k];
-        return &item;
+        return 0;
+    }
+
 #else
+
+    NodeItem<T, V, Cmp> * addItem(T const & k) {
         NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
         ItemsContainerIter iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
@@ -314,12 +343,17 @@ private:
             mItems.insert(v);
             return v;
         } else {
-            return (NodeItem<T, V, Cmp> *) *iter;
+            if (k != mEndSymbol) {
+                return (NodeItem<T, V, Cmp> *) *iter;
+            }
         }
-#endif
+        return 0;
     }
 
+#endif
+
     NodeItem<T, V, Cmp> * getItem(T const & k) {
+
 #ifdef HIGH_PERFORMANCE
         return mItems[k];
 #else
@@ -343,8 +377,9 @@ private:
     typedef typename ItemsContainer::iterator ItemsContainerIter;
     typedef typename ItemsContainer::const_iterator ItemsContainerConster;
 
-    const T mEndSymbol;
     ItemsContainer mItems;
+    const T mEndSymbol;
+    unsigned int mSize;
 };
 
 /*!
@@ -380,8 +415,8 @@ public:
      * @param key The key, should be terminated by 'end' symbol
      * @param value The value that is to be set with the key
      */
-    void add(const T * key, V const & value) {
-        mRoot.add(key, value);
+    bool add(const T * key, V const & value) {
+        return mRoot.add(key, value);
     }
 
     /*!
@@ -400,6 +435,22 @@ public:
      */
     bool hasKey(const T * key) {
         return mRoot.hasKey(key);
+    }
+
+    /*!
+     * Test whether Trie is empty
+     * @return true if the Trie size is 0, false otherwise
+     */
+    bool empty() const {
+        return mRoot.empty();
+    }
+
+    /*!
+     * Returns the number of elements in the Trie
+     * @return Number of key value pair in the Trie
+     */
+    unsigned int size() const {
+        return mRoot.size();
     }
 
     /*!
