@@ -26,8 +26,9 @@ int main(int argc, char ** argv) {
         std::cout << "******************************************" << std::endl;
         std::cout << "0 : To Exit" << std::endl;
         std::cout << "1 : Add a word " << std::endl;
-        std::cout << "2 : Search a word (Enter starting letters)" << std::endl;
-        std::cout << "3 : List all words " << std::endl;
+        std::cout << "2 : Remove a word " << std::endl;
+        std::cout << "3 : Search a word (Enter starting letters)" << std::endl;
+        std::cout << "4 : List all words " << std::endl;
         std::cout << "******************************************" << std::endl;
 
         std::cout << std::endl << "Enter Choice : ";
@@ -51,10 +52,25 @@ int main(int argc, char ** argv) {
                 std::cout << "Enter the meaning : ";
                 std::cin.ignore();
                 std::cin.get(meaning, sizeof(meaning), '\n');
-                dictionary.add(delimWord.c_str(), meaning);
+                dictionary.insert(delimWord.c_str(), meaning);
                 break;
                     }
             case '2': {
+                char word[80];
+                std::cout << "Enter the word : ";
+                std::cin.ignore();
+                std::cin.get(word, sizeof(word), '\n');
+                std::string delimWord(word);
+                delimWord.insert(delimWord.length(), "$");
+                if (dictionary.erase(delimWord.c_str())) {
+                    std::cout << "Removed " << word << std::endl;
+                } else {
+                    std::cout << "Failed to Remove " << word << std::endl;
+                }
+
+                break;
+                      }
+            case '3': {
                 char word[80];
                 std::cout << "Enter the word : ";
                 std::cin.ignore();
@@ -79,7 +95,7 @@ int main(int argc, char ** argv) {
                 }
                 break;
                     }
-            case '3': {
+            case '4': {
                 std::cout << "*****************************************" << std::endl;
                 dictionary.traverse(TrieTraverseCallBack());
                 std::cout << "*****************************************" << std::endl;

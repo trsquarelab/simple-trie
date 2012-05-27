@@ -76,7 +76,8 @@
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a84160e2cd9a7610530d2501c1e032eed">Trie</a> (const T &amp;endSymbol)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a1ae3e3088ef6d337e702fc144c92efc6">Trie</a> (const T &amp;endSymbol, int max)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a3e99ee108523d70e41571eda3511f06c">add</a> (const T *key, V const &amp;value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ae1081ab59af54e8594aee14b228b33a2">insert</a> (const T *key, V const &amp;value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a73268dc40855f268d8904fb28443e89d">erase</a> (const T *key)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const V *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ac1a18525e36f1679f065fa1bec8f986d">get</a> (const T *key)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a4b2ed8dd60729e7ed2947f27dce80042">hasKey</a> (const T *key)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a83f98b10a508c721f7f6c66c365c2741">empty</a> () const </td></tr>
@@ -95,16 +96,101 @@ class rtv::Trie&lt; T, V, Cmp &gt;</h3>
   <table class="">
     <tr><td class="paramname">T</td><td>Type for each element in the key </td></tr>
     <tr><td class="paramname">V</td><td>Type of the value that the key will be representing </td></tr>
-    <tr><td class="paramname">Cmp</td><td>Comparison functor </td></tr>
+    <tr><td class="paramname">Cmp</td><td>Comparison functor</td></tr>
   </table>
   </dd>
 </dl>
-</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<h2><a class="anchor" id="usage_sec"></a>
+Usage of the Trie</h2>
+<h3><a class="anchor" id="usage_declaration"></a>
+Declarating the Trie</h3>
+<p>A <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with key as chars and value as std::string can be declared as given below </p>
+<div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;string&gt;</span>
+<span class="preprocessor"> #include &lt;trie.h&gt;</span>
+
+ <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
+
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+
+     <span class="keywordflow">return</span> 0
+ }
+</pre></div><h3><a class="anchor" id="usage_population"></a>
+Populatiion and deletion from the Trie</h3>
+<p><a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> can be populated by using the <a class="el" href="classrtv_1_1_trie.html#ae1081ab59af54e8594aee14b228b33a2">Trie::insert</a> method and element can be removed using <a class="el" href="classrtv_1_1_trie.html#a73268dc40855f268d8904fb28443e89d">Trie::erase</a>. </p>
+<div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
+<span class="preprocessor"> #include &lt;string&gt;</span>
+<span class="preprocessor"> #include &lt;iostream&gt;</span>
+
+ <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
+
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     
+     <span class="comment">// adding key value pair to the Trie</span>
+     <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>)) {
+         std::cout &lt;&lt; <span class="stringliteral">&quot;added karma&quot;</span> &lt;&lt; std::endl;
+     }
+
+     <span class="comment">// removing key from the Trie</span>
+     <span class="keywordflow">if</span> (dictionary.erase(<span class="stringliteral">&quot;karma$&quot;</span>)) {
+         std::cout &lt;&lt; <span class="stringliteral">&quot;removed karma&quot;</span> &lt;&lt; std::endl;
+     }
+
+     <span class="keywordflow">return</span> 0
+ }
+</pre></div> <h3><a class="anchor" id="usage_retrieval"></a>
+Retrieval of Value</h3>
+<p>Value for a key can be retrieved using <a class="el" href="classrtv_1_1_trie.html#ac1a18525e36f1679f065fa1bec8f986d">Trie::get</a> method and the existence of the key can be tested using <a class="el" href="classrtv_1_1_trie.html#a4b2ed8dd60729e7ed2947f27dce80042">Trie::hasKey</a> method. </p>
+<div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
+<span class="preprocessor"> #include &lt;string&gt;</span>
+<span class="preprocessor"> #include &lt;iostream&gt;</span>
+
+ <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
+
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary;
+     
+     dictionary.<a class="code" href="classrtv_1_1_trie.html#ae1081ab59af54e8594aee14b228b33a2">insert</a>(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>);
+
+     <span class="keywordflow">if</span> (dictionary.<a class="code" href="classrtv_1_1_trie.html#a4b2ed8dd60729e7ed2947f27dce80042">hasKey</a>(<span class="stringliteral">&quot;karma$&quot;</span>)) {
+         std::cout &lt;&lt; <span class="stringliteral">&quot;key karma found&quot;</span> &lt;&lt; std::endl;
+     }
+     std::string * result = dictionary.<a class="code" href="classrtv_1_1_trie.html#ac1a18525e36f1679f065fa1bec8f986d">get</a>(<span class="stringliteral">&quot;karma$&quot;</span>);
+     <span class="keywordflow">if</span> (result) {
+         std::cout &lt;&lt; result-&gt;c_str() &lt;&lt; std::endl;
+     }
+     <span class="keywordflow">return</span> 0
+ }
+</pre></div><h3><a class="anchor" id="usage_searching"></a>
+Searching keys which begins with the given charactars</h3>
+<p>Keys which begins with a specific charactars can be retrieved using <a class="el" href="classrtv_1_1_trie.html#adf64d188dac4b8d010c3e74652c29a3d">Trie::startsWith</a> method </p>
+<div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
+<span class="preprocessor"> #include &lt;string&gt;</span>
+<span class="preprocessor"> #include &lt;iostream&gt;</span>
+<span class="preprocessor"> #include &lt;vector&gt;</span>
+
+ <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
+
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary;
+     
+     dictionary.<a class="code" href="classrtv_1_1_trie.html#ae1081ab59af54e8594aee14b228b33a2">insert</a>(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>);
+
+     <span class="keyword">typedef</span> std::vector&lt; std::pair &lt; std::vector&lt;char&gt; , std::string &gt; &gt; TrieResult;
+     TrieResult result;
+
+     dictionary.<a class="code" href="classrtv_1_1_trie.html#adf64d188dac4b8d010c3e74652c29a3d">startsWith</a>(<span class="stringliteral">&quot;kar$&quot;</span>, result);
+
+     <span class="keywordflow">for</span> (TrieResult::iterator iter = result.begin(); iter != result.end(); ++iter) {
+         iter-&gt;first.push_back(0);
+         std::cout &lt;&lt; &amp;((iter-&gt;first)[0]) &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; iter-&gt;second.c_str() &lt;&lt; std::endl;
+     }
+
+     <span class="keywordflow">return</span> 0
+ }
+</pre></div> </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a84160e2cd9a7610530d2501c1e032eed"></a><!-- doxytag: member="rtv::Trie::Trie" ref="a84160e2cd9a7610530d2501c1e032eed" args="(const T &amp;endSymbol)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::<a class="el" href="classrtv_1_1_trie.html">Trie</a> </td>
@@ -129,7 +215,7 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::<a class="el" href="classrtv_1_1_trie.html">Trie</a> </td>
@@ -162,14 +248,134 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a3e99ee108523d70e41571eda3511f06c"></a><!-- doxytag: member="rtv::Trie::add" ref="a3e99ee108523d70e41571eda3511f06c" args="(const T *key, V const &amp;value)" -->
+<a class="anchor" id="a0223ff4ae3596e226efe7fdaa9cde713"></a><!-- doxytag: member="rtv::Trie::clear" ref="a0223ff4ae3596e226efe7fdaa9cde713" args="()" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::add </td>
+          <td class="memname">void <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>All the elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> are dropped, leaving the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with a size of 0. </p>
+
+</div>
+</div>
+<a class="anchor" id="a83f98b10a508c721f7f6c66c365c2741"></a><!-- doxytag: member="rtv::Trie::empty" ref="a83f98b10a508c721f7f6c66c365c2741" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::empty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Test whether <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> is empty </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> size is 0, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a73268dc40855f268d8904fb28443e89d"></a><!-- doxytag: member="rtv::Trie::erase" ref="a73268dc40855f268d8904fb28443e89d" args="(const T *key)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::erase </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Remove the entry with the given key from the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Key which should be erased, should be terminated by 'end' symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is erased in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac1a18525e36f1679f065fa1bec8f986d"></a><!-- doxytag: member="rtv::Trie::get" ref="ac1a18525e36f1679f065fa1bec8f986d" args="(const T *key)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const V* <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::get </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Retrieves the value for the given key </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Pointer to value for the given key, 0 on failure </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4b2ed8dd60729e7ed2947f27dce80042"></a><!-- doxytag: member="rtv::Trie::hasKey" ref="a4b2ed8dd60729e7ed2947f27dce80042" args="(const T *key)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::hasKey </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Checks whether the given key is present in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symol </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the key is present </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae1081ab59af54e8594aee14b228b33a2"></a><!-- doxytag: member="rtv::Trie::insert" ref="ae1081ab59af54e8594aee14b228b33a2" args="(const T *key, V const &amp;value)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">const T *&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -200,104 +406,11 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
 
 </div>
 </div>
-<a class="anchor" id="a0223ff4ae3596e226efe7fdaa9cde713"></a><!-- doxytag: member="rtv::Trie::clear" ref="a0223ff4ae3596e226efe7fdaa9cde713" args="()" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::clear </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>All the elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> are dropped, leaving the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with a size of 0. </p>
-
-</div>
-</div>
-<a class="anchor" id="a83f98b10a508c721f7f6c66c365c2741"></a><!-- doxytag: member="rtv::Trie::empty" ref="a83f98b10a508c721f7f6c66c365c2741" args="() const " -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::empty </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const<code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Test whether <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> is empty </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> size is 0, false otherwise </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ac1a18525e36f1679f065fa1bec8f986d"></a><!-- doxytag: member="rtv::Trie::get" ref="ac1a18525e36f1679f065fa1bec8f986d" args="(const T *key)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">const V* <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::get </td>
-          <td>(</td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>key</em></td><td>)</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Retrieves the value for the given key </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symbol </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>Pointer to value for the given key, 0 on failure </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a4b2ed8dd60729e7ed2947f27dce80042"></a><!-- doxytag: member="rtv::Trie::hasKey" ref="a4b2ed8dd60729e7ed2947f27dce80042" args="(const T *key)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::hasKey </td>
-          <td>(</td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>key</em></td><td>)</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Checks whether the given key is present in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symol </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if the key is present </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a86f1889b5a23070629377091d4ee85b2"></a><!-- doxytag: member="rtv::Trie::size" ref="a86f1889b5a23070629377091d4ee85b2" args="() const " -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">unsigned int <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::size </td>
@@ -317,7 +430,7 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp &gt;::startsWith </td>
@@ -350,7 +463,7 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
   <table class="params">
     <tr><td class="paramname">key</td><td>Part of the key which should be searched, should be terminated by 'end' symbol </td></tr>
     <tr><td class="paramname">values</td><td>Vector of key, value pair </td></tr>
-    <tr><td class="paramname">count</td><td>Number of entries that should be returned </td></tr>
+    <tr><td class="paramname">count</td><td>Maximum number of entries that should be returned </td></tr>
   </table>
   </dd>
 </dl>
@@ -361,7 +474,7 @@ template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </d
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename V , typename Cmp  = std::less&lt;T&gt;&gt; </div>
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename CB &gt; </div>
       <table class="memname">
@@ -378,7 +491,7 @@ template&lt;typename CB &gt; </div>
 <p>Traverse through the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">c</td><td>The functor class which will be called when a node is reached. Functor takes two arguments, first argument is std::vector&lt;T&gt; and second V </td></tr>
+    <tr><td class="paramname">c</td><td>The functor class which will be called when a node is reached. Functor takes two arguments, first argument is const T * and second V(or const V &amp;) </td></tr>
   </table>
   </dd>
 </dl>
@@ -392,7 +505,7 @@ template&lt;typename CB &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 25 2012 15:26:02 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat May 26 2012 17:27:54 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

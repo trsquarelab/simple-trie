@@ -183,12 +183,21 @@ public:
         return mSize;
     }
 
-    bool add(const T * key, V const & value) {
-        if (addData(key, value, 0)) {
+    bool insert(const T * key, V const & value) {
+        bool inserted = insertData(key, value, 0);
+        if (inserted) {
             ++mSize;
-            return true;
         }
-        return false;
+        return inserted;
+    }
+
+    bool erase(const T * key) {
+        bool finished = false;
+        bool erased = erase(key, 0, finished);
+        if (erased) {
+            --mSize;
+        }
+        return erased;
     }
 
     const V * get(const T * key) {
@@ -219,14 +228,16 @@ private:
     }
 
     template <typename CB>
-    void traverse(std::vector<T> key, CB const & cb) {
-
+    void traverse(std::vector<T> & key, CB const & cb) {
         ItemsContainerIter iterEnd = mItems.end();
+
         for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
             if (*iter) {
                 NodeItem<T, V, Cmp> & item = *(NodeItem<T, V, Cmp> *) *iter;
-                if (item == mEndSymbol) {                    
-                    cb(key, ((EndNodeItem<T, V, Cmp>&)item).getValue());
+                if (item == mEndSymbol) {
+                    key.push_back(item.get());
+                    cb((const T *)&key[0], ((EndNodeItem<T, V, Cmp>&)item).getValue());
+                    key.pop_back();
                 } else {
                     key.push_back(item.get());
                     item.getChilds()->traverse(key, cb);
@@ -287,25 +298,23 @@ private:
     }
 
     bool hasKey(const T * key, int i) {
-        NodeItem<T, V, Cmp> * itemp = getItem(key[i]);
-        if (!itemp) {
+        NodeItem<T, V, Cmp> * item = getItem(key[i]);
+        if (!item) {
             return false;
         }
 
-        NodeItem<T, V, Cmp> & item = *itemp;
-        
-        if (key[i] == mEndSymbol && item == mEndSymbol) {
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
             return true;
-        } else if (item == key[i]) {
-            return item.getChilds()->hasKey(key, ++i);
+        } else if (*item == key[i]) {
+            return item->getChilds()->hasKey(key, ++i);
         } else {
             return false;
         }
     }
 
-    bool addData(const T * key, V const & value, int i) {
+    bool insertData(const T * key, V const & value, int i) {
 
-        NodeItem<T, V, Cmp> * item = addItem(key[i]);
+        NodeItem<T, V, Cmp> * item = insertItem(key[i]);
 
         if (!item) {
             return false;
@@ -315,9 +324,50 @@ private:
             ((EndNodeItem<T, V, Cmp>*)item)->set(key[i], value);  
             return true;
         } else if (*item == key[i]) {
-            return item->getChilds()->addData(key, value, ++i);
+            return item->getChilds()->insertData(key, value, ++i);
         }
         return false;
+    }
+
+    bool erase(const T * key, int i, bool & finished) {
+        bool erased = false;
+        NodeItem<T, V, Cmp> * item = getItem(key[i]);
+        if (!item) {
+            return erased;
+        }
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            int count = 0;
+            ItemsContainerIter iterEnd = mItems.end();
+            for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+                if (*iter != 0) {
+                    ++count;
+                }
+            }
+            if (count > 1) {
+                eraseItem(key[i]);
+                finished = true;
+            }
+            erased = true;
+        } else {
+            erased = item->getChilds()->erase(key, i+1, finished);
+            if (erased && !finished) {
+                int count = 0;
+                ItemsContainerIter iterEnd = mItems.end();
+                for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+                    if (*iter != 0) {
+                        ++count;
+                    }
+                }
+                if (count > 1) {
+                    eraseItem(key[i]);
+                    finished = true;
+                } else if (count == 1) {
+                    eraseItem(key[i]);
+                }
+
+            }
+        }
+        return erased;
     }
 
     NodeItem<T, V, Cmp> * createNodeItem(T const & k) {
@@ -330,7 +380,7 @@ private:
 
 #ifdef HIGH_PERFORMANCE
 
-    NodeItem<T, V, Cmp> * addItem(T const & k) {
+    NodeItem<T, V, Cmp> * insertItem(T const & k) {
         if (!mItems[k]) {
             mItems[k] = createNodeItem(k);
             return mItems[k];
@@ -342,9 +392,25 @@ private:
         return 0;
     }
 
+    bool eraseItem(T const & k) {
+        if (mItems[k]) {
+            delete mItems[k];
+            mItems[k] = (NodeItem<T, V, Cmp> *)0;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    NodeItem<T, V, Cmp> * getItem(T const & k) {
+        return mItems[k];
+    }
+
+private:
+        typedef std::vector< NodeItem<T, V, Cmp>* > ItemsContainer;
 #else
 
-    NodeItem<T, V, Cmp> * addItem(T const & k) {
+    NodeItem<T, V, Cmp> * insertItem(T const & k) {
         NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
         ItemsContainerIter iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
@@ -359,13 +425,18 @@ private:
         return 0;
     }
 
-#endif
+    bool eraseItem(T const & k) {
+        NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
+        ItemsContainerIter iter = mItems.find(&tmp);
+        if (iter != mItems.end()) {
+            mItems.erase(iter);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     NodeItem<T, V, Cmp> * getItem(T const & k) {
-
-#ifdef HIGH_PERFORMANCE
-        return mItems[k];
-#else
         NodeItem<T, V, Cmp> tmp(mEndSymbol, k);
 
         ItemsContainerIter iter = mItems.find(&tmp);
@@ -373,16 +444,14 @@ private:
             return 0;
         }
         return (NodeItem<T, V, Cmp> *) (*iter);
-#endif
     }
+private:
+    typedef std::set< NodeItem<T, V, Cmp>*, NodeItemPtrCompare<T, V, Cmp> > ItemsContainer;
+
+#endif
 
 private:
 
-#ifdef HIGH_PERFORMANCE
-    typedef std::vector< NodeItem<T, V, Cmp>* > ItemsContainer;
-#else
-    typedef std::set< NodeItem<T, V, Cmp>*, NodeItemPtrCompare<T, V, Cmp> > ItemsContainer;
-#endif
     typedef typename ItemsContainer::iterator ItemsContainerIter;
     typedef typename ItemsContainer::const_iterator ItemsContainerConster;
 
@@ -396,6 +465,100 @@ private:
  * @tparam T Type for each element in the key
  * @tparam V Type of the value that the key will be representing
  * @tparam Cmp Comparison functor
+ * 
+ *
+ * @section usage_sec Usage of the Trie
+ * @subsection usage_declaration Declarating the Trie
+ * A Trie with key as chars and value as std::string can be declared as given below
+ * @code
+ * #include <string>
+ * #include <trie.h>
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string> dictionary('$');
+ *
+ *     return 0
+ * }
+ * @endcode
+ *
+ * @subsection usage_population Populatiion and deletion from the Trie
+ * Trie can be populated by using the Trie::insert method and element can be removed using Trie::erase.
+ * @code
+ * #include <trie.h>
+ * #include <string>
+ * #include <iostream>
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string> dictionary('$');
+ *     
+ *     // adding key value pair to the Trie
+ *     if (dictionary.insert("karma$", "Destiny or fate, following as effect from cause")) {
+ *         std::cout << "added karma" << std::endl;
+ *     }
+ *
+ *     // removing key from the Trie
+ *     if (dictionary.erase("karma$")) {
+ *         std::cout << "removed karma" << std::endl;
+ *     }
+ *
+ *     return 0
+ * }
+ * @endcode
+ * @subsection usage_retrieval Retrieval of Value
+ * Value for a key can be retrieved using Trie::get method and
+ * the existence of the key can be tested using Trie::hasKey method.
+ * @code
+ * #include <trie.h>
+ * #include <string>
+ * #include <iostream>
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string> dictionary;
+ *     
+ *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
+ *
+ *     if (dictionary.hasKey("karma$")) {
+ *         std::cout << "key karma found" << std::endl;
+ *     }
+ *     std::string * result = dictionary.get("karma$");
+ *     if (result) {
+ *         std::cout << result->c_str() << std::endl;
+ *     }
+ *     return 0
+ * }
+ * @endcode
+ *
+ * @subsection usage_searching Searching keys which begins with the given charactars
+ * Keys which begins with a specific charactars can be retrieved using Trie::startsWith method
+ * @code
+ * #include <trie.h>
+ * #include <string>
+ * #include <iostream>
+ * #include <vector>
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string> dictionary;
+ *     
+ *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
+ *
+ *     typedef std::vector< std::pair < std::vector<char> , std::string > > TrieResult;
+ *     TrieResult result;
+ *
+ *     dictionary.startsWith("kar$", result);
+ *
+ *     for (TrieResult::iterator iter = result.begin(); iter != result.end(); ++iter) {
+ *         iter->first.push_back(0);
+ *         std::cout << &((iter->first)[0]) << " : " << iter->second.c_str() << std::endl;
+ *     }
+ *
+ *     return 0
+ * }
+ * @endcode
+ *
  */
 template<typename T,
          typename V,
@@ -425,8 +588,17 @@ public:
      * @param value The value that is to be set with the key
      * @return true if the given key is inserted in to the Trie, false otherwise
      */
-    bool add(const T * key, V const & value) {
-        return mRoot.add(key, value);
+    bool insert(const T * key, V const & value) {
+        return mRoot.insert(key, value);
+    }
+
+    /*!
+     * Remove the entry with the given key from the Trie
+     * @param key Key which should be erased, should be terminated by 'end' symbol
+     * @return true if the given key is erased in to the Trie, false otherwise
+     */
+    bool erase(const T * key) {
+        return mRoot.erase(key);
     }
 
     /*!
@@ -473,7 +645,7 @@ public:
      * Retrieves all the key value pair which starts with the given key
      * @param key Part of the key which should be searched, should be terminated by 'end' symbol
      * @param values Vector of key, value pair
-     * @param count Number of entries that should be returned
+     * @param count Maximum number of entries that should be returned
      */
     void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) {
         mRoot.startsWith(key, values, count);
@@ -482,7 +654,7 @@ public:
     /*!
      * Traverse through the Trie
      * @param c The functor class which will be called when a node is reached. Functor takes two arguments, 
-     *          first argument is std::vector<T> and second V
+     *          first argument is const T * and second V(or const V &)
      */
     template <typename CB>
     void traverse(CB const & c) {

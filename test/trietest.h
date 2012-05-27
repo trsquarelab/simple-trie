@@ -14,7 +14,6 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -39,23 +38,29 @@ class TrieTraverseCallBack {
 public:
     mutable unsigned int mCount;
     bool mPrint;
-    TrieTraverseCallBack() 
+    char mEndSymbol;
+
+    TrieTraverseCallBack(char endSymbol='$')
         : mCount(0),
-          mPrint(true)
+          mPrint(true),
+          mEndSymbol(endSymbol)
     {}
 
-    void operator()(std::vector<char> key, std::string value) const {
+    void operator()(const char * key, std::string const & value) const {
         if (mPrint) {
-            key.push_back(0);
+            std::string k;
+            for (int i=0; key[i] != mEndSymbol; ++i) {
+                char astr[2] = {'\0', '\0'};
+                astr[0] = key[i];
+                k.append(astr);
+            }
+
             std::cout.width(10);
-            std::string k(&key[0]);
             k.insert(0, "[");
             k.insert(k.length(), "]");
             std::cout << std::left << k.c_str() << " : ";
             std::cout.width(0);
             std::cout.width(70);
-            value.insert(0, "[");
-            value.insert(value.length(), "]");
             std::cout << std::left << value.c_str() << std::endl;
         }
         ++mCount;
@@ -104,8 +109,10 @@ public:
 
     template <typename D>
     void testAndAddToTrie(D & aTrie, const std::string & word, const std::string & meaning) {
-        aTrie.add(word.c_str(), meaning.c_str());
-        assert(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::add or Trie::get !!!");
+        unsigned int trieSize = aTrie.size();
+        aTrie.insert(word.c_str(), meaning.c_str());
+        assert(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::insert or Trie::get !!!");
+        assert(aTrie.size() == trieSize+1, "Trie size did not updated properly after Trie::insert!!!");
     }
    
     template<typename D>
@@ -126,18 +133,20 @@ public:
     template <typename D>
     void testSuite(D & aTrie) {
 
-        //Test empty functionality
+        std::srand((unsigned int)std::time(0));
+
+        //Test Trie::empty functionality
         aTrie.clear();
         assert(aTrie.empty(), "Trie::empty failed!!!");
         
-        //Test add functionality
+        //Test Trie::insert functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         
-        //Test size functionality
+        //Test Trie::size functionality
         assert(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
                                                   "Trie::size returned", aTrie.size(),
                                                   "Expected", mSampleValues.size());
-        //Test traverse functionality
+        //Test Trie::traverse functionality
         do {
             TrieTraverseCallBack ttcb;
             ttcb.mPrint = false;
@@ -148,15 +157,14 @@ public:
                                   "Actual count", ttcb.mCount);
         } while (0);
 
-        //Test hasKey functionality
-        std::srand((unsigned int)std::time(0));
+        //Test Trie::hasKey functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
             TrieTestCases::testKeyInTrie(aTrie, iter->first, true);
         }
         TrieTestCases::testKeyInTrie(aTrie, "something which is not in the Trie$", false);
 
-        //Test startsWith functionality
+        //Test Trie::startsWith functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
             std::string keyStr = iter->first;
@@ -168,8 +176,23 @@ public:
         }
         std::string negTest("something which is not in the Trie$");
         TrieTestCases::teststartsWith(aTrie, negTest);
-        
-        //Test clear functionality
+
+        //Test Trie::erase functionality
+        unsigned int trieSize = aTrie.size();
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            assert(aTrie.erase(iter->first.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
+            assert(aTrie.get(iter->first.c_str()) == 0, "Removing ", iter->first.c_str(), "failed!!!");
+            assert(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
+
+            TrieTraverseCallBack ttcb;
+            ttcb.mPrint = false;
+            aTrie.traverse(ttcb);
+            assert(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
+        }
+
+        //Test Trie::clear functionality
+        TrieTestCases::populateTrieWithSampleValues(aTrie);
         aTrie.clear();
         assert(aTrie.empty(), "Trie::clear failed!!!");
         do {
