@@ -16,7 +16,7 @@ int main(int argc, char ** argv) {
 
     TrieTestCases::instance()->execute();
 
-    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('$', 256);
+    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('$');
     
     TrieTestCases::instance()->populateTrieWithSampleValues(dictionary);
     

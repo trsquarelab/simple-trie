@@ -17,7 +17,7 @@ namespace {
 void test1() {
     std::cout << "Executing Test Case 1 ... ";
 
-    rtv::Trie<char, std::string, TrieCompare> dictionary('$', 256);
+    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary('$');
         
     TrieTestCases::instance()->testSuite(dictionary);
 

@@ -9,8 +9,6 @@
  *
  */
 
-#define HIGH_PERFORMANCE
-
 #include "trie.h"
 #include "trietest.h"
 
@@ -19,7 +17,7 @@ namespace {
 void test2() {
     std::cout << "Executing Test Case 2 ... ";
 
-    rtv::Trie<char, std::string, std::less<char> > dictionary('$', 256);
+    rtv::Trie<char, std::string, std::less<char>, rtv::VectorItems<char, std::string, std::less<char>, 256> > dictionary('$');
             
     TrieTestCases::instance()->testSuite(dictionary);
     
