@@ -450,8 +450,8 @@ public:
     }
 
 private:
+    const T mEndSymbol;
     Items mItems;
-    T mEndSymbol;
     Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > * mNode;
 };
 
@@ -528,8 +528,8 @@ public:
     }
 
 private:
+    const T mEndSymbol;
     Items mItems;
-    T mEndSymbol;
     Node<T, V, Cmp, SetItems<T, V, Cmp> > * mNode;
 };
 
