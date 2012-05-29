@@ -101,9 +101,9 @@ public:
     template <typename D>
     void testKeyInTrie(D  & aTrie, std::string const & word, bool expected) {
         if (aTrie.hasKey(word.c_str())) {
-            assert(expected, "Found", word.c_str(), "when it should not be found !!!");            
+            testResult(expected, "Found", word.c_str(), "when it should not be found !!!");            
         } else {
-            assert(!expected, "Did not find", word.c_str(), "when it should be !!!");
+            testResult(!expected, "Did not find", word.c_str(), "when it should be !!!");
         }
     }
 
@@ -111,8 +111,8 @@ public:
     void testAndAddToTrie(D & aTrie, const std::string & word, const std::string & meaning) {
         unsigned int trieSize = aTrie.size();
         aTrie.insert(word.c_str(), meaning.c_str());
-        assert(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::insert or Trie::get !!!");
-        assert(aTrie.size() == trieSize+1, "Trie size did not updated properly after Trie::insert!!!");
+        testResult(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::insert or Trie::get !!!");
+        testResult(aTrie.size() == trieSize+1, "Trie size did not updated properly after Trie::insert!!!");
     }
    
     template<typename D>
@@ -127,7 +127,7 @@ public:
         }
         std::vector< std::pair < std::vector<char> , std::string > > result;
         aTrie.startsWith(key.c_str(), result, mSampleValues.size());
-        TrieTestCases::assert(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
+        TrieTestCases::testResult(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 
     template <typename D>
@@ -137,13 +137,13 @@ public:
 
         //Test Trie::empty functionality
         aTrie.clear();
-        assert(aTrie.empty(), "Trie::empty failed!!!");
+        testResult(aTrie.empty(), "Trie::empty failed!!!");
         
         //Test Trie::insert functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         
         //Test Trie::size functionality
-        assert(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
+        testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
                                                   "Trie::size returned", aTrie.size(),
                                                   "Expected", mSampleValues.size());
         //Test Trie::traverse functionality
@@ -151,7 +151,7 @@ public:
             TrieTraverseCallBack ttcb;
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
-            TrieTestCases::assert(ttcb.mCount == mSampleValues.size(),
+            TrieTestCases::testResult(ttcb.mCount == mSampleValues.size(),
                                   "Error in Trie::traverse functionality!!! Expected count",
                                   mSampleValues.size(),
                                   "Actual count", ttcb.mCount);
@@ -181,25 +181,25 @@ public:
         unsigned int trieSize = aTrie.size();
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-            assert(aTrie.erase(iter->first.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
-            assert(aTrie.get(iter->first.c_str()) == 0, "Removing ", iter->first.c_str(), "failed!!!");
-            assert(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
+            testResult(aTrie.erase(iter->first.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.get(iter->first.c_str()) == 0, "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
 
             TrieTraverseCallBack ttcb;
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
-            assert(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
+            testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
         }
 
         //Test Trie::clear functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         aTrie.clear();
-        assert(aTrie.empty(), "Trie::clear failed!!!");
+        testResult(aTrie.empty(), "Trie::clear failed!!!");
         do {
             TrieTraverseCallBack ttcb;
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
-            TrieTestCases::assert(ttcb.mCount == 0,
+            TrieTestCases::testResult(ttcb.mCount == 0,
                                   "Error in Trie::clear functionality!!! Expected count",
                                   0,
                                   "Actual count", ttcb.mCount);
@@ -207,7 +207,7 @@ public:
     }
 
     template <typename T>
-    void assert(bool result, const T & message) {
+    void testResult(bool result, const T & message) {
         if (!result) {
             std::cerr << message << std::endl;
             std::abort();
@@ -215,7 +215,7 @@ public:
     }
 
     template <typename T1, typename T2>
-    void assert(bool result,
+    void testResult(bool result,
                        const T1 & message1,
                        const T2 & message2) {
         if (!result) {
@@ -226,7 +226,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3>
-    void assert(bool result,
+    void testResult(bool result,
                        const T1 & message1,
                        const T2 & message2,
                        const T3 & message3) {
@@ -239,7 +239,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4>
-    void assert(bool result,
+    void testResult(bool result,
                        const T1 & message1,
                        const T2 & message2,
                        const T3 & message3,
@@ -254,7 +254,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    void assert(bool result,
+    void testResult(bool result,
                        const T1 & message1,
                        const T2 & message2,
                        const T3 & message3,
