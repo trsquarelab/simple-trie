@@ -751,11 +751,12 @@ public:
     void clear() {
         mRoot.clear();
     }
+
     /*!
      * Retrieves all the key value pair which starts with the given key
      * @param key Part of the key which should be searched, should be terminated by 'end' symbol
      * @param values Vector of key, value pair
-     * @param count Maximum number of entries that should be returned
+     * @param count Maximum number of elements that should be returned
      */
     void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) {
         mRoot.startsWith(key, values, count);

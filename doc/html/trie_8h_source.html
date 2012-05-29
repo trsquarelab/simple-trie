@@ -473,7 +473,7 @@
 <a name="l00425"></a>00425 
 <a name="l00426"></a>00426     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * insertItem(T <span class="keyword">const</span> &amp; k) {
 <a name="l00427"></a>00427         <span class="keywordflow">if</span> (!mItems[k]) {
-<a name="l00428"></a>00428             mItems[k] = mNode-&gt;createNodeItem(k);
+<a name="l00428"></a>00428             assignItem(mNode-&gt;createNodeItem(k));
 <a name="l00429"></a>00429             <span class="keywordflow">return</span> mItems[k];
 <a name="l00430"></a>00430         } <span class="keywordflow">else</span> {
 <a name="l00431"></a>00431             <span class="keywordflow">if</span> (k != mEndSymbol) {
@@ -493,157 +493,164 @@
 <a name="l00445"></a>00445         }
 <a name="l00446"></a>00446     }
 <a name="l00447"></a>00447 
-<a name="l00448"></a>00448     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * getItem(T <span class="keyword">const</span> &amp; k) {
-<a name="l00449"></a>00449         <span class="keywordflow">return</span> mItems[k];
-<a name="l00450"></a>00450     }
-<a name="l00451"></a>00451 
-<a name="l00452"></a>00452 <span class="keyword">private</span>:
-<a name="l00453"></a>00453     Items mItems;
-<a name="l00454"></a>00454     T mEndSymbol;
-<a name="l00455"></a>00455     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, VectorItems&lt;T, V, Cmp, Max&gt;</a> &gt; * mNode;
-<a name="l00456"></a>00456 };
+<a name="l00448"></a>00448     <span class="comment">// In case key symbol should be stored in a different index</span>
+<a name="l00449"></a>00449     <span class="comment">// derive from this class and override getItem and assignItem</span>
+<a name="l00450"></a>00450     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * getItem(T <span class="keyword">const</span> &amp; k) {
+<a name="l00451"></a>00451         <span class="keywordflow">return</span> mItems[k];
+<a name="l00452"></a>00452     }
+<a name="l00453"></a>00453 
+<a name="l00454"></a>00454     <span class="keywordtype">void</span> assignItem(<a class="code" href="classrtv_1_1_node_item.html">Item</a> * i) {
+<a name="l00455"></a>00455         mItems[i-&gt;get()] = i;
+<a name="l00456"></a>00456     }
 <a name="l00457"></a>00457 
-<a name="l00458"></a>00458 <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,
-<a name="l00459"></a>00459          <span class="keyword">typename</span> V,
-<a name="l00460"></a><a class="code" href="classrtv_1_1_set_items.html">00460</a>          <span class="keyword">typename</span> Cmp&gt; <span class="keyword">class </span><a class="code" href="classrtv_1_1_set_items.html">SetItems</a>
-<a name="l00461"></a>00461 {
-<a name="l00462"></a>00462 <span class="keyword">public</span>:
-<a name="l00463"></a>00463     <span class="keyword">typedef</span> <a class="code" href="classrtv_1_1_node_item.html">NodeItem&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt;</a> &gt; <a class="code" href="classrtv_1_1_node_item.html">Item</a>;
-<a name="l00464"></a>00464     <span class="keyword">typedef</span> std::set&lt;Item *, NodeItemPtrCompare&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt; &gt; &gt; Items;
-<a name="l00465"></a>00465     <span class="keyword">typedef</span> <span class="keyword">typename</span> Items::iterator iterator;
-<a name="l00466"></a>00466     <span class="keyword">typedef</span> <span class="keyword">typename</span> Items::const_iterator const_iterator;
-<a name="l00467"></a>00467 
+<a name="l00458"></a>00458 <span class="keyword">private</span>:
+<a name="l00459"></a>00459     <span class="keyword">const</span> T mEndSymbol;
+<a name="l00460"></a>00460     Items mItems;
+<a name="l00461"></a>00461     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, VectorItems&lt;T, V, Cmp, Max&gt;</a> &gt; * mNode;
+<a name="l00462"></a>00462 };
+<a name="l00463"></a>00463 
+<a name="l00464"></a>00464 <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,
+<a name="l00465"></a>00465          <span class="keyword">typename</span> V,
+<a name="l00466"></a><a class="code" href="classrtv_1_1_set_items.html">00466</a>          <span class="keyword">typename</span> Cmp&gt; <span class="keyword">class </span><a class="code" href="classrtv_1_1_set_items.html">SetItems</a>
+<a name="l00467"></a>00467 {
 <a name="l00468"></a>00468 <span class="keyword">public</span>:
-<a name="l00469"></a>00469     <a class="code" href="classrtv_1_1_set_items.html">SetItems</a>(T <span class="keyword">const</span> &amp; endSymbol, <a class="code" href="classrtv_1_1_node.html">Node</a>&lt;T, V, Cmp, <a class="code" href="classrtv_1_1_set_items.html">SetItems&lt;T, V, Cmp&gt;</a> &gt; * node)
-<a name="l00470"></a>00470         : mEndSymbol(endSymbol),
-<a name="l00471"></a>00471           mNode(node)
-<a name="l00472"></a>00472     {}
+<a name="l00469"></a>00469     <span class="keyword">typedef</span> <a class="code" href="classrtv_1_1_node_item.html">NodeItem&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt;</a> &gt; <a class="code" href="classrtv_1_1_node_item.html">Item</a>;
+<a name="l00470"></a>00470     <span class="keyword">typedef</span> std::set&lt;Item *, NodeItemPtrCompare&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt; &gt; &gt; Items;
+<a name="l00471"></a>00471     <span class="keyword">typedef</span> <span class="keyword">typename</span> Items::iterator iterator;
+<a name="l00472"></a>00472     <span class="keyword">typedef</span> <span class="keyword">typename</span> Items::const_iterator const_iterator;
 <a name="l00473"></a>00473 
-<a name="l00474"></a>00474     iterator begin() {
-<a name="l00475"></a>00475         <span class="keywordflow">return</span> mItems.begin();
-<a name="l00476"></a>00476     }
-<a name="l00477"></a>00477     
-<a name="l00478"></a>00478     const_iterator begin()<span class="keyword"> const </span>{
-<a name="l00479"></a>00479         <span class="keywordflow">return</span> mItems.begin();
-<a name="l00480"></a>00480     }
-<a name="l00481"></a>00481 
-<a name="l00482"></a>00482     iterator end() {
-<a name="l00483"></a>00483         <span class="keywordflow">return</span> mItems.end();
-<a name="l00484"></a>00484     }
-<a name="l00485"></a>00485 
-<a name="l00486"></a>00486     const_iterator end()<span class="keyword"> const </span>{
-<a name="l00487"></a>00487         <span class="keywordflow">return</span> mItems.end();
-<a name="l00488"></a>00488     }
-<a name="l00489"></a>00489 
-<a name="l00490"></a>00490     <span class="keywordtype">void</span> clear() {
-<a name="l00491"></a>00491         mItems.clear();
-<a name="l00492"></a>00492     }
-<a name="l00493"></a>00493 
-<a name="l00494"></a>00494     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * insertItem(T <span class="keyword">const</span> &amp; k) {
-<a name="l00495"></a>00495         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
-<a name="l00496"></a>00496         iterator iter = mItems.find(&amp;tmp);
-<a name="l00497"></a>00497         <span class="keywordflow">if</span> (iter == mItems.end()) {
-<a name="l00498"></a>00498             <a class="code" href="classrtv_1_1_node_item.html">Item</a> * v = mNode-&gt;createNodeItem(k);
-<a name="l00499"></a>00499             mItems.insert(v);
-<a name="l00500"></a>00500             <span class="keywordflow">return</span> v;
-<a name="l00501"></a>00501         } <span class="keywordflow">else</span> {
-<a name="l00502"></a>00502             <span class="keywordflow">if</span> (k != mEndSymbol) {
-<a name="l00503"></a>00503                 <span class="keywordflow">return</span> (<a class="code" href="classrtv_1_1_node_item.html">Item</a>*) *iter;
-<a name="l00504"></a>00504             }
-<a name="l00505"></a>00505         }
-<a name="l00506"></a>00506         <span class="keywordflow">return</span> 0;
-<a name="l00507"></a>00507     }
-<a name="l00508"></a>00508 
-<a name="l00509"></a>00509     <span class="keywordtype">bool</span> eraseItem(T <span class="keyword">const</span> &amp; k) {
-<a name="l00510"></a>00510         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
-<a name="l00511"></a>00511         iterator iter = mItems.find(&amp;tmp);
-<a name="l00512"></a>00512         <span class="keywordflow">if</span> (iter != mItems.end()) {
-<a name="l00513"></a>00513             mItems.erase(iter);
-<a name="l00514"></a>00514             <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00515"></a>00515         } <span class="keywordflow">else</span> {
-<a name="l00516"></a>00516             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00517"></a>00517         }
-<a name="l00518"></a>00518     }
-<a name="l00519"></a>00519 
-<a name="l00520"></a>00520     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * getItem(T <span class="keyword">const</span> &amp; k) {
-<a name="l00521"></a>00521         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
-<a name="l00522"></a>00522 
-<a name="l00523"></a>00523         iterator iter = mItems.find(&amp;tmp);
-<a name="l00524"></a>00524         <span class="keywordflow">if</span> (iter == mItems.end()) {
-<a name="l00525"></a>00525             <span class="keywordflow">return</span> 0;
-<a name="l00526"></a>00526         }
-<a name="l00527"></a>00527         <span class="keywordflow">return</span> (<a class="code" href="classrtv_1_1_node_item.html">Item</a> *) (*iter);
-<a name="l00528"></a>00528     }
-<a name="l00529"></a>00529 
-<a name="l00530"></a>00530 <span class="keyword">private</span>:
-<a name="l00531"></a>00531     Items mItems;
-<a name="l00532"></a>00532     T mEndSymbol;
-<a name="l00533"></a>00533     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt;</a> &gt; * mNode;
-<a name="l00534"></a>00534 };
+<a name="l00474"></a>00474 <span class="keyword">public</span>:
+<a name="l00475"></a>00475     <a class="code" href="classrtv_1_1_set_items.html">SetItems</a>(T <span class="keyword">const</span> &amp; endSymbol, <a class="code" href="classrtv_1_1_node.html">Node</a>&lt;T, V, Cmp, <a class="code" href="classrtv_1_1_set_items.html">SetItems&lt;T, V, Cmp&gt;</a> &gt; * node)
+<a name="l00476"></a>00476         : mEndSymbol(endSymbol),
+<a name="l00477"></a>00477           mNode(node)
+<a name="l00478"></a>00478     {}
+<a name="l00479"></a>00479 
+<a name="l00480"></a>00480     iterator begin() {
+<a name="l00481"></a>00481         <span class="keywordflow">return</span> mItems.begin();
+<a name="l00482"></a>00482     }
+<a name="l00483"></a>00483     
+<a name="l00484"></a>00484     const_iterator begin()<span class="keyword"> const </span>{
+<a name="l00485"></a>00485         <span class="keywordflow">return</span> mItems.begin();
+<a name="l00486"></a>00486     }
+<a name="l00487"></a>00487 
+<a name="l00488"></a>00488     iterator end() {
+<a name="l00489"></a>00489         <span class="keywordflow">return</span> mItems.end();
+<a name="l00490"></a>00490     }
+<a name="l00491"></a>00491 
+<a name="l00492"></a>00492     const_iterator end()<span class="keyword"> const </span>{
+<a name="l00493"></a>00493         <span class="keywordflow">return</span> mItems.end();
+<a name="l00494"></a>00494     }
+<a name="l00495"></a>00495 
+<a name="l00496"></a>00496     <span class="keywordtype">void</span> clear() {
+<a name="l00497"></a>00497         mItems.clear();
+<a name="l00498"></a>00498     }
+<a name="l00499"></a>00499 
+<a name="l00500"></a>00500     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * insertItem(T <span class="keyword">const</span> &amp; k) {
+<a name="l00501"></a>00501         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
+<a name="l00502"></a>00502         iterator iter = mItems.find(&amp;tmp);
+<a name="l00503"></a>00503         <span class="keywordflow">if</span> (iter == mItems.end()) {
+<a name="l00504"></a>00504             <a class="code" href="classrtv_1_1_node_item.html">Item</a> * v = mNode-&gt;createNodeItem(k);
+<a name="l00505"></a>00505             mItems.insert(v);
+<a name="l00506"></a>00506             <span class="keywordflow">return</span> v;
+<a name="l00507"></a>00507         } <span class="keywordflow">else</span> {
+<a name="l00508"></a>00508             <span class="keywordflow">if</span> (k != mEndSymbol) {
+<a name="l00509"></a>00509                 <span class="keywordflow">return</span> (<a class="code" href="classrtv_1_1_node_item.html">Item</a>*) *iter;
+<a name="l00510"></a>00510             }
+<a name="l00511"></a>00511         }
+<a name="l00512"></a>00512         <span class="keywordflow">return</span> 0;
+<a name="l00513"></a>00513     }
+<a name="l00514"></a>00514 
+<a name="l00515"></a>00515     <span class="keywordtype">bool</span> eraseItem(T <span class="keyword">const</span> &amp; k) {
+<a name="l00516"></a>00516         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
+<a name="l00517"></a>00517         iterator iter = mItems.find(&amp;tmp);
+<a name="l00518"></a>00518         <span class="keywordflow">if</span> (iter != mItems.end()) {
+<a name="l00519"></a>00519             mItems.erase(iter);
+<a name="l00520"></a>00520             <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00521"></a>00521         } <span class="keywordflow">else</span> {
+<a name="l00522"></a>00522             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00523"></a>00523         }
+<a name="l00524"></a>00524     }
+<a name="l00525"></a>00525 
+<a name="l00526"></a>00526     <a class="code" href="classrtv_1_1_node_item.html">Item</a> * getItem(T <span class="keyword">const</span> &amp; k) {
+<a name="l00527"></a>00527         <a class="code" href="classrtv_1_1_node_item.html">Item</a> tmp(mEndSymbol, k);
+<a name="l00528"></a>00528 
+<a name="l00529"></a>00529         iterator iter = mItems.find(&amp;tmp);
+<a name="l00530"></a>00530         <span class="keywordflow">if</span> (iter == mItems.end()) {
+<a name="l00531"></a>00531             <span class="keywordflow">return</span> 0;
+<a name="l00532"></a>00532         }
+<a name="l00533"></a>00533         <span class="keywordflow">return</span> (<a class="code" href="classrtv_1_1_node_item.html">Item</a> *) (*iter);
+<a name="l00534"></a>00534     }
 <a name="l00535"></a>00535 
-<a name="l00676"></a>00676 <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,
-<a name="l00677"></a>00677          <span class="keyword">typename</span> V,
-<a name="l00678"></a>00678          <span class="keyword">typename</span> Cmp=std::less&lt;T&gt;,
-<a name="l00679"></a><a class="code" href="classrtv_1_1_trie.html">00679</a>          <span class="keyword">typename</span> Items=<a class="code" href="classrtv_1_1_set_items.html">SetItems&lt;T, V, Cmp&gt;</a> &gt; <span class="keyword">class </span><a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>
-<a name="l00680"></a>00680 {
-<a name="l00681"></a>00681 <span class="keyword">public</span>:
-<a name="l00685"></a><a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">00685</a>     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<span class="keyword">const</span> T &amp; endSymbol)
-<a name="l00686"></a>00686         : mRoot(endSymbol)
-<a name="l00687"></a>00687     {}
-<a name="l00688"></a>00688 
-<a name="l00695"></a><a class="code" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">00695</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">insert</a>(<span class="keyword">const</span> T * key, V <span class="keyword">const</span> &amp; value) {
-<a name="l00696"></a>00696         <span class="keywordflow">return</span> mRoot.insert(key, value);
-<a name="l00697"></a>00697     }
-<a name="l00698"></a>00698 
-<a name="l00704"></a><a class="code" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">00704</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">erase</a>(<span class="keyword">const</span> T * key) {
-<a name="l00705"></a>00705         <span class="keywordflow">return</span> mRoot.erase(key);
-<a name="l00706"></a>00706     }
-<a name="l00707"></a>00707 
-<a name="l00713"></a><a class="code" href="classrtv_1_1_trie.html#a1ae78cf97fb94822968c3aa653c6d8c7">00713</a>     <span class="keyword">const</span> V * <span class="keyword">get</span>(<span class="keyword">const</span> T * key) {
-<a name="l00714"></a>00714         <span class="keywordflow">return</span> mRoot.get(key);
-<a name="l00715"></a>00715     }
-<a name="l00716"></a>00716 
-<a name="l00722"></a><a class="code" href="classrtv_1_1_trie.html#abedb1668e9811f11e81669950cc7810d">00722</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#abedb1668e9811f11e81669950cc7810d">hasKey</a>(<span class="keyword">const</span> T * key) {
-<a name="l00723"></a>00723         <span class="keywordflow">return</span> mRoot.hasKey(key);
-<a name="l00724"></a>00724     }
-<a name="l00725"></a>00725 
-<a name="l00730"></a><a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">00730</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">empty</a>()<span class="keyword"> const </span>{
-<a name="l00731"></a>00731         <span class="keywordflow">return</span> mRoot.empty();
-<a name="l00732"></a>00732     }
-<a name="l00733"></a>00733 
-<a name="l00738"></a><a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">00738</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">size</a>()<span class="keyword"> const </span>{
-<a name="l00739"></a>00739         <span class="keywordflow">return</span> mRoot.size();
-<a name="l00740"></a>00740     }
-<a name="l00741"></a>00741 
-<a name="l00745"></a><a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">00745</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">clear</a>() {
-<a name="l00746"></a>00746         mRoot.clear();
-<a name="l00747"></a>00747     }
-<a name="l00754"></a><a class="code" href="classrtv_1_1_trie.html#a7a5fb570b3b77f80f2c44c6121c10072">00754</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#a7a5fb570b3b77f80f2c44c6121c10072">startsWith</a>(<span class="keyword">const</span> T * key, std::vector&lt; std::pair&lt;std::vector&lt;T&gt;, V&gt; &gt; &amp; values, <span class="keywordtype">int</span> count = 5) {
-<a name="l00755"></a>00755         mRoot.startsWith(key, values, count);
-<a name="l00756"></a>00756     }
-<a name="l00757"></a>00757 
-<a name="l00763"></a>00763     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
-<a name="l00764"></a><a class="code" href="classrtv_1_1_trie.html#af6904d9824234690e6488ca1a51c8e87">00764</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#af6904d9824234690e6488ca1a51c8e87">traverse</a>(CB <span class="keyword">const</span> &amp; c) {
-<a name="l00765"></a>00765         mRoot.traverse(c);
-<a name="l00766"></a>00766     }
-<a name="l00767"></a>00767 
-<a name="l00768"></a>00768 <span class="keyword">private</span>:
-<a name="l00769"></a>00769     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l00770"></a>00770     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> &amp; operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l00771"></a>00771 
-<a name="l00772"></a>00772 <span class="keyword">private</span>:
-<a name="l00773"></a>00773     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, Items&gt;</a> mRoot;
-<a name="l00774"></a>00774 };
-<a name="l00775"></a>00775 
-<a name="l00776"></a>00776 }
-<a name="l00777"></a>00777 
-<a name="l00778"></a>00778 <span class="preprocessor">#endif</span>
+<a name="l00536"></a>00536 <span class="keyword">private</span>:
+<a name="l00537"></a>00537     <span class="keyword">const</span> T mEndSymbol;
+<a name="l00538"></a>00538     Items mItems;
+<a name="l00539"></a>00539     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, SetItems&lt;T, V, Cmp&gt;</a> &gt; * mNode;
+<a name="l00540"></a>00540 };
+<a name="l00541"></a>00541 
+<a name="l00682"></a>00682 <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,
+<a name="l00683"></a>00683          <span class="keyword">typename</span> V,
+<a name="l00684"></a>00684          <span class="keyword">typename</span> Cmp=std::less&lt;T&gt;,
+<a name="l00685"></a><a class="code" href="classrtv_1_1_trie.html">00685</a>          <span class="keyword">typename</span> Items=<a class="code" href="classrtv_1_1_set_items.html">SetItems&lt;T, V, Cmp&gt;</a> &gt; <span class="keyword">class </span><a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>
+<a name="l00686"></a>00686 {
+<a name="l00687"></a>00687 <span class="keyword">public</span>:
+<a name="l00691"></a><a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">00691</a>     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<span class="keyword">const</span> T &amp; endSymbol)
+<a name="l00692"></a>00692         : mRoot(endSymbol)
+<a name="l00693"></a>00693     {}
+<a name="l00694"></a>00694 
+<a name="l00701"></a><a class="code" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">00701</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">insert</a>(<span class="keyword">const</span> T * key, V <span class="keyword">const</span> &amp; value) {
+<a name="l00702"></a>00702         <span class="keywordflow">return</span> mRoot.insert(key, value);
+<a name="l00703"></a>00703     }
+<a name="l00704"></a>00704 
+<a name="l00710"></a><a class="code" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">00710</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">erase</a>(<span class="keyword">const</span> T * key) {
+<a name="l00711"></a>00711         <span class="keywordflow">return</span> mRoot.erase(key);
+<a name="l00712"></a>00712     }
+<a name="l00713"></a>00713 
+<a name="l00719"></a><a class="code" href="classrtv_1_1_trie.html#a1ae78cf97fb94822968c3aa653c6d8c7">00719</a>     <span class="keyword">const</span> V * <span class="keyword">get</span>(<span class="keyword">const</span> T * key) {
+<a name="l00720"></a>00720         <span class="keywordflow">return</span> mRoot.get(key);
+<a name="l00721"></a>00721     }
+<a name="l00722"></a>00722 
+<a name="l00728"></a><a class="code" href="classrtv_1_1_trie.html#abedb1668e9811f11e81669950cc7810d">00728</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#abedb1668e9811f11e81669950cc7810d">hasKey</a>(<span class="keyword">const</span> T * key) {
+<a name="l00729"></a>00729         <span class="keywordflow">return</span> mRoot.hasKey(key);
+<a name="l00730"></a>00730     }
+<a name="l00731"></a>00731 
+<a name="l00736"></a><a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">00736</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">empty</a>()<span class="keyword"> const </span>{
+<a name="l00737"></a>00737         <span class="keywordflow">return</span> mRoot.empty();
+<a name="l00738"></a>00738     }
+<a name="l00739"></a>00739 
+<a name="l00744"></a><a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">00744</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">size</a>()<span class="keyword"> const </span>{
+<a name="l00745"></a>00745         <span class="keywordflow">return</span> mRoot.size();
+<a name="l00746"></a>00746     }
+<a name="l00747"></a>00747 
+<a name="l00751"></a><a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">00751</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">clear</a>() {
+<a name="l00752"></a>00752         mRoot.clear();
+<a name="l00753"></a>00753     }
+<a name="l00754"></a>00754 
+<a name="l00761"></a><a class="code" href="classrtv_1_1_trie.html#a7a5fb570b3b77f80f2c44c6121c10072">00761</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#a7a5fb570b3b77f80f2c44c6121c10072">startsWith</a>(<span class="keyword">const</span> T * key, std::vector&lt; std::pair&lt;std::vector&lt;T&gt;, V&gt; &gt; &amp; values, <span class="keywordtype">int</span> count = 5) {
+<a name="l00762"></a>00762         mRoot.startsWith(key, values, count);
+<a name="l00763"></a>00763     }
+<a name="l00764"></a>00764 
+<a name="l00770"></a>00770     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
+<a name="l00771"></a><a class="code" href="classrtv_1_1_trie.html#af6904d9824234690e6488ca1a51c8e87">00771</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#af6904d9824234690e6488ca1a51c8e87">traverse</a>(CB <span class="keyword">const</span> &amp; c) {
+<a name="l00772"></a>00772         mRoot.traverse(c);
+<a name="l00773"></a>00773     }
+<a name="l00774"></a>00774 
+<a name="l00775"></a>00775 <span class="keyword">private</span>:
+<a name="l00776"></a>00776     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l00777"></a>00777     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> &amp; operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l00778"></a>00778 
+<a name="l00779"></a>00779 <span class="keyword">private</span>:
+<a name="l00780"></a>00780     <a class="code" href="classrtv_1_1_node.html">Node&lt;T, V, Cmp, Items&gt;</a> mRoot;
+<a name="l00781"></a>00781 };
+<a name="l00782"></a>00782 
+<a name="l00783"></a>00783 }
+<a name="l00784"></a>00784 
+<a name="l00785"></a>00785 <span class="preprocessor">#endif</span>
 </pre></div></div>
 </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 28 2012 16:16:42 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 29 2012 10:42:47 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
