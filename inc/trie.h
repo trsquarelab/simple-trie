@@ -534,6 +534,7 @@ public:
         Item tmp(mEndSymbol, k);
         iterator iter = mItems.find(&tmp);
         if (iter != mItems.end()) {
+            delete *iter;
             mItems.erase(iter);
             return true;
         } else {

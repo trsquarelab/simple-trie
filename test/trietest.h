@@ -269,6 +269,9 @@ public:
     }
 
 private:
+    ~TrieTestCases() {
+    }
+
     TrieTestCases()
     {
         const std::pair<std::string, std::string> sampleValues[] = {
