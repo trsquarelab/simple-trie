@@ -425,7 +425,7 @@ public:
 
     Item * insertItem(T const & k) {
         if (!mItems[k]) {
-            mItems[k] = mNode->createNodeItem(k);
+            assignItem(mNode->createNodeItem(k));
             return mItems[k];
         } else {
             if (k != mEndSymbol) {
@@ -445,8 +445,14 @@ public:
         }
     }
 
+    // In case key symbol should be stored in a different index
+    // derive from this class and override getItem and assignItem
     Item * getItem(T const & k) {
         return mItems[k];
+    }
+
+    void assignItem(Item * i) {
+        mItems[i->get()] = i;
     }
 
 private:
