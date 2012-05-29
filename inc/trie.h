@@ -9,12 +9,6 @@
  *
  */
 
-/*!
- * @mainpage trie
- * @section intro_sec Introduction
- * This is an implementation of Trie.
- */
-
 #ifndef TRIE_H
 #define TRIE_H
 
@@ -385,6 +379,19 @@ private:
     const T mEndSymbol;
     unsigned int mSize;
 };
+
+/*!
+ * @brief Container representing each node in the Trie.
+ *
+ *
+ * With this class the container used for storing node item is STL vector.
+ * Here each node will use a space propotional to Max.
+ * For searching only constant time taken at each node.
+ * @tparam T Type for each element in the key
+ * @tparam V Type of the value that the key will be representing
+ * @tparam Cmp Comparison functor
+ * @tparam Max Maximum element that a Trie node can have
+ */
 template<typename T,
          typename V,
          typename Cmp,
@@ -461,6 +468,17 @@ private:
     Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > * mNode;
 };
 
+/*!
+ * @brief Container representing each node in the Trie.
+ *
+ *
+ * With this class the container used for storing node item is STL set.
+ * Here no extra space will used for storing node item.
+ * For searching in each node the time taken is propotional to number of item in the node.
+ * @tparam T Type for each element in the key
+ * @tparam V Type of the value that the key will be representing
+ * @tparam Cmp Comparison functor
+ */
 template<typename T,
          typename V,
          typename Cmp> class SetItems
@@ -540,13 +558,29 @@ private:
 };
 
 /*!
- * @brief Trie implementation class
+ * @mainpage Simple Trie
+ * @section intro_sec Introduction
+ * This is an implementation of prefix Trie data structure. This implementation is in C++ and using template.
+ * @section features Features
+ * Following are the main operations provided by the Trie.
+ * <ul>
+ * <li>Adding key, value pair
+ * <li>Removing an element by key
+ * <li>Checking the existence of a key
+ * <li>Traversing the Trie
+ * <li>Find elements with common prefix
+ * </ul>
+ */
+
+
+/*!
+ * @brief Trie main class
  * @tparam T Type for each element in the key
  * @tparam V Type of the value that the key will be representing
  * @tparam Cmp Comparison functor
  * @tparam Items The data structure that represents each node in the Trie. 
  *               Items can be rtv::SetItems<T, V, Cmp> or rtv::VectorItems<T, V, Cmp, Max>,
- *               Max is the integer representing the size of each node.
+ *               Max is the integer representing number of elements in each Trie node.
  *
  * @section usage_sec Usage of the Trie
  * @subsection usage_declaration Declarating the Trie

@@ -46,7 +46,6 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -58,61 +57,39 @@
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">rtv::SetItems&lt; T, V, Cmp &gt; Class Template Reference</div>  </div>
 </div>
 <div class="contents">
 <!-- doxytag: class="rtv::SetItems" -->
-<p><a href="classrtv_1_1_set_items-members.html">List of all members.</a></p>
-<table class="memberdecls">
-<tr><td colspan="2"><h2><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61ad68844fc2e614de756c0c6154a3ed"></a><!-- doxytag: member="rtv::SetItems::Item" ref="a61ad68844fc2e614de756c0c6154a3ed" args="" -->
-typedef <a class="el" href="classrtv_1_1_node_item.html">NodeItem</a>&lt; T, V, Cmp, <br class="typebreak"/>
-<a class="el" href="classrtv_1_1_set_items.html">SetItems</a>&lt; T, V, Cmp &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Item</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36b01de376c2f22cad2d933f15f5f8ec"></a><!-- doxytag: member="rtv::SetItems::Items" ref="a36b01de376c2f22cad2d933f15f5f8ec" args="" -->
-typedef std::set&lt; <a class="el" href="classrtv_1_1_node_item.html">Item</a> <br class="typebreak"/>
-*, <a class="el" href="classrtv_1_1_node_item_ptr_compare.html">NodeItemPtrCompare</a>&lt; T, V, <br class="typebreak"/>
-Cmp, <a class="el" href="classrtv_1_1_set_items.html">SetItems</a>&lt; T, V, Cmp &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Items</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab00823b773dcc2f7772853706f2269ad"></a><!-- doxytag: member="rtv::SetItems::iterator" ref="ab00823b773dcc2f7772853706f2269ad" args="" -->
-typedef Items::iterator&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab81a8b7f8df2a336623309c8fee32324"></a><!-- doxytag: member="rtv::SetItems::const_iterator" ref="ab81a8b7f8df2a336623309c8fee32324" args="" -->
-typedef Items::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><b>const_iterator</b></td></tr>
-<tr><td colspan="2"><h2><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae29beb9a95629cdcac36a836be8cd284"></a><!-- doxytag: member="rtv::SetItems::SetItems" ref="ae29beb9a95629cdcac36a836be8cd284" args="(T const &amp;endSymbol, Node&lt; T, V, Cmp, SetItems&lt; T, V, Cmp &gt; &gt; *node)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>SetItems</b> (T const &amp;endSymbol, <a class="el" href="classrtv_1_1_node.html">Node</a>&lt; T, V, Cmp, <a class="el" href="classrtv_1_1_set_items.html">SetItems</a>&lt; T, V, Cmp &gt; &gt; *node)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59df71a7b8068c258a027c065c9b5c67"></a><!-- doxytag: member="rtv::SetItems::begin" ref="a59df71a7b8068c258a027c065c9b5c67" args="()" -->
-iterator&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ad5a60a99fee01956b7eb6646509da3"></a><!-- doxytag: member="rtv::SetItems::begin" ref="a0ad5a60a99fee01956b7eb6646509da3" args="() const " -->
-const_iterator&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbb34af33366957ed9953fcbba878f4f"></a><!-- doxytag: member="rtv::SetItems::end" ref="abbb34af33366957ed9953fcbba878f4f" args="()" -->
-iterator&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e1b891c9621a242a8d249ed074cf4bc"></a><!-- doxytag: member="rtv::SetItems::end" ref="a4e1b891c9621a242a8d249ed074cf4bc" args="() const " -->
-const_iterator&#160;</td><td class="memItemRight" valign="bottom"><b>end</b> () const </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d3ca6edb8326c8cc989d7ffa1b7d260"></a><!-- doxytag: member="rtv::SetItems::clear" ref="a7d3ca6edb8326c8cc989d7ffa1b7d260" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96b6bf95c1f672a9b2d2dafa9e62fd06"></a><!-- doxytag: member="rtv::SetItems::insertItem" ref="a96b6bf95c1f672a9b2d2dafa9e62fd06" args="(T const &amp;k)" -->
-<a class="el" href="classrtv_1_1_node_item.html">Item</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>insertItem</b> (T const &amp;k)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dd13a7b1f80204c4c11614449ca6296"></a><!-- doxytag: member="rtv::SetItems::eraseItem" ref="a4dd13a7b1f80204c4c11614449ca6296" args="(T const &amp;k)" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>eraseItem</b> (T const &amp;k)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f2be799b771adbe26f83ec656b7da9e"></a><!-- doxytag: member="rtv::SetItems::getItem" ref="a5f2be799b771adbe26f83ec656b7da9e" args="(T const &amp;k)" -->
-<a class="el" href="classrtv_1_1_node_item.html">Item</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>getItem</b> (T const &amp;k)</td></tr>
-</table>
-<h3>template&lt;typename T, typename V, typename Cmp&gt;<br/>
- class rtv::SetItems&lt; T, V, Cmp &gt;</h3>
+<p>Container representing each node in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>.  
+ <a href="classrtv_1_1_set_items.html#details">More...</a></p>
 
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>C:/Cygwin/home/valappil/prg/simple-trie/inc/<a class="el" href="trie_8h_source.html">trie.h</a></li>
+<p><code>#include &lt;<a class="el" href="trie_8h_source.html">trie.h</a>&gt;</code></p>
+
+<p><a href="classrtv_1_1_set_items-members.html">List of all members.</a></p>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename T, typename V, typename Cmp&gt;<br/>
+class rtv::SetItems&lt; T, V, Cmp &gt;</h3>
+
+<p>Container representing each node in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>. </p>
+<p>With this class the container used for storing node item is STL set. Here no extra space will used for storing node item. For searching in each node the time taken is propotional to number of item in the node. </p>
+<dl><dt><b>Template Parameters:</b></dt><dd>
+  <table class="">
+    <tr><td class="paramname">T</td><td>Type for each element in the key </td></tr>
+    <tr><td class="paramname">V</td><td>Type of the value that the key will be representing </td></tr>
+    <tr><td class="paramname">Cmp</td><td>Comparison functor </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
+<li><a class="el" href="trie_8h_source.html">trie.h</a></li>
 </ul>
 </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 29 2012 10:42:47 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 29 2012 13:28:27 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

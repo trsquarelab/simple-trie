@@ -46,7 +46,6 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -65,7 +64,7 @@
 </div>
 <div class="contents">
 <!-- doxytag: class="rtv::Trie" -->
-<p><a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> implementation class.  
+<p><a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> main class.  
  <a href="classrtv_1_1_trie.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="trie_8h_source.html">trie.h</a>&gt;</code></p>
@@ -90,13 +89,13 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt;<br/>
 class rtv::Trie&lt; T, V, Cmp, Items &gt;</h3>
 
-<p><a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> implementation class. </p>
+<p><a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> main class. </p>
 <dl><dt><b>Template Parameters:</b></dt><dd>
   <table class="">
     <tr><td class="paramname">T</td><td>Type for each element in the key </td></tr>
     <tr><td class="paramname">V</td><td>Type of the value that the key will be representing </td></tr>
     <tr><td class="paramname">Cmp</td><td>Comparison functor </td></tr>
-    <tr><td class="paramname">Items</td><td>The data structure that represents each node in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>. Items can be rtv::SetItems&lt;T, V, Cmp&gt; or rtv::VectorItems&lt;T, V, Cmp, Max&gt;, Max is the integer representing the size of each node.</td></tr>
+    <tr><td class="paramname">Items</td><td>The data structure that represents each node in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>. Items can be rtv::SetItems&lt;T, V, Cmp&gt; or rtv::VectorItems&lt;T, V, Cmp, Max&gt;, Max is the integer representing number of elements in each <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> node.</td></tr>
   </table>
   </dd>
 </dl>
@@ -104,26 +103,26 @@ class rtv::Trie&lt; T, V, Cmp, Items &gt;</h3>
 Usage of the Trie</h2>
 <h3><a class="anchor" id="usage_declaration"></a>
 Declarating the Trie</h3>
-<p>A <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with key as chars and value as std::string can be declared as given below </p>
+<p>A <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> with key as chars and value as std::string can be declared as given below </p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;string&gt;</span>
 <span class="preprocessor"> #include &lt;trie.h&gt;</span>
 
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
 
      <span class="keywordflow">return</span> 0
  }
 </pre></div><h3><a class="anchor" id="usage_population"></a>
 Populatiion and deletion from the Trie</h3>
-<p><a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> can be populated by using the <a class="el" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">Trie::insert</a> method and element can be removed using <a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">Trie::erase</a>. </p>
+<p><a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> can be populated by using the <a class="el" href="classrtv_1_1_trie.html#afc71ef8da4eb25130cf38a02b1ba89a5">Trie::insert</a> method and element can be removed using <a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">Trie::erase</a>. </p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
 <span class="preprocessor"> #include &lt;string&gt;</span>
 <span class="preprocessor"> #include &lt;iostream&gt;</span>
 
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
      
      <span class="comment">// adding key value pair to the Trie</span>
      <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>)) {
@@ -146,7 +145,7 @@ Retrieval of Value</h3>
 
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
      
      dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>);
 
@@ -169,7 +168,7 @@ Searching keys which begins with the given charactars</h3>
 
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
      
      dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>);
 
@@ -187,7 +186,7 @@ Searching keys which begins with the given charactars</h3>
  }
 </pre></div><h3><a class="anchor" id="usage_array_of_node"></a>
 Trie with each Node as an array</h3>
-<p>Here each node of the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> is an array. The advantage is that the searching of a symbol in the array takes O(1) time (is constant time). The disadvantage is that the array will have empty elements so the space used will more than actually required.</p>
+<p>Here each node of the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> is an array. The advantage is that the searching of a symbol in the array takes O(1) time (is constant time). The disadvantage is that the array will have empty elements so the space used will more than actually required.</p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
 <span class="preprocessor"> #include &lt;string&gt;</span>
 <span class="preprocessor"> #include &lt;iostream&gt;</span>
@@ -196,13 +195,13 @@ Trie with each Node as an array</h3>
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
      <span class="comment">// Here 256 is the size of array in each node</span>
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string, std::less&lt;char&gt;</a>, <a class="code" href="classrtv_1_1_vector_items.html">rtv::VectorItems&lt;char, std::string, std::less&lt;char&gt;</a>, 256&gt; &gt; dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string, std::less&lt;char&gt;</a>, <a class="code" href="classrtv_1_1_vector_items.html" title="Container representing each node in the Trie.">rtv::VectorItems&lt;char, std::string, std::less&lt;char&gt;</a>, 256&gt; &gt; dictionary(<span class="charliteral">&#39;$&#39;</span>);
 
      <span class="keywordflow">return</span> 0
  }
 </pre></div><h3><a class="anchor" id="usage_set_of_node"></a>
 Trie with each Node as a set</h3>
-<p>Here each node will be an ordered set. Here there will be no extra usage of space but search for a symbol in the node takes logarithmic time. <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with this feature can also be used for caseinsensitive symbol handling. </p>
+<p>Here each node will be an ordered set. Here there will be no extra usage of space but search for a symbol in the node takes logarithmic time. <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> with this feature can also be used for caseinsensitive symbol handling. </p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
 <span class="preprocessor"> #include &lt;string&gt;</span>
 <span class="preprocessor"> #include &lt;iostream&gt;</span>
@@ -210,7 +209,7 @@ Trie with each Node as a set</h3>
 
  <span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> ** argv) {
 
-     <a class="code" href="classrtv_1_1_trie.html" title="Trie implementation class.">rtv::Trie&lt;char, std::string, std::less&lt;char&gt;</a>, <a class="code" href="classrtv_1_1_set_items.html">rtv::SetItems&lt;char, std::string, std::less&lt;char&gt;</a> &gt; &gt; dictionary(<span class="charliteral">&#39;$&#39;</span>);
+     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string, std::less&lt;char&gt;</a>, <a class="code" href="classrtv_1_1_set_items.html" title="Container representing each node in the Trie.">rtv::SetItems&lt;char, std::string, std::less&lt;char&gt;</a> &gt; &gt; dictionary(<span class="charliteral">&#39;$&#39;</span>);
 
      <span class="keywordflow">return</span> 0
  }
@@ -256,7 +255,7 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>All the elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> are dropped, leaving the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> with a size of 0. </p>
+<p>All the elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> are dropped, leaving the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> with a size of 0. </p>
 
 </div>
 </div>
@@ -275,8 +274,8 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>Test whether <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> is empty </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> size is 0, false otherwise </dd></dl>
+<p>Test whether <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> is empty </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> size is 0, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -296,14 +295,14 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>Remove the entry with the given key from the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<p>Remove the entry with the given key from the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Key which should be erased, should be terminated by 'end' symbol </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is erased in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>, false otherwise </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is erased in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -350,7 +349,7 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>Checks whether the given key is present in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<p>Checks whether the given key is present in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symol </td></tr>
@@ -387,7 +386,7 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>Add a key with value in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<p>Add a key with value in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Key which should be inserted, should be terminated by 'end' symbol </td></tr>
@@ -395,7 +394,7 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is inserted in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a>, false otherwise </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is inserted in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -414,8 +413,8 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
       </table>
 </div>
 <div class="memdoc">
-<p>Returns the number of elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>Number of key value pair in the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </dd></dl>
+<p>Returns the number of elements in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Number of key value pair in the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </dd></dl>
 
 </div>
 </div>
@@ -481,7 +480,7 @@ template&lt;typename CB &gt; </div>
       </table>
 </div>
 <div class="memdoc">
-<p>Traverse through the <a class="el" href="classrtv_1_1_trie.html" title="Trie implementation class.">Trie</a> </p>
+<p>Traverse through the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>The functor class which will be called when a node is reached. Functor takes two arguments, first argument is const T * and second V(or const V &amp;) </td></tr>
@@ -492,13 +491,13 @@ template&lt;typename CB &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>C:/Cygwin/home/valappil/prg/simple-trie/inc/<a class="el" href="trie_8h_source.html">trie.h</a></li>
+<li><a class="el" href="trie_8h_source.html">trie.h</a></li>
 </ul>
 </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 29 2012 10:42:47 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 29 2012 13:28:27 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
