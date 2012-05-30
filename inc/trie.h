@@ -13,6 +13,7 @@
 #define TRIE_H
 
 #include <vector>
+#include <stack>
 #include <set>
 #include <algorithm>
 
@@ -148,18 +149,23 @@ template<typename T,
 private:
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
     typedef EndNodeItem<T, V, Cmp, Items> EndNodeItemClass;
+    typedef Node<T, V, Cmp, Items> NodeClass;
 
 public:
-    Node(const T & endSymbol)
+    Node(const T & eSymbol)
         : mItems(0),
-          mEndSymbol(endSymbol),
+          mEndSymbol(eSymbol),
           mSize(0) {
-        mItems = new Items(endSymbol, this);
+        mItems = new Items(eSymbol, this);
     }
 
     ~Node() {
         clear();
         delete mItems;
+    }
+
+    T endSymbol() const {
+        return mEndSymbol;
     }
 
     void clear() {
@@ -218,6 +224,103 @@ public:
         } else {
             return new NodeItemClass(mEndSymbol, k);
         }
+    }
+
+    class Iterator {
+    private:
+        typedef typename NodeClass::ItemsContainerIter ItemsContainerIter;
+        typedef std::pair<std::vector<T>, const V *> KeyValuePair;
+
+        std::stack<ItemsContainerIter> mIterStack;
+        std::stack<NodeClass *> mNodeStack;
+        KeyValuePair mKeyValuePair;
+
+    public:
+        Iterator(NodeClass * node) {
+            pushNode(node);
+            ++(*this);
+        }
+
+        std::pair<std::vector<T>, const V *> & operator*() {
+            return mKeyValuePair;
+        }
+
+        std::pair<std::vector<T>, const V *> * operator->() {
+            return &mKeyValuePair;
+        }
+
+        bool operator==(Iterator const & oth) const {
+            return mNodeStack == oth.mNodeStack &&
+                   mIterStack == oth.mIterStack;
+        }
+
+        bool operator!=(Iterator const & oth) const {
+            return !(*this == oth);
+        }
+
+        bool operator!() const {
+            return mNodeStack.empty() && mIterStack.empty();
+        }
+
+        Iterator operator++(int) {
+            Iterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        Iterator & operator++() {
+            while (!mNodeStack.empty()) {
+                NodeClass * currentNode = mNodeStack.top();
+                ItemsContainerIter iterEnd = currentNode->mItems->end();
+                ItemsContainerIter iter = mIterStack.top();
+
+                mIterStack.pop();
+                mNodeStack.pop();
+
+                mKeyValuePair.first.pop_back();
+
+                for (; iter != iterEnd; ++iter) {
+                    if (*iter) {
+                        NodeItemClass & item = *(NodeItemClass *) *iter;
+                        if (item == currentNode->endSymbol()) {
+                            mKeyValuePair.first.push_back(item.get());
+                            mKeyValuePair.second = &(((EndNodeItemClass&)item).getValue());
+                            mNodeStack.push(currentNode);
+                            mIterStack.push(++iter);
+                            return *this;
+                        } else {
+                            mKeyValuePair.first.push_back(item.get());
+                            mNodeStack.push(currentNode);
+                            mIterStack.push(++iter);
+                            pushNode(item.getChilds());
+                            currentNode = mNodeStack.top();
+                            iter = mIterStack.top();
+                            iterEnd = currentNode->mItems->end();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return *this;
+        }
+
+    private:
+        void pushNode(NodeClass * node) {
+            if (node) {
+                mNodeStack.push(node);
+                mIterStack.push(node->mItems->begin());
+                mKeyValuePair.first.push_back(node->endSymbol());
+            }
+        }
+    };
+
+    Iterator begin() {
+        return Iterator(this);
+    }
+
+    Iterator end() {
+        return Iterator(0);
     }
 
 private:
@@ -372,6 +475,8 @@ private:
     }
 
 private:
+    friend class Iterator;
+
     typedef typename Items::iterator ItemsContainerIter;
     typedef typename Items::const_iterator ItemsContainerConster;
 
@@ -570,6 +675,7 @@ private:
  * <li>Checking the existence of a key
  * <li>Traversing the Trie
  * <li>Find elements with common prefix
+ * <li>Iterator
  * </ul>
  */
 
@@ -594,7 +700,7 @@ private:
  *
  *     rtv::Trie<char, std::string> dictionary('$');
  *
- *     return 0
+ *     return 0;
  * }
  * @endcode
  *
@@ -619,7 +725,7 @@ private:
  *         std::cout << "removed karma" << std::endl;
  *     }
  *
- *     return 0
+ *     return 0;
  * }
  * @endcode
  * @subsection usage_retrieval Retrieval of Value
@@ -643,7 +749,8 @@ private:
  *     if (result) {
  *         std::cout << result->c_str() << std::endl;
  *     }
- *     return 0
+ *
+ *     return 0;
  * }
  * @endcode
  *
@@ -671,7 +778,7 @@ private:
  *         std::cout << &((iter->first)[0]) << " : " << iter->second.c_str() << std::endl;
  *     }
  *
- *     return 0
+ *     return 0;
  * }
  * @endcode
  *
@@ -689,9 +796,10 @@ private:
  * int main(int argc, char ** argv) {
  *
  *     // Here 256 is the size of array in each node
- *     rtv::Trie<char, std::string, std::less<char>, rtv::VectorItems<char, std::string, std::less<char>, 256> > dictionary('$');
+ *     rtv::Trie<char, std::string, std::less<char>,
+ *               rtv::VectorItems<char, std::string, std::less<char>, 256> > dictionary('$');
  *
- *     return 0
+ *     return 0;
  * }
  * @endcode
  *
@@ -708,17 +816,51 @@ private:
  *
  * int main(int argc, char ** argv) {
  *
- *     rtv::Trie<char, std::string, std::less<char>, rtv::SetItems<char, std::string, std::less<char> > > dictionary('$');
+ *     rtv::Trie<char, std::string, std::less<char>,
+ *               rtv::SetItems<char, std::string, std::less<char> > > dictionary('$');
  *
- *     return 0
+ *     return 0;
  * }
  * @endcode
+ * @subsection usage_iterator Using Trie::Iterator
+ * Trie iterator can be used the same way as STL iterator.
+ * Trie::Iterator is only a forward iterator. Key and value can be accessed from iterator using first and secod member.
+ * first is vector of key characters and second is a pointer to value.
+ * @code
+ * #include <trie.h>
+ * #include <string>
+ * #include <iostream>
+ * #include <vector>
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string> dictionary('$');
+ *     
+ *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
+ *
+ *     rtv::Trie<char, std::string>::Iterator iter = dictionary.begin();
+ *     rtv::Trie<char, std::string>::Iterator iend = dictionary.end();
+ *
+ *     for (; iter != iend; ++iter) {
+ *
+ *         std::string k((const char *)&(iter->first[0]), iter->first.size()-1);
+ *
+ *         std::cout << k  << " " << iter->second->c_str() << std::endl;
+ *     }
+ *
+ *     return 0;
+ * }
+ * @endcode
+
  */
 template<typename T,
          typename V,
          typename Cmp=std::less<T>,
          typename Items=SetItems<T, V, Cmp> > class Trie
 {
+public:
+    typedef typename Node<T, V, Cmp, Items>::Iterator Iterator;
+
 public:
     /*!
      * @param endSymbol The symbol which marks the end of key input
@@ -805,6 +947,30 @@ public:
     template <typename CB>
     void traverse(CB const & c) {
         mRoot.traverse(c);
+    }
+
+    /*!
+     * Retrieves the end symbol
+     * @return end symbol
+     */
+    T endSymbol() const {
+        return mRoot.endSymbol();
+    }
+
+    /*!
+     * Returns an iterator referring to the first element in the Trie
+     * @return An iterator to the first element in the Trie
+     */
+    Iterator begin() {
+        return mRoot.begin();
+    }
+
+    /*!
+     * Returns an iterator referring to the past-the-end element in the Trie
+     * @return An iterator to the element past the end of the Trie
+     */
+    Iterator end() {
+        return mRoot.end();
     }
 
 private:

@@ -97,7 +97,21 @@ int main(int argc, char ** argv) {
                     }
             case '4': {
                 std::cout << "*****************************************" << std::endl;
-                dictionary.traverse(TrieTraverseCallBack());
+                rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.begin();
+                rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iend = dictionary.end();
+
+                for (; iter != iend; ++iter) {
+                         std::string k((const char *)&(iter->first[0]), iter->first.size()-1);
+
+                         std::cout.width(10);
+                         k.insert(0, "[");
+                         k.insert(k.length(), "]");
+                         std::cout << std::left << k.c_str() << " : ";
+                         std::cout.width(0);
+                         std::cout.width(70);
+                         std::cout << std::left << iter->second->c_str() << std::endl;
+                }
+
                 std::cout << "*****************************************" << std::endl;
                 break;
                     }

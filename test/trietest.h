@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <ctime>
@@ -146,6 +147,40 @@ public:
         testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
                                                   "Trie::size returned", aTrie.size(),
                                                   "Expected", mSampleValues.size());
+
+        //Test Trie::Iterator functionality
+        SampleValues copySamples = mSampleValues;
+        std::sort(copySamples.begin(), copySamples.end(), PairSort());
+
+        SampleValuesIter siter = copySamples.begin();
+
+        // operator++()
+        for (typename D::Iterator iter = aTrie.begin();
+            iter != aTrie.end(); ++iter, ++siter) {
+                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                testResult(siter->first.compare(iterStr) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->first.c_str(), "Actual Key", iterStr.c_str());
+                
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+        }
+
+        // operator++(int)
+        siter = copySamples.begin();
+        for (typename D::Iterator iter = aTrie.begin();
+            iter != aTrie.end(); iter++, siter++) {
+                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                testResult(siter->first.compare(iterStr) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->first.c_str(), "Actual Key", iterStr.c_str());
+                
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+        }
+
         //Test Trie::traverse functionality
         do {
             TrieTraverseCallBack ttcb;
@@ -204,13 +239,14 @@ public:
                                   0,
                                   "Actual count", ttcb.mCount);
         } while (0);
+
     }
 
     template <typename T>
     void testResult(bool result, const T & message) {
         if (!result) {
             std::cerr << message << std::endl;
-            std::abort();
+            std::exit(1);
         }
     }
 
@@ -221,7 +257,7 @@ public:
         if (!result) {
             std::cerr << message1 << " " <<
                          message2 << std::endl;
-            std::abort();
+            std::exit(1);
         }
     }
 
@@ -234,7 +270,7 @@ public:
             std::cerr << message1 << " " <<
                          message2 << " " <<
                          message3 << std::endl;
-            std::abort();
+            std::exit(1);
         }
     }
 
@@ -249,7 +285,7 @@ public:
                          message2 << " " <<
                          message3 << " " <<
                          message4 << std::endl;
-            std::abort();
+            std::exit(1);
         }
     }
 
@@ -264,13 +300,21 @@ public:
             std::cerr << message1 << " " << message2 << " " <<
                          message3 << " " << message4 << " " <<
                          message5 << std::endl;
-            std::abort();
+            std::exit(1);
         }
     }
 
 private:
     ~TrieTestCases() {
     }
+
+    class PairSort {
+    public:
+        bool operator() (std::pair<std::string, std::string> const & v1,
+                         std::pair<std::string, std::string> const & v2) {
+                             return v1.first.compare(v2.first) < 0;
+        }
+    };
 
     TrieTestCases()
     {
