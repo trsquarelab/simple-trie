@@ -126,7 +126,7 @@ public:
                 ++countForKey;
             }
         }
-        std::vector< std::pair < std::vector<char> , std::string > > result;
+        std::vector< std::pair < std::vector<char> , std::string> > result;
         aTrie.startsWith(key.c_str(), result, mSampleValues.size());
         TrieTestCases::testResult(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
@@ -148,11 +148,43 @@ public:
                                                   "Trie::size returned", aTrie.size(),
                                                   "Expected", mSampleValues.size());
 
-        //Test Trie::Iterator functionality
+        //Test Trie::ConstIterator functionality
         SampleValues copySamples = mSampleValues;
         std::sort(copySamples.begin(), copySamples.end(), PairSort());
 
         SampleValuesIter siter = copySamples.begin();
+
+        // operator++()
+        for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
+            iter != ((const D &)aTrie).end(); ++iter, ++siter) {
+                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                testResult(siter->first.compare(iterStr) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->first.c_str(), "Actual Key", iterStr.c_str());
+                
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+        }
+
+        // operator++(int)
+        siter = copySamples.begin();
+        for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
+            iter != ((const D &)aTrie).end(); iter++, siter++) {
+                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                testResult(siter->first.compare(iterStr) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->first.c_str(), "Actual Key", iterStr.c_str());
+                
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+        }
+
+        //Test Trie::Iterator functionality
+        std::sort(copySamples.begin(), copySamples.end(), PairSort());
+
+        siter = copySamples.begin();
 
         // operator++()
         for (typename D::Iterator iter = aTrie.begin();

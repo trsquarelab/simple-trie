@@ -79,9 +79,9 @@ int main(int argc, char ** argv) {
                 delimWord.insert(delimWord.length(), "$");
                 std::cout << "Searching ... ";
 
-                std::vector< std::pair < std::vector<char> , std::string > > result;
+                std::vector< std::pair < std::vector<char> , std::string> > result;
                 dictionary.startsWith(delimWord.c_str(), result);
-                std::vector< std::pair < std::vector<char> , std::string > >::iterator iter = result.begin();
+                std::vector< std::pair < std::vector<char> , std::string> >::iterator iter = result.begin();
 
                 if (result.size() == 0) {
                     std::cout << "Could not find the given word";

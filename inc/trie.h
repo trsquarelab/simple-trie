@@ -71,6 +71,10 @@ public:
         return mKey;
     }
 
+    const NodeClass * getChilds() const {
+        return mChilds;
+    }
+
     NodeClass * getChilds() {
         createChilds();
         return mChilds;
@@ -115,7 +119,7 @@ public:
         mValue = value;
     }
 
-    const V & getValue() const {
+    V & getValue() {
         return mValue;
     }
 
@@ -199,7 +203,7 @@ public:
         return erased;
     }
 
-    const V * get(const T * key) {
+    V * get(const T * key) {
         return get(key, 0);
     }
 
@@ -226,49 +230,15 @@ public:
         }
     }
 
-    class Iterator {
-    private:
-        typedef typename NodeClass::ItemsContainerIter ItemsContainerIter;
-        typedef std::pair<std::vector<T>, const V *> KeyValuePair;
-
-        std::stack<ItemsContainerIter> mIterStack;
-        std::stack<NodeClass *> mNodeStack;
-        KeyValuePair mKeyValuePair;
-
+    template <typename KV>
+    class IteratorBase {
     public:
-        Iterator(NodeClass * node) {
+        IteratorBase(NodeClass * node) {
             pushNode(node);
-            ++(*this);
+            next();
         }
 
-        std::pair<std::vector<T>, const V *> & operator*() {
-            return mKeyValuePair;
-        }
-
-        std::pair<std::vector<T>, const V *> * operator->() {
-            return &mKeyValuePair;
-        }
-
-        bool operator==(Iterator const & oth) const {
-            return mNodeStack == oth.mNodeStack &&
-                   mIterStack == oth.mIterStack;
-        }
-
-        bool operator!=(Iterator const & oth) const {
-            return !(*this == oth);
-        }
-
-        bool operator!() const {
-            return mNodeStack.empty() && mIterStack.empty();
-        }
-
-        Iterator operator++(int) {
-            Iterator iter = *this;
-            ++(*this);
-            return iter;
-        }
-
-        Iterator & operator++() {
+        void next() {
             while (!mNodeStack.empty()) {
                 NodeClass * currentNode = mNodeStack.top();
                 ItemsContainerIter iterEnd = currentNode->mItems->end();
@@ -287,7 +257,7 @@ public:
                             mKeyValuePair.second = &(((EndNodeItemClass&)item).getValue());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
-                            return *this;
+                            return;
                         } else {
                             mKeyValuePair.first.push_back(item.get());
                             mNodeStack.push(currentNode);
@@ -301,11 +271,17 @@ public:
                     }
                 }
             }
-
-            return *this;
         }
 
-    private:
+    protected:
+        typedef typename NodeClass::ItemsContainerIter ItemsContainerIter;
+        typedef KV KeyValuePair;
+
+        std::stack<ItemsContainerIter> mIterStack;
+        std::stack<NodeClass *> mNodeStack;
+        KeyValuePair mKeyValuePair;
+
+    protected:
         void pushNode(NodeClass * node) {
             if (node) {
                 mNodeStack.push(node);
@@ -314,6 +290,101 @@ public:
             }
         }
     };
+
+    class ConstIterator : public IteratorBase<std::pair<std::vector<T>, const V *> > {
+    private:
+        typedef IteratorBase<std::pair<std::vector<T>, const V *> > IteratorParent;
+        typedef typename IteratorParent::KeyValuePair KeyValuePair;
+
+    public:
+        ConstIterator(const NodeClass * node) 
+            : IteratorParent(const_cast<NodeClass *>(node)) 
+        {}
+
+        const KeyValuePair & operator*() const {
+            return this->mKeyValuePair;
+        }
+
+        const KeyValuePair * operator->() const {
+            return &this->mKeyValuePair;
+        }
+
+        bool operator==(ConstIterator const & oth) const {
+            return this->mNodeStack == oth.mNodeStack &&
+                   this->mIterStack == oth.mIterStack;
+        }
+
+        bool operator!=(ConstIterator const & oth) const {
+            return !(*this == oth);
+        }
+
+        bool operator!() const {
+            return this->mNodeStack.empty() && this->mIterStack.empty();
+        }
+
+        ConstIterator operator++(int) {
+            ConstIterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        ConstIterator & operator++() {
+            this->next();
+            return *this;
+        }
+    };
+
+    class Iterator : public IteratorBase<std::pair<std::vector<T>, V *> > {
+    private:
+        typedef IteratorBase<std::pair<std::vector<T>, V *> > IteratorParent;
+        typedef typename IteratorParent::KeyValuePair KeyValuePair;
+
+    public:
+        Iterator(NodeClass * node) 
+            : IteratorParent(node) 
+        {}
+
+        KeyValuePair & operator*() {
+            return this->mKeyValuePair;
+        }
+
+        KeyValuePair * operator->() {
+            return &(this->mKeyValuePair);
+        }
+
+        bool operator==(Iterator const & oth) const {
+            return this->mNodeStack == oth.mNodeStack &&
+                   this->mIterStack == oth.mIterStack;
+        }
+
+        bool operator!=(Iterator const & oth) const {
+            return !(*this == oth);
+        }
+
+        bool operator!() const {
+            return this->mNodeStack.empty() &&
+                   this->mIterStack.empty();
+        }
+
+        Iterator operator++(int) {
+            Iterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        Iterator & operator++() {
+            this->next();
+            return *this;
+        }
+    };
+
+    ConstIterator begin() const {
+        return ConstIterator(this);
+    }
+
+    ConstIterator end() const {
+        return ConstIterator(0);
+    }
 
     Iterator begin() {
         return Iterator(this);
@@ -386,7 +457,7 @@ private:
         }
     }
 
-    const V * get(const T * key, int i) {
+    V * get(const T * key, int i) {
         NodeItemClass * itemp = mItems->getItem(key[i]);
         if (!itemp) {
             return 0;
@@ -768,7 +839,7 @@ private:
  *     
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
  *
- *     typedef std::vector< std::pair < std::vector<char> , std::string > > TrieResult;
+ *     typedef std::vector< std::pair < std::vector<char> , std::string &> > TrieResult;
  *     TrieResult result;
  *
  *     dictionary.startsWith("kar$", result);
@@ -860,6 +931,7 @@ template<typename T,
 {
 public:
     typedef typename Node<T, V, Cmp, Items>::Iterator Iterator;
+    typedef typename Node<T, V, Cmp, Items>::ConstIterator ConstIterator;
 
 public:
     /*!
@@ -893,8 +965,20 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Pointer to value for the given key, 0 on failure
      */
-    const V * get(const T * key) {
+    V * get(const T * key) {
         return mRoot.get(key);
+    }
+
+    /*!
+     * Retrieves the value for the given key,
+     * If key does not match the key of any element in the Trie,
+     * the function inserts a new element with that key and returns a reference to its mapped value
+     * @param key Key to be searched for, should be terminated by 'end' symbol
+     * @return Reference to value for the given key
+     */
+    V & operator[](const T * key) {
+        insert(key, V());
+        return *get(key);
     }
 
     /*!
@@ -942,7 +1026,7 @@ public:
     /*!
      * Traverse through the Trie
      * @param c The functor class which will be called when a node is reached. Functor takes two arguments, 
-     *          first argument is const T * and second V(or const V &)
+     *          first argument is const T * and second V &
      */
     template <typename CB>
     void traverse(CB const & c) {
@@ -970,6 +1054,22 @@ public:
      * @return An iterator to the element past the end of the Trie
      */
     Iterator end() {
+        return mRoot.end();
+    }
+
+    /*!
+     * Returns an constant iterator referring to the first element in the Trie
+     * @return An constant iterator to the first element in the Trie
+     */
+    ConstIterator begin() const {
+        return mRoot.begin();
+    }
+
+    /*!
+     * Returns an constant iterator referring to the past-the-end element in the Trie
+     * @return An constant iterator to the element past the end of the Trie
+     */
+    ConstIterator end() const {
         return mRoot.end();
     }
 
