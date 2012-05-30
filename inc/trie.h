@@ -71,10 +71,6 @@ public:
         return mKey;
     }
 
-    const NodeClass * getChilds() const {
-        return mChilds;
-    }
-
     NodeClass * getChilds() {
         createChilds();
         return mChilds;
