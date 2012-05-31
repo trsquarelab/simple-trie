@@ -182,12 +182,12 @@ public:
         return mSize;
     }
 
-    bool insert(const T * key, V const & value) {
-        bool inserted = insertData(key, value, 0);
-        if (inserted) {
+    std::pair<V*, bool> insert(const T * key, V const & value) {
+        std::pair<V*, bool> r = insertData(key, value, 0);
+        if (r.second) {
             ++mSize;
         }
-        return inserted;
+        return r;
     }
 
     bool erase(const T * key) {
@@ -484,21 +484,23 @@ private:
         }
     }
 
-    bool insertData(const T * key, V const & value, int i) {
-
-        NodeItemClass * item = mItems->insertItem(key[i]);
-
-        if (!item) {
-            return false;
+    std::pair<V*, bool> insertData(const T * key, V const & value, int i) {
+	std::pair<V*, bool> result(0, false);
+        std::pair<typename Items::Item *, bool> itemPair = mItems->insertItem(key[i]);
+        NodeItemClass * item = itemPair.first;
+        if (itemPair.second) {
+            result.first = &(((EndNodeItemClass*)item)->getValue());
+            return result;
         }
 
         if (key[i] == mEndSymbol) {
             ((EndNodeItemClass*)item)->set(key[i], value);  
-            return true;
+            result.first = &(((EndNodeItemClass*)item)->getValue());
+            result.second = true;
         } else if (*item == key[i]) {
             return item->getChilds()->insertData(key, value, ++i);
         }
-        return false;
+        return result;
     }
 
     bool erase(const T * key, int i, bool & finished) {
@@ -603,16 +605,18 @@ public:
         std::fill(mItems.begin(), mItems.end(), (Item *)0);
     }
 
-    Item * insertItem(T const & k) {
+    std::pair<Item *, bool> insertItem(T const & k) {
+        std::pair<Item *, bool> ret(0, false); 
         if (!mItems[k]) {
             assignItem(mNode->createNodeItem(k));
-            return mItems[k];
+            ret.first = mItems[k];
         } else {
-            if (k != mEndSymbol) {
-                return mItems[k];
+            ret.first = mItems[k];
+            if (k == mEndSymbol) {
+                ret.second = true;
             }
         }
-        return 0;
+        return ret;
     }
 
     bool eraseItem(T const & k) {
@@ -688,19 +692,21 @@ public:
         mItems.clear();
     }
 
-    Item * insertItem(T const & k) {
+    std::pair<Item *, bool> insertItem(T const & k) {
+        std::pair<Item *, bool> ret(0, false); 
         Item tmp(mEndSymbol, k);
         iterator iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
             Item * v = mNode->createNodeItem(k);
             mItems.insert(v);
-            return v;
+            ret.first = v;
         } else {
-            if (k != mEndSymbol) {
-                return (Item*) *iter;
+            ret.first = (Item*) *iter;
+            if (k == mEndSymbol) {
+                ret.second = true;
             }
         }
-        return 0;
+        return ret;
     }
 
     bool eraseItem(T const & k) {
@@ -940,9 +946,9 @@ public:
      * Add a key with value in to the Trie
      * @param key Key which should be inserted, should be terminated by 'end' symbol
      * @param value The value that is to be set with the key
-     * @return true if the given key is inserted in to the Trie, false otherwise
+     * @return An std::pair with pair::first set to a pointer points to the value and pair::second to true is key is newly inserted, false otherwise
      */
-    bool insert(const T * key, V const & value) {
+    std::pair<V *, bool> insert(const T * key, V const & value) {
         return mRoot.insert(key, value);
     }
 
@@ -972,8 +978,8 @@ public:
      * @return Reference to value for the given key
      */
     V & operator[](const T * key) {
-        insert(key, V());
-        return *get(key);
+        std::pair<V *, bool> result = insert(key, V());
+        return *(result.first);
     }
 
     /*!
