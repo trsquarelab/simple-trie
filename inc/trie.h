@@ -71,6 +71,10 @@ public:
         return mKey;
     }
 
+    const NodeClass * getChilds() const {
+        return mChilds;
+    }
+
     NodeClass * getChilds() {
         createChilds();
         return mChilds;
@@ -199,11 +203,15 @@ public:
         return erased;
     }
 
+    const V * get(const T * key) const {
+        return get(key, 0);
+    }
+
     V * get(const T * key) {
         return get(key, 0);
     }
 
-    bool hasKey(const T * key) {
+    bool hasKey(const T * key) const {
         return hasKey(key, 0);
     }
 
@@ -454,6 +462,21 @@ private:
         }
     }
 
+    const V * get(const T * key, int i) const {
+        NodeItemClass * itemp = mItems->getItem(key[i]);
+        if (!itemp) {
+            return 0;
+        }
+        NodeItemClass & item = *itemp;
+        if (key[i] == mEndSymbol && item == mEndSymbol) {
+            return &(((EndNodeItemClass&)item).getValue());
+        } else if (item == key[i]) {
+            return item.getChilds()->get(key, ++i);
+        } else {
+            return 0;
+        }
+    }
+
     V * get(const T * key, int i) {
         NodeItemClass * itemp = mItems->getItem(key[i]);
         if (!itemp) {
@@ -469,7 +492,7 @@ private:
         }
     }
 
-    bool hasKey(const T * key, int i) {
+    bool hasKey(const T * key, int i) const {
         NodeItemClass * item = mItems->getItem(key[i]);
         if (!item) {
             return false;
@@ -964,6 +987,15 @@ public:
     /*!
      * Retrieves the value for the given key
      * @param key Key to be searched for, should be terminated by 'end' symbol
+     * @return Constant pointer to value for the given key, 0 on failure
+     */
+    const V * get(const T * key) const {
+        return mRoot.get(key);
+    }
+
+    /*!
+     * Retrieves the value for the given key
+     * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Pointer to value for the given key, 0 on failure
      */
     V * get(const T * key) {
@@ -987,7 +1019,7 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symol
      * @return true if the key is present
      */
-    bool hasKey(const T * key) {
+    bool hasKey(const T * key) const {
         return mRoot.hasKey(key);
     }
 

@@ -304,6 +304,20 @@ public:
         aTrie[negKey.c_str()] = "test";
         testResult(aTrie[negKey.c_str()] == *aTrie.get(negKey.c_str()), "operator[] != Trie::get()!!!");
         aTrie.erase(negKey.c_str());
+
+        //Test Trie::hasKey functionality
+	{
+            aTrie.clear();
+            TrieTestCases::populateTrieWithSampleValues(aTrie);
+            const D & constTrie = aTrie;
+
+            for (SampleValuesIter iter = mSampleValues.begin();
+                 iter != mSampleValues.end(); ++iter) {
+       	        std::string key = iter->first;
+                key.append(std::string(&endSymbol, 1));
+                testResult(iter->second.compare(*constTrie.get(key.c_str())) == 0, "Trie::get() const failed!!!");
+            }
+	} while (0);
     }
 
     template <typename T>
