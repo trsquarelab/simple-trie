@@ -234,10 +234,10 @@ public:
             TrieTraverseCallBack ttcb(aTrie.endSymbol());
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
-            TrieTestCases::testResult(ttcb.mCount == mSampleValues.size(),
-                                  "Error in Trie::traverse functionality!!! Expected count",
-                                  mSampleValues.size(),
-                                  "Actual count", ttcb.mCount);
+            testResult(ttcb.mCount == mSampleValues.size(),
+                       "Error in Trie::traverse functionality!!! Expected count",
+                       mSampleValues.size(),
+                       "Actual count", ttcb.mCount);
         } while (0);
 
         //Test Trie::hasKey functionality
@@ -245,7 +245,7 @@ public:
              iter != mSampleValues.end(); ++iter) {
        	    std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
-            TrieTestCases::testKeyInTrie(aTrie, key, true);
+            testKeyInTrie(aTrie, key, true);
         }
         std::string negKey("something which is not in the Trie");
         negKey.append(std::string(&endSymbol, 1));
@@ -258,10 +258,10 @@ public:
             if (keyStr.length() > 0) {
                 std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
                 keyPart.append(std::string(&endSymbol, 1));
-                TrieTestCases::teststartsWith(aTrie, keyPart);
+                teststartsWith(aTrie, keyPart);
             }
         }
-        TrieTestCases::teststartsWith(aTrie, negKey);
+        teststartsWith(aTrie, negKey);
 
         //Test Trie::erase functionality
         unsigned int trieSize = aTrie.size();
@@ -278,7 +278,7 @@ public:
             aTrie.traverse(ttcb);
             testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
         }
-
+   
         //Test Trie::clear functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         aTrie.clear();
@@ -287,12 +287,23 @@ public:
             TrieTraverseCallBack ttcb(aTrie.endSymbol());
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
-            TrieTestCases::testResult(ttcb.mCount == 0,
+            testResult(ttcb.mCount == 0,
                                   "Error in Trie::clear functionality!!! Expected count",
                                   0,
                                   "Actual count", ttcb.mCount);
         } while (0);
 
+        //Test Trie::operator[] functionality
+        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+       	    std::string key = iter->first;
+            key.append(std::string(&endSymbol, 1));
+            testResult(aTrie[key.c_str()] == *aTrie.get(key.c_str()), "operator[] != Trie::get()!!!");
+        }
+        aTrie[negKey.c_str()] = "test";
+        testResult(aTrie[negKey.c_str()] == *aTrie.get(negKey.c_str()), "operator[] != Trie::get()!!!");
+        aTrie.erase(negKey.c_str());
     }
 
     template <typename T>

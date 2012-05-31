@@ -14,7 +14,12 @@
 
 namespace {
 
+void test1();
+
+bool testCaseAdded = TrieTestCases::instance()->addTestCase(test1);
+
 void test1() {
+    (void)testCaseAdded;
     std::cout << "Executing Test Case 1 ... ";
 
     rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary1('$');
@@ -28,7 +33,5 @@ void test1() {
 
     std::cout << "Succeeded" << std::endl;
 }
-
-bool testCaseAdded = TrieTestCases::instance()->addTestCase(test1);
 
 }
