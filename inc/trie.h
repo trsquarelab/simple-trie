@@ -119,6 +119,10 @@ public:
         mValue = value;
     }
 
+    const V & getValue() const {
+        return mValue;
+    }
+
     V & getValue() {
         return mValue;
     }
@@ -215,13 +219,13 @@ public:
         return hasKey(key, 0);
     }
 
-    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count) {
+    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
         std::vector<T> keySoFar;
         startsWith(keySoFar, key, values, count, 0);
     }
 
     template <typename CB>
-    void traverse(CB const & cb) {
+    void traverse(CB const & cb) const {
         std::vector<T> v;
         traverse(v, cb);
     }
@@ -408,7 +412,7 @@ private:
     }
 
     template <typename CB>
-    void traverse(std::vector<T> & key, CB const & cb) {
+    void traverse(std::vector<T> & key, CB const & cb) const {
         ItemsContainerIter iterEnd = mItems->end();
 
         for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd; ++iter) {
@@ -427,7 +431,7 @@ private:
         }
     }
 
-    void startsWith(std::vector<T> & keySoFar, const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) {
+    void startsWith(std::vector<T> & keySoFar, const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
         
         if (key[i] == mEndSymbol) {
             accumulate(keySoFar, values, count);
@@ -443,7 +447,7 @@ private:
         }
     }
 
-    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) {
+    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
         ItemsContainerIter iterEnd = mItems->end();
         for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
@@ -1052,7 +1056,7 @@ public:
      * @param values Vector of key, value pair
      * @param count Maximum number of elements that should be returned
      */
-    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) {
+    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) const {
         mRoot.startsWith(key, values, count);
     }
 
@@ -1062,7 +1066,7 @@ public:
      *          first argument is const T * and second V &
      */
     template <typename CB>
-    void traverse(CB const & c) {
+    void traverse(CB const & c) const {
         mRoot.traverse(c);
     }
 
