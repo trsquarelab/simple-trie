@@ -242,20 +242,20 @@ public:
 
                 mIterStack.pop();
                 mNodeStack.pop();
-
-                mKeyValuePair.first.pop_back();
+                mKeyStack.pop_back();
 
                 for (; iter != iterEnd; ++iter) {
                     if (*iter) {
                         NodeItemClass & item = *(NodeItemClass *) *iter;
                         if (item == currentNode->endSymbol()) {
-                            mKeyValuePair.first.push_back(item.get());
+                            mKeyStack.push_back(item.get());
+			    mKeyValuePair.first = &(mKeyStack[0]);
                             mKeyValuePair.second = &(((EndNodeItemClass&)item).getValue());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
                             return;
                         } else {
-                            mKeyValuePair.first.push_back(item.get());
+                            mKeyStack.push_back(item.get());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
                             pushNode(item.getChilds());
@@ -275,6 +275,7 @@ public:
 
         std::stack<ItemsContainerIter> mIterStack;
         std::stack<NodeClass *> mNodeStack;
+        std::vector<T> mKeyStack;
         KeyValuePair mKeyValuePair;
 
     protected:
@@ -282,14 +283,14 @@ public:
             if (node) {
                 mNodeStack.push(node);
                 mIterStack.push(node->mItems->begin());
-                mKeyValuePair.first.push_back(node->endSymbol());
+                mKeyStack.push_back(node->endSymbol());
             }
         }
     };
 
-    class ConstIterator : public IteratorBase<std::pair<std::vector<T>, const V *> > {
+    class ConstIterator : public IteratorBase<std::pair<const T *, const V *> > {
     private:
-        typedef IteratorBase<std::pair<std::vector<T>, const V *> > IteratorParent;
+        typedef IteratorBase<std::pair<const T *, const V *> > IteratorParent;
         typedef typename IteratorParent::KeyValuePair KeyValuePair;
 
     public:
@@ -330,9 +331,9 @@ public:
         }
     };
 
-    class Iterator : public IteratorBase<std::pair<std::vector<T>, V *> > {
+    class Iterator : public IteratorBase<std::pair<const T *, V *> > {
     private:
-        typedef IteratorBase<std::pair<std::vector<T>, V *> > IteratorParent;
+        typedef IteratorBase<std::pair<const T *, V *> > IteratorParent;
         typedef typename IteratorParent::KeyValuePair KeyValuePair;
 
     public:
@@ -901,7 +902,7 @@ private:
  *
  * int main(int argc, char ** argv) {
  *
- *     rtv::Trie<char, std::string> dictionary('$');
+ *     rtv::Trie<char, std::string> dictionary('\0');
  *     
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
  *
@@ -910,9 +911,7 @@ private:
  *
  *     for (; iter != iend; ++iter) {
  *
- *         std::string k((const char *)&(iter->first[0]), iter->first.size()-1);
- *
- *         std::cout << k  << " " << iter->second->c_str() << std::endl;
+ *         std::cout << iter->first  << " " << iter->second->c_str() << std::endl;
  *     }
  *
  *     return 0;

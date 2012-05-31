@@ -17,9 +17,14 @@ namespace {
 void test1() {
     std::cout << "Executing Test Case 1 ... ";
 
-    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary('$');
-        
-    TrieTestCases::instance()->testSuite(dictionary);
+    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary1('$');
+    TrieTestCases::instance()->testSuite(dictionary1);
+
+    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary2('#');
+    TrieTestCases::instance()->testSuite(dictionary2);
+
+    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary3('\0');
+    TrieTestCases::instance()->testSuite(dictionary3);
 
     std::cout << "Succeeded" << std::endl;
 }

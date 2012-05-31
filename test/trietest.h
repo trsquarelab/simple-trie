@@ -41,7 +41,7 @@ public:
     bool mPrint;
     char mEndSymbol;
 
-    TrieTraverseCallBack(char endSymbol='$')
+    TrieTraverseCallBack(char endSymbol)
         : mCount(0),
           mPrint(true),
           mEndSymbol(endSymbol)
@@ -95,7 +95,9 @@ public:
     void populateTrieWithSampleValues(D  & aTrie) {
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-            TrieTestCases::testAndAddToTrie(aTrie, iter->first, iter->second);
+            char endSymbol = aTrie.endSymbol();
+            std::string key = iter->first + std::string(&endSymbol, 1);
+            TrieTestCases::testAndAddToTrie(aTrie, key, iter->second);
         }
     }
 
@@ -132,7 +134,17 @@ public:
     }
 
     template <typename D>
+    std::string keyToString(D &aTrie, const char * key) {
+        int i=0;
+        for (; key[i] != aTrie.endSymbol(); ++i) {
+        }
+        return std::string(key, i+1);
+    }
+
+    template <typename D>
     void testSuite(D & aTrie) {
+
+        char endSymbol = aTrie.endSymbol();
 
         std::srand((unsigned int)std::time(0));
 
@@ -157,9 +169,10 @@ public:
         // operator++()
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
             iter != ((const D &)aTrie).end(); ++iter, ++siter) {
-                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                std::string iterStr = keyToString(aTrie, iter->first);
+                iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
+                    "Error in Trie::Iterator traversal!!! \nExpected Key",
                     siter->first.c_str(), "Actual Key", iterStr.c_str());
                 
                 testResult(siter->second.compare(iter->second->c_str()) == 0,
@@ -171,7 +184,8 @@ public:
         siter = copySamples.begin();
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
             iter != ((const D &)aTrie).end(); iter++, siter++) {
-                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                std::string iterStr = keyToString(aTrie, iter->first);
+                iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
                     siter->first.c_str(), "Actual Key", iterStr.c_str());
@@ -189,7 +203,8 @@ public:
         // operator++()
         for (typename D::Iterator iter = aTrie.begin();
             iter != aTrie.end(); ++iter, ++siter) {
-                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                std::string iterStr = keyToString(aTrie, iter->first);
+                iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
                     siter->first.c_str(), "Actual Key", iterStr.c_str());
@@ -203,7 +218,8 @@ public:
         siter = copySamples.begin();
         for (typename D::Iterator iter = aTrie.begin();
             iter != aTrie.end(); iter++, siter++) {
-                std::string iterStr((const char *)&(iter->first[0]), iter->first.size());
+                std::string iterStr = keyToString(aTrie, iter->first);
+                iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
                     siter->first.c_str(), "Actual Key", iterStr.c_str());
@@ -215,7 +231,7 @@ public:
 
         //Test Trie::traverse functionality
         do {
-            TrieTraverseCallBack ttcb;
+            TrieTraverseCallBack ttcb(aTrie.endSymbol());
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
             TrieTestCases::testResult(ttcb.mCount == mSampleValues.size(),
@@ -227,9 +243,13 @@ public:
         //Test Trie::hasKey functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-            TrieTestCases::testKeyInTrie(aTrie, iter->first, true);
+       	    std::string key = iter->first;
+            key.append(std::string(&endSymbol, 1));
+            TrieTestCases::testKeyInTrie(aTrie, key, true);
         }
-        TrieTestCases::testKeyInTrie(aTrie, "something which is not in the Trie$", false);
+        std::string negKey("something which is not in the Trie");
+        negKey.append(std::string(&endSymbol, 1));
+        TrieTestCases::testKeyInTrie(aTrie, negKey, false);
 
         //Test Trie::startsWith functionality
         for (SampleValuesIter iter = mSampleValues.begin();
@@ -237,22 +257,23 @@ public:
             std::string keyStr = iter->first;
             if (keyStr.length() > 0) {
                 std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
-                keyPart.insert(keyPart.length(), "$");
+                keyPart.append(std::string(&endSymbol, 1));
                 TrieTestCases::teststartsWith(aTrie, keyPart);
             }
         }
-        std::string negTest("something which is not in the Trie$");
-        TrieTestCases::teststartsWith(aTrie, negTest);
+        TrieTestCases::teststartsWith(aTrie, negKey);
 
         //Test Trie::erase functionality
         unsigned int trieSize = aTrie.size();
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-            testResult(aTrie.erase(iter->first.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
-            testResult(aTrie.get(iter->first.c_str()) == 0, "Removing ", iter->first.c_str(), "failed!!!");
+       	    std::string key = iter->first;
+            key.append(std::string(&endSymbol, 1));
+            testResult(aTrie.erase(key.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
             testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
 
-            TrieTraverseCallBack ttcb;
+            TrieTraverseCallBack ttcb(aTrie.endSymbol());
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
             testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
@@ -263,7 +284,7 @@ public:
         aTrie.clear();
         testResult(aTrie.empty(), "Trie::clear failed!!!");
         do {
-            TrieTraverseCallBack ttcb;
+            TrieTraverseCallBack ttcb(aTrie.endSymbol());
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
             TrieTestCases::testResult(ttcb.mCount == 0,
@@ -351,25 +372,25 @@ private:
     TrieTestCases()
     {
         const std::pair<std::string, std::string> sampleValues[] = {
-            std::pair<std::string, std::string>(std::string("Multiset$"),
+            std::pair<std::string, std::string>(std::string("Multiset"),
                 std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
-            std::pair<std::string, std::string>(std::string("Deque$"),
+            std::pair<std::string, std::string>(std::string("Deque"),
                 std::string("Double-ended queue")),
-            std::pair<std::string, std::string>(std::string("Multimap$"),
+            std::pair<std::string, std::string>(std::string("Multimap"),
                 std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
-            std::pair<std::string, std::string>(std::string("Stack$"),
+            std::pair<std::string, std::string>(std::string("Stack"),
                 std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
-            std::pair<std::string, std::string>(std::string("Set$"),
+            std::pair<std::string, std::string>(std::string("Set"),
                 std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
-            std::pair<std::string, std::string>(std::string("Vector$"),
+            std::pair<std::string, std::string>(std::string("Vector"),
                 std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
-            std::pair<std::string, std::string>(std::string("Array$"),
+            std::pair<std::string, std::string>(std::string("Array"),
                 std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
-            std::pair<std::string, std::string>(std::string("Map$"),
+            std::pair<std::string, std::string>(std::string("Map"),
                 std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
-            std::pair<std::string, std::string>(std::string("List$"),
+            std::pair<std::string, std::string>(std::string("List"),
                 std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
-            std::pair<std::string, std::string>(std::string("Bitset$"),
+            std::pair<std::string, std::string>(std::string("Bitset"),
                 std::string("A bitset is a special container class that is designed to store bits")),
         };
 

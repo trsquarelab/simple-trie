@@ -16,7 +16,7 @@ int main(int argc, char ** argv) {
 
     TrieTestCases::instance()->execute();
 
-    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('$');
+    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('\0');
     
     TrieTestCases::instance()->populateTrieWithSampleValues(dictionary);
     
@@ -47,12 +47,10 @@ int main(int argc, char ** argv) {
                 std::cout << "Enter the word : ";
                 std::cin.ignore();
                 std::cin.get(word, sizeof(word), '\n');
-                std::string delimWord(word);
-                delimWord.insert(delimWord.length(), "$");
                 std::cout << "Enter the meaning : ";
                 std::cin.ignore();
                 std::cin.get(meaning, sizeof(meaning), '\n');
-                dictionary.insert(delimWord.c_str(), meaning);
+                dictionary.insert(&word[0], meaning);
                 break;
                     }
             case '2': {
@@ -60,9 +58,7 @@ int main(int argc, char ** argv) {
                 std::cout << "Enter the word : ";
                 std::cin.ignore();
                 std::cin.get(word, sizeof(word), '\n');
-                std::string delimWord(word);
-                delimWord.insert(delimWord.length(), "$");
-                if (dictionary.erase(delimWord.c_str())) {
+                if (dictionary.erase(&word[0])) {
                     std::cout << "Removed " << word << std::endl;
                 } else {
                     std::cout << "Failed to Remove " << word << std::endl;
@@ -75,12 +71,10 @@ int main(int argc, char ** argv) {
                 std::cout << "Enter the word : ";
                 std::cin.ignore();
                 std::cin.get(word, sizeof(word), '\n');
-                std::string delimWord(word);
-                delimWord.insert(delimWord.length(), "$");
                 std::cout << "Searching ... ";
 
                 std::vector< std::pair < std::vector<char> , std::string> > result;
-                dictionary.startsWith(delimWord.c_str(), result);
+                dictionary.startsWith(&word[0], result);
                 std::vector< std::pair < std::vector<char> , std::string> >::iterator iter = result.begin();
 
                 if (result.size() == 0) {
@@ -101,7 +95,7 @@ int main(int argc, char ** argv) {
                 rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iend = dictionary.end();
 
                 for (; iter != iend; ++iter) {
-                         std::string k((const char *)&(iter->first[0]), iter->first.size()-1);
+                         std::string k((const char *)(iter->first));
 
                          std::cout.width(10);
                          k.insert(0, "[");
