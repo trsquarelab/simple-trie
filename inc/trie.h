@@ -260,7 +260,7 @@ public:
                         NodeItemClass & item = *(NodeItemClass *) *iter;
                         if (item == currentNode->endSymbol()) {
                             mKeyStack.push_back(item.get());
-			    mKeyValuePair.first = &(mKeyStack[0]);
+                            mKeyValuePair.first = &(mKeyStack[0]);
                             mKeyValuePair.second = &(((EndNodeItemClass&)item).getValue());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
