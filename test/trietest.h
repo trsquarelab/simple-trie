@@ -19,14 +19,16 @@
 #include <cstdlib>
 #include <ctime>
 
-class TrieCompare {
+class TrieCompare
+{
 public:
     bool operator()(char v1, char v2) {
         return v1 < v2;
-    }  
+    }
 };
 
-class TrieCaseInsensitiveCompare {
+class TrieCaseInsensitiveCompare
+{
 public:
     bool operator()(char v1, char v2) {
         int i1 = std::tolower(v1);
@@ -35,7 +37,8 @@ public:
     }
 };
 
-class TrieTraverseCallBack {
+class TrieTraverseCallBack
+{
 public:
     mutable unsigned int mCount;
     bool mPrint;
@@ -47,10 +50,10 @@ public:
           mEndSymbol(endSymbol)
     {}
 
-    void operator()(const char * key, std::string const & value) const {
+    void operator()(const char *key, std::string const &value) const {
         if (mPrint) {
             std::string k;
-            for (int i=0; key[i] != mEndSymbol; ++i) {
+            for (int i = 0; key[i] != mEndSymbol; ++i) {
                 char astr[2] = {'\0', '\0'};
                 astr[0] = key[i];
                 k.append(astr);
@@ -74,7 +77,7 @@ private:
     typedef void (*TestCaseFunction)();
 
 public:
-    static TrieTestCases * instance() {
+    static TrieTestCases *instance() {
         static TrieTestCases _instance;
         return &_instance;
     }
@@ -92,7 +95,7 @@ public:
     }
 
     template <typename D>
-    void populateTrieWithSampleValues(D  & aTrie) {
+    void populateTrieWithSampleValues(D   &aTrie) {
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
             char endSymbol = aTrie.endSymbol();
@@ -103,28 +106,28 @@ public:
     }
 
     template <typename D>
-    void testKeyInTrie(D  & aTrie, std::string const & word, bool expected) {
+    void testKeyInTrie(D   &aTrie, std::string const &word, bool expected) {
         if (aTrie.hasKey(word.c_str())) {
-            testResult(expected, "Found", word.c_str(), "when it should not be found !!!");            
+            testResult(expected, "Found", word.c_str(), "when it should not be found !!!");
         } else {
             testResult(!expected, "Did not find", word.c_str(), "when it should be !!!");
         }
     }
 
     template <typename D>
-    void testAndAddToTrie(D & aTrie, const std::string & word, const std::string & meaning) {
+    void testAndAddToTrie(D &aTrie, const std::string &word, const std::string &meaning) {
         unsigned int trieSize = aTrie.size();
         aTrie.insert(word.c_str(), meaning.c_str());
         testResult(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::insert or Trie::get !!!");
-        testResult(aTrie.size() == trieSize+1, "Trie size did not updated properly after Trie::insert!!!");
+        testResult(aTrie.size() == trieSize + 1, "Trie size did not updated properly after Trie::insert!!!");
     }
-   
+
     template<typename D>
-    void teststartsWith(D & aTrie, const std::string & key) {
+    void teststartsWith(D &aTrie, const std::string &key) {
         unsigned int countForKey = 0;
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-            int cv = key.compare(0, key.length()-1, iter->first, 0, key.length()-1);
+            int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
             if (cv == 0) {
                 ++countForKey;
             }
@@ -134,15 +137,15 @@ public:
         TrieTestCases::testResult(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 
-    std::string keyToString(char endSymbol, const char * key) {
-        int i=0;
+    std::string keyToString(char endSymbol, const char *key) {
+        int i = 0;
         for (; key[i] != endSymbol; ++i) {
         }
-        return std::string(key, i+1);
+        return std::string(key, i + 1);
     }
 
     template <typename D>
-    void testSuite(D & aTrie) {
+    void testSuite(D &aTrie) {
 
         char endSymbol = aTrie.endSymbol();
 
@@ -151,14 +154,14 @@ public:
         //Test Trie::empty functionality
         aTrie.clear();
         testResult(aTrie.empty(), "Trie::empty failed!!!");
-        
+
         //Test Trie::insert functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
-        
+
         //Test Trie::size functionality
         testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
-                                                  "Trie::size returned", aTrie.size(),
-                                                  "Expected", mSampleValues.size());
+                   "Trie::size returned", aTrie.size(),
+                   "Expected", mSampleValues.size());
 
         //Test Trie::ConstIterator functionality
         SampleValues copySamples = mSampleValues;
@@ -168,31 +171,31 @@ public:
 
         // operator++()
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
-            iter != ((const D &)aTrie).end(); ++iter, ++siter) {
-                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
-                iterStr.erase(iterStr.length()-1);
-                testResult(siter->first.compare(iterStr) == 0,
-                    "Error in Trie::Iterator traversal!!! \nExpected Key",
-                    siter->first.c_str(), "Actual Key", iterStr.c_str());
-                
-                testResult(siter->second.compare(iter->second->c_str()) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+             iter != ((const D &)aTrie).end(); ++iter, ++siter) {
+            std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+            iterStr.erase(iterStr.length() - 1);
+            testResult(siter->first.compare(iterStr) == 0,
+                       "Error in Trie::Iterator traversal!!! \nExpected Key",
+                       siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+            testResult(siter->second.compare(iter->second->c_str()) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
         // operator++(int)
         siter = copySamples.begin();
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
-            iter != ((const D &)aTrie).end(); iter++, siter++) {
-                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
-                iterStr.erase(iterStr.length()-1);
-                testResult(siter->first.compare(iterStr) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->first.c_str(), "Actual Key", iterStr.c_str());
-                
-                testResult(siter->second.compare(iter->second->c_str()) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+             iter != ((const D &)aTrie).end(); iter++, siter++) {
+            std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+            iterStr.erase(iterStr.length() - 1);
+            testResult(siter->first.compare(iterStr) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+            testResult(siter->second.compare(iter->second->c_str()) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
         //Test Trie::Iterator functionality
@@ -202,31 +205,31 @@ public:
 
         // operator++()
         for (typename D::Iterator iter = aTrie.begin();
-            iter != aTrie.end(); ++iter, ++siter) {
-                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
-                iterStr.erase(iterStr.length()-1);
-                testResult(siter->first.compare(iterStr) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->first.c_str(), "Actual Key", iterStr.c_str());
-                
-                testResult(siter->second.compare(iter->second->c_str()) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+             iter != aTrie.end(); ++iter, ++siter) {
+            std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+            iterStr.erase(iterStr.length() - 1);
+            testResult(siter->first.compare(iterStr) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+            testResult(siter->second.compare(iter->second->c_str()) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
         // operator++(int)
         siter = copySamples.begin();
         for (typename D::Iterator iter = aTrie.begin();
-            iter != aTrie.end(); iter++, siter++) {
-                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
-                iterStr.erase(iterStr.length()-1);
-                testResult(siter->first.compare(iterStr) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->first.c_str(), "Actual Key", iterStr.c_str());
-                
-                testResult(siter->second.compare(iter->second->c_str()) == 0,
-                    "Error in Trie::Iterator traversal!!! Expected Key",
-                    siter->second.c_str(), "Actual Key", iter->second->c_str());
+             iter != aTrie.end(); iter++, siter++) {
+            std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+            iterStr.erase(iterStr.length() - 1);
+            testResult(siter->first.compare(iterStr) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+            testResult(siter->second.compare(iter->second->c_str()) == 0,
+                       "Error in Trie::Iterator traversal!!! Expected Key",
+                       siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
         //Test Trie::traverse functionality
@@ -243,7 +246,7 @@ public:
         //Test Trie::hasKey functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-       	    std::string key = iter->first;
+            std::string key = iter->first;
             key.append(&endSymbol, 1);
             testKeyInTrie(aTrie, key, true);
         }
@@ -267,7 +270,7 @@ public:
         unsigned int trieSize = aTrie.size();
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-       	    std::string key = iter->first;
+            std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
             testResult(aTrie.erase(key.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
             testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
@@ -278,7 +281,7 @@ public:
             aTrie.traverse(ttcb);
             testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
         }
-   
+
         //Test Trie::clear functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         aTrie.clear();
@@ -288,16 +291,16 @@ public:
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
             testResult(ttcb.mCount == 0,
-                                  "Error in Trie::clear functionality!!! Expected count",
-                                  0,
-                                  "Actual count", ttcb.mCount);
+                       "Error in Trie::clear functionality!!! Expected count",
+                       0,
+                       "Actual count", ttcb.mCount);
         } while (0);
 
         //Test Trie::operator[] functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
-       	    std::string key = iter->first;
+            std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
             bool res = aTrie[key.c_str()].compare(*aTrie.get(key.c_str())) == 0;
             testResult(res, "operator[] != Trie::get()!!!");
@@ -308,22 +311,22 @@ public:
         aTrie.erase(negKey.c_str());
 
         //Test Trie::hasKey functionality
-	{
+        {
             aTrie.clear();
             TrieTestCases::populateTrieWithSampleValues(aTrie);
-            const D & constTrie = aTrie;
+            const D &constTrie = aTrie;
 
             for (SampleValuesIter iter = mSampleValues.begin();
                  iter != mSampleValues.end(); ++iter) {
-       	        std::string key = iter->first;
+                std::string key = iter->first;
                 key.append(std::string(&endSymbol, 1));
                 testResult(iter->second.compare(*constTrie.get(key.c_str())) == 0, "Trie::get() const failed!!!");
             }
-	} while (0);
+        }
     }
 
     template <typename T>
-    void testResult(bool result, const T & message) {
+    void testResult(bool result, const T &message) {
         if (!result) {
             std::cerr << message << std::endl;
             std::exit(1);
@@ -332,54 +335,54 @@ public:
 
     template <typename T1, typename T2>
     void testResult(bool result,
-                       const T1 & message1,
-                       const T2 & message2) {
+                    const T1 &message1,
+                    const T2 &message2) {
         if (!result) {
             std::cerr << message1 << " " <<
-                         message2 << std::endl;
+                      message2 << std::endl;
             std::exit(1);
         }
     }
 
     template <typename T1, typename T2, typename T3>
     void testResult(bool result,
-                       const T1 & message1,
-                       const T2 & message2,
-                       const T3 & message3) {
+                    const T1 &message1,
+                    const T2 &message2,
+                    const T3 &message3) {
         if (!result) {
             std::cerr << message1 << " " <<
-                         message2 << " " <<
-                         message3 << std::endl;
+                      message2 << " " <<
+                      message3 << std::endl;
             std::exit(1);
         }
     }
 
     template <typename T1, typename T2, typename T3, typename T4>
     void testResult(bool result,
-                       const T1 & message1,
-                       const T2 & message2,
-                       const T3 & message3,
-                       const T4 & message4) {
+                    const T1 &message1,
+                    const T2 &message2,
+                    const T3 &message3,
+                    const T4 &message4) {
         if (!result) {
             std::cerr << message1 << " " <<
-                         message2 << " " <<
-                         message3 << " " <<
-                         message4 << std::endl;
+                      message2 << " " <<
+                      message3 << " " <<
+                      message4 << std::endl;
             std::exit(1);
         }
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5>
     void testResult(bool result,
-                       const T1 & message1,
-                       const T2 & message2,
-                       const T3 & message3,
-                       const T4 & message4,
-                       const T5 & message5) {
+                    const T1 &message1,
+                    const T2 &message2,
+                    const T3 &message3,
+                    const T4 &message4,
+                    const T5 &message5) {
         if (!result) {
             std::cerr << message1 << " " << message2 << " " <<
-                         message3 << " " << message4 << " " <<
-                         message5 << std::endl;
+                      message3 << " " << message4 << " " <<
+                      message5 << std::endl;
             std::exit(1);
         }
     }
@@ -388,46 +391,46 @@ private:
     ~TrieTestCases() {
     }
 
-    class PairSort {
+    class PairSort
+    {
     public:
-        bool operator() (std::pair<std::string, std::string> const & v1,
-                         std::pair<std::string, std::string> const & v2) {
-                             return v1.first.compare(v2.first) < 0;
+        bool operator()(std::pair<std::string, std::string> const &v1,
+                        std::pair<std::string, std::string> const &v2) {
+            return v1.first.compare(v2.first) < 0;
         }
     };
 
-    TrieTestCases()
-    {
+    TrieTestCases() {
         const std::pair<std::string, std::string> sampleValues[] = {
             std::pair<std::string, std::string>(std::string("Multiset"),
-                std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
+            std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
             std::pair<std::string, std::string>(std::string("Deque"),
-                std::string("Double-ended queue")),
+            std::string("Double-ended queue")),
             std::pair<std::string, std::string>(std::string("Multimap"),
-                std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
+            std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
             std::pair<std::string, std::string>(std::string("Stack"),
-                std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
+            std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
             std::pair<std::string, std::string>(std::string("Set"),
-                std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
+            std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
             std::pair<std::string, std::string>(std::string("Vector"),
-                std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
+            std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
             std::pair<std::string, std::string>(std::string("Array"),
-                std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
+            std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
             std::pair<std::string, std::string>(std::string("Map"),
-                std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
+            std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
             std::pair<std::string, std::string>(std::string("List"),
-                std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
+            std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
             std::pair<std::string, std::string>(std::string("Bitset"),
-                std::string("A bitset is a special container class that is designed to store bits")),
+            std::string("A bitset is a special container class that is designed to store bits")),
         };
 
-        for (unsigned int i=0; i<sizeof(sampleValues)/sizeof(sampleValues[0]); ++i) {
+        for (unsigned int i = 0; i < sizeof(sampleValues) / sizeof(sampleValues[0]); ++i) {
             mSampleValues.insert(mSampleValues.begin(), sampleValues[i]);
         }
     }
 
     TrieTestCases(TrieTestCases const &);
-    TrieTestCases & operator=(TrieTestCases const &);
+    TrieTestCases &operator=(TrieTestCases const &);
 
 private:
     typedef std::vector< std::pair<std::string, std::string> > SampleValues;

@@ -12,13 +12,15 @@
 #include "trie.h"
 #include "trietest.h"
 
-namespace {
+namespace
+{
 
 void test1();
 
 bool testCaseAdded = TrieTestCases::instance()->addTestCase(test1);
 
-void test1() {
+void test1()
+{
     (void)testCaseAdded;
     std::cout << "Executing Test Case 1 ... ";
 

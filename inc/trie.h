@@ -20,25 +20,25 @@
 namespace rtv
 {
 
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         typename Items> class Node;
+         typename Items > class Node;
 
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         typename Items> class NodeItem
+         typename Items > class NodeItem
 {
 private:
     typedef Node<T, V, Cmp, Items> NodeClass;
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
 
 public:
-    NodeItem(const T & endSymbol, T const & key) 
-     : mEndSymbol(endSymbol),
-       mKey(key),
-       mChilds(0) {
+    NodeItem(const T &endSymbol, T const &key)
+        : mEndSymbol(endSymbol),
+          mKey(key),
+          mChilds(0) {
         createChilds();
     }
 
@@ -46,36 +46,36 @@ public:
         delete mChilds;
     }
 
-    bool operator<(NodeItemClass const & oth) const {
+    bool operator<(NodeItemClass const &oth) const {
         return Cmp()(this->mKey, oth.mKey);
     }
 
-    bool operator<(T const & key) const {
+    bool operator<(T const &key) const {
         return Cmp()(this->mKey, key);
     }
 
-    bool operator==(T const & key) const {
+    bool operator==(T const &key) const {
         return !Cmp()(this->mKey, key) && !Cmp()(key, this->mKey);
     }
 
-    bool operator==(NodeItemClass const & oth) const {
+    bool operator==(NodeItemClass const &oth) const {
         return !Cmp()(this->mKey, oth.mKey) && !Cmp()(oth.mKey, this->mKey);
     }
 
-    void set(T const & key) {
+    void set(T const &key) {
         mKey = key;
         createChilds();
     }
 
-    const T & get() const {
+    const T &get() const {
         return mKey;
     }
 
-    const NodeClass * getChilds() const {
+    const NodeClass *getChilds() const {
         return mChilds;
     }
 
-    NodeClass * getChilds() {
+    NodeClass *getChilds() {
         createChilds();
         return mChilds;
     }
@@ -88,71 +88,71 @@ private:
     }
 
     NodeItem(NodeItem const &);
-    NodeItem & operator=(NodeItem const &);
+    NodeItem &operator=(NodeItem const &);
 
 private:
     const T mEndSymbol;
     T mKey;
-    NodeClass * mChilds;
+    NodeClass *mChilds;
 };
 
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         typename Items> class EndNodeItem: public NodeItem<T, V, Cmp, Items>
+         typename Items > class EndNodeItem: public NodeItem<T, V, Cmp, Items>
 {
 private:
     typedef NodeItem<T, V, Cmp, Items> ParentClass;
 
 public:
-    EndNodeItem(const T & endSymbol, T const & key) 
-     : ParentClass(endSymbol, key)
+    EndNodeItem(const T &endSymbol, T const &key)
+        : ParentClass(endSymbol, key)
     {}
 
-    EndNodeItem(const T & endSymbol, T const & key, V const & value) 
-     : ParentClass(endSymbol, key),
-       mValue(value)
+    EndNodeItem(const T &endSymbol, T const &key, V const &value)
+        : ParentClass(endSymbol, key),
+          mValue(value)
     {}
 
-    void set(T const & key, V const & value) {
+    void set(T const &key, V const &value) {
         ParentClass::set(key);
         mValue = value;
     }
 
-    const V & getValue() const {
+    const V &getValue() const {
         return mValue;
     }
 
-    V & getValue() {
+    V &getValue() {
         return mValue;
     }
 
 private:
     EndNodeItem(EndNodeItem const &);
-    EndNodeItem & operator=(EndNodeItem const &);
+    EndNodeItem &operator=(EndNodeItem const &);
 
 private:
     V mValue;
 };
 
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         typename Items> class NodeItemPtrCompare
+         typename Items > class NodeItemPtrCompare
 {
 private:
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
 
 public:
-    bool operator()(const NodeItemClass * v1, const NodeItemClass * v2) {
+    bool operator()(const NodeItemClass *v1, const NodeItemClass *v2) {
         return *v1 < *v2;
     }
 };
 
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         typename Items> class Node
+         typename Items > class Node
 {
 private:
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
@@ -160,7 +160,7 @@ private:
     typedef Node<T, V, Cmp, Items> NodeClass;
 
 public:
-    Node(const T & eSymbol)
+    Node(const T &eSymbol)
         : mItems(eSymbol),
           mEndSymbol(eSymbol),
           mSize(0) {
@@ -189,15 +189,15 @@ public:
         return mSize;
     }
 
-    std::pair<V*, bool> insert(const T * key, V const & value) {
-        std::pair<V*, bool> r = insertData(key, value, 0);
+    std::pair<V *, bool> insert(const T *key, V const &value) {
+        std::pair<V *, bool> r = insertData(key, value, 0);
         if (r.second) {
             ++mSize;
         }
         return r;
     }
 
-    bool erase(const T * key) {
+    bool erase(const T *key) {
         bool finished = false;
         bool erased = erase(key, 0, finished);
         if (erased) {
@@ -206,30 +206,30 @@ public:
         return erased;
     }
 
-    const V * get(const T * key) const {
+    const V *get(const T *key) const {
         return get(key, 0);
     }
 
-    V * get(const T * key) {
+    V *get(const T *key) {
         return get(key, 0);
     }
 
-    bool hasKey(const T * key) const {
+    bool hasKey(const T *key) const {
         return hasKey(key, 0);
     }
 
-    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
+    void startsWith(const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
         std::vector<T> keySoFar;
         startsWith(keySoFar, key, values, count, 0);
     }
 
     template <typename CB>
-    void traverse(CB const & cb) const {
+    void traverse(CB const &cb) const {
         std::vector<T> v;
         traverse(v, cb);
     }
 
-    NodeItemClass * createNodeItem(T const & k) {
+    NodeItemClass *createNodeItem(T const &k) {
         if (k == mEndSymbol) {
             return new EndNodeItemClass(mEndSymbol, k);
         } else {
@@ -238,16 +238,17 @@ public:
     }
 
     template <typename KV>
-    class IteratorBase {
+    class IteratorBase
+    {
     public:
-        IteratorBase(NodeClass * node) {
+        IteratorBase(NodeClass *node) {
             pushNode(node);
             next();
         }
 
         void next() {
             while (!mNodeStack.empty()) {
-                NodeClass * currentNode = mNodeStack.top();
+                NodeClass *currentNode = mNodeStack.top();
                 ItemsContainerIter iterEnd = currentNode->mItems.end();
                 ItemsContainerIter iter = mIterStack.top();
 
@@ -257,11 +258,11 @@ public:
 
                 for (; iter != iterEnd; ++iter) {
                     if (*iter) {
-                        NodeItemClass & item = *(NodeItemClass *) *iter;
+                        NodeItemClass &item = *(NodeItemClass *) * iter;
                         if (item == currentNode->endSymbol()) {
                             mKeyStack.push_back(item.get());
                             mKeyValuePair.first = &(mKeyStack[0]);
-                            mKeyValuePair.second = &(((EndNodeItemClass&)item).getValue());
+                            mKeyValuePair.second = &(((EndNodeItemClass &)item).getValue());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
                             return;
@@ -290,7 +291,7 @@ public:
         KeyValuePair mKeyValuePair;
 
     protected:
-        void pushNode(NodeClass * node) {
+        void pushNode(NodeClass *node) {
             if (node) {
                 mNodeStack.push(node);
                 mIterStack.push(node->mItems.begin());
@@ -299,30 +300,31 @@ public:
         }
     };
 
-    class ConstIterator : public IteratorBase<std::pair<const T *, const V *> > {
+    class ConstIterator : public IteratorBase<std::pair<const T *, const V *> >
+    {
     private:
         typedef IteratorBase<std::pair<const T *, const V *> > IteratorParent;
         typedef typename IteratorParent::KeyValuePair KeyValuePair;
-    
+
     public:
-        ConstIterator(const NodeClass * node) 
-            : IteratorParent(const_cast<NodeClass *>(node)) 
+        ConstIterator(const NodeClass *node)
+            : IteratorParent(const_cast<NodeClass *>(node))
         {}
 
-        const KeyValuePair & operator*() const {
+        const KeyValuePair &operator*() const {
             return this->mKeyValuePair;
         }
 
-        const KeyValuePair * operator->() const {
+        const KeyValuePair *operator->() const {
             return &this->mKeyValuePair;
         }
 
-        bool operator==(ConstIterator const & oth) const {
+        bool operator==(ConstIterator const &oth) const {
             return this->mNodeStack == oth.mNodeStack &&
                    this->mIterStack == oth.mIterStack;
         }
 
-        bool operator!=(ConstIterator const & oth) const {
+        bool operator!=(ConstIterator const &oth) const {
             return !(*this == oth);
         }
 
@@ -336,36 +338,37 @@ public:
             return iter;
         }
 
-        ConstIterator & operator++() {
+        ConstIterator &operator++() {
             this->next();
             return *this;
         }
     };
 
-    class Iterator : public IteratorBase<std::pair<const T *, V *> > {
+    class Iterator : public IteratorBase<std::pair<const T *, V *> >
+    {
     private:
         typedef IteratorBase<std::pair<const T *, V *> > IteratorParent;
         typedef typename IteratorParent::KeyValuePair KeyValuePair;
 
     public:
-        Iterator(NodeClass * node) 
-            : IteratorParent(node) 
+        Iterator(NodeClass *node)
+            : IteratorParent(node)
         {}
 
-        KeyValuePair & operator*() {
+        KeyValuePair &operator*() {
             return this->mKeyValuePair;
         }
 
-        KeyValuePair * operator->() {
+        KeyValuePair *operator->() {
             return &(this->mKeyValuePair);
         }
 
-        bool operator==(Iterator const & oth) const {
+        bool operator==(Iterator const &oth) const {
             return this->mNodeStack == oth.mNodeStack &&
                    this->mIterStack == oth.mIterStack;
         }
 
-        bool operator!=(Iterator const & oth) const {
+        bool operator!=(Iterator const &oth) const {
             return !(*this == oth);
         }
 
@@ -380,7 +383,7 @@ public:
             return iter;
         }
 
-        Iterator & operator++() {
+        Iterator &operator++() {
             this->next();
             return *this;
         }
@@ -404,22 +407,22 @@ public:
 
 private:
     Node(Node const &);
-    Node & operator=(Node const &);
+    Node &operator=(Node const &);
 
-    static void deleteItem(NodeItemClass * item) {
+    static void deleteItem(NodeItemClass *item) {
         delete item;
     }
 
     template <typename CB>
-    void traverse(std::vector<T> & key, CB const & cb) const {
+    void traverse(std::vector<T> & key, CB const &cb) const {
         ItemsContainerConsIter iterEnd = mItems.end();
 
         for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd; ++iter) {
             if (*iter) {
-                NodeItemClass & item = *(NodeItemClass *) *iter;
+                NodeItemClass &item = *(NodeItemClass *) * iter;
                 if (item == mEndSymbol) {
                     key.push_back(item.get());
-                    cb((const T *)&key[0], ((const EndNodeItemClass&)item).getValue());
+                    cb((const T *)&key[0], ((const EndNodeItemClass &)item).getValue());
                     key.pop_back();
                 } else {
                     key.push_back(item.get());
@@ -430,14 +433,14 @@ private:
         }
     }
 
-    void startsWith(std::vector<T> & keySoFar, const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
-        
+    void startsWith(std::vector<T> & keySoFar, const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
+
         if (key[i] == mEndSymbol) {
             accumulate(keySoFar, values, count);
             return;
         }
 
-        const NodeItemClass * item = mItems.getItem(key[i]);
+        const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return;
         } else if (*item == key[i]) {
@@ -450,11 +453,11 @@ private:
         ItemsContainerConsIter iterEnd = mItems.end();
         for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
-                const NodeItemClass & item = *(const NodeItemClass *)*iter;
+                const NodeItemClass &item = *(const NodeItemClass *) * iter;
                 if (item == mEndSymbol) {
                     std::vector<T> result;
                     result.assign(key.begin(), key.end());
-                    values.push_back(std::make_pair(result, ((const EndNodeItemClass&)item).getValue()));
+                    values.push_back(std::make_pair(result, ((const EndNodeItemClass &)item).getValue()));
                     --count;
                 } else {
                     key.push_back(item.get());
@@ -465,8 +468,8 @@ private:
         }
     }
 
-    const V * get(const T * key, int i) const {
-        const NodeItemClass * item = mItems.getItem(key[i]);
+    const V *get(const T *key, int i) const {
+        const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
         }
@@ -479,8 +482,8 @@ private:
         }
     }
 
-    V * get(const T * key, int i) {
-        NodeItemClass * item = mItems.getItem(key[i]);
+    V *get(const T *key, int i) {
+        NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
         }
@@ -493,8 +496,8 @@ private:
         }
     }
 
-    bool hasKey(const T * key, int i) const {
-        const NodeItemClass * item = mItems.getItem(key[i]);
+    bool hasKey(const T *key, int i) const {
+        const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return false;
         }
@@ -508,18 +511,18 @@ private:
         }
     }
 
-    std::pair<V*, bool> insertData(const T * key, V const & value, int i) {
-	std::pair<V*, bool> result(0, false);
+    std::pair<V *, bool> insertData(const T *key, V const &value, int i) {
+        std::pair<V *, bool> result(0, false);
         std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
-        NodeItemClass * item = itemPair.first;
+        NodeItemClass *item = itemPair.first;
         if (itemPair.second) {
-            result.first = &(((EndNodeItemClass*)item)->getValue());
+            result.first = &(((EndNodeItemClass *)item)->getValue());
             return result;
         }
 
         if (key[i] == mEndSymbol) {
-            ((EndNodeItemClass*)item)->set(key[i], value);  
-            result.first = &(((EndNodeItemClass*)item)->getValue());
+            ((EndNodeItemClass *)item)->set(key[i], value);
+            result.first = &(((EndNodeItemClass *)item)->getValue());
             result.second = true;
         } else if (*item == key[i]) {
             return item->getChilds()->insertData(key, value, ++i);
@@ -527,9 +530,9 @@ private:
         return result;
     }
 
-    bool erase(const T * key, int i, bool & finished) {
+    bool erase(const T *key, int i, bool &finished) {
         bool erased = false;
-        NodeItemClass * item = mItems.getItem(key[i]);
+        NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return erased;
         }
@@ -547,7 +550,7 @@ private:
             }
             erased = true;
         } else {
-            erased = item->getChilds()->erase(key, i+1, finished);
+            erased = item->getChilds()->erase(key, i + 1, finished);
             if (erased && !finished) {
                 int count = 0;
                 ItemsContainerIter iterEnd = mItems.end();
@@ -589,10 +592,10 @@ private:
  * @tparam Cmp Comparison functor
  * @tparam Max Maximum element that a Trie node can have
  */
-template<typename T,
+template < typename T,
          typename V,
          typename Cmp,
-         int Max = 256> class VectorItems
+         int Max = 256 > class VectorItems
 {
 public:
     typedef NodeItem<T, V, Cmp, VectorItems<T, V, Cmp, Max> > Item;
@@ -602,13 +605,13 @@ public:
     typedef Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > NodeClass;
 
 public:
-    VectorItems(T const & endSymbol, NodeClass * node = 0)
+    VectorItems(T const &endSymbol, NodeClass *node = 0)
         : mEndSymbol(endSymbol),
           mItems(Max, (Item *)0),
           mNode(node)
     {}
 
-    void setNode(NodeClass * node) {
+    void setNode(NodeClass *node) {
         mNode = node;
     }
 
@@ -632,8 +635,8 @@ public:
         std::fill(mItems.begin(), mItems.end(), (Item *)0);
     }
 
-    std::pair<Item *, bool> insertItem(T const & k) {
-        std::pair<Item *, bool> ret(0, false); 
+    std::pair<Item *, bool> insertItem(T const &k) {
+        std::pair<Item *, bool> ret(0, false);
         if (!mItems[k]) {
             assignItem(mNode->createNodeItem(k));
             ret.first = mItems[k];
@@ -646,7 +649,7 @@ public:
         return ret;
     }
 
-    bool eraseItem(T const & k) {
+    bool eraseItem(T const &k) {
         if (mItems[k]) {
             delete mItems[k];
             mItems[k] = (Item *)0;
@@ -658,22 +661,22 @@ public:
 
     // In case key symbol should be stored in a different index
     // derive from this class and override getItem and assignItem
-    Item * getItem(T const & k) {
+    Item *getItem(T const &k) {
         return mItems[k];
     }
 
-    const Item * getItem(T const & k) const {
+    const Item *getItem(T const &k) const {
         return mItems[k];
     }
 
-    void assignItem(Item * i) {
+    void assignItem(Item *i) {
         mItems[i->get()] = i;
     }
 
 private:
     const T mEndSymbol;
     Items mItems;
-    NodeClass * mNode;
+    NodeClass *mNode;
 };
 
 /*!
@@ -687,9 +690,9 @@ private:
  * @tparam V Type of the value that the key will be representing
  * @tparam Cmp Comparison functor
  */
-template<typename T,
+template < typename T,
          typename V,
-         typename Cmp> class SetItems
+         typename Cmp > class SetItems
 {
 public:
     typedef NodeItem<T, V, Cmp, SetItems<T, V, Cmp> > Item;
@@ -699,19 +702,19 @@ public:
     typedef Node<T, V, Cmp, SetItems<T, V, Cmp> > NodeClass;
 
 public:
-    SetItems(T const & endSymbol, NodeClass * node = 0)
+    SetItems(T const &endSymbol, NodeClass *node = 0)
         : mEndSymbol(endSymbol),
           mNode(node)
     {}
 
-    void setNode(NodeClass * node) {
+    void setNode(NodeClass *node) {
         mNode = node;
     }
 
     iterator begin() {
         return mItems.begin();
     }
-    
+
     const_iterator begin() const {
         return mItems.begin();
     }
@@ -728,16 +731,16 @@ public:
         mItems.clear();
     }
 
-    std::pair<Item *, bool> insertItem(T const & k) {
-        std::pair<Item *, bool> ret(0, false); 
+    std::pair<Item *, bool> insertItem(T const &k) {
+        std::pair<Item *, bool> ret(0, false);
         Item tmp(mEndSymbol, k);
         iterator iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
-            Item * v = mNode->createNodeItem(k);
+            Item *v = mNode->createNodeItem(k);
             mItems.insert(v);
             ret.first = v;
         } else {
-            ret.first = (Item*) *iter;
+            ret.first = (Item *) * iter;
             if (k == mEndSymbol) {
                 ret.second = true;
             }
@@ -745,7 +748,7 @@ public:
         return ret;
     }
 
-    bool eraseItem(T const & k) {
+    bool eraseItem(T const &k) {
         Item tmp(mEndSymbol, k);
         iterator iter = mItems.find(&tmp);
         if (iter != mItems.end()) {
@@ -757,30 +760,30 @@ public:
         }
     }
 
-    const Item * getItem(T const & k) const {
+    const Item *getItem(T const &k) const {
         Item tmp(mEndSymbol, k);
 
         iterator iter = const_cast<SetItems *>(this)->mItems.find(&tmp);
         if (iter == mItems.end()) {
             return 0;
         }
-        return (const Item *) (*iter);
+        return (const Item *)(*iter);
     }
 
-    Item * getItem(T const & k) {
+    Item *getItem(T const &k) {
         Item tmp(mEndSymbol, k);
 
         iterator iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
             return 0;
         }
-        return (Item *) (*iter);
+        return (Item *)(*iter);
     }
 
 private:
     const T mEndSymbol;
     Items mItems;
-    NodeClass * mNode;
+    NodeClass *mNode;
 };
 
 /*!
@@ -805,7 +808,7 @@ private:
  * @tparam T Type for each element in the key
  * @tparam V Type of the value that the key will be representing
  * @tparam Cmp Comparison functor
- * @tparam Items The data structure that represents each node in the Trie. 
+ * @tparam Items The data structure that represents each node in the Trie.
  *               Items can be rtv::SetItems<T, V, Cmp> or rtv::VectorItems<T, V, Cmp, Max>,
  *               Max is the integer representing number of elements in each Trie node.
  *
@@ -834,7 +837,7 @@ private:
  * int main(int argc, char ** argv) {
  *
  *     rtv::Trie<char, std::string> dictionary('$');
- *     
+ *
  *     // adding key value pair to the Trie
  *     if (dictionary.insert("karma$", "Destiny or fate, following as effect from cause")) {
  *         std::cout << "added karma" << std::endl;
@@ -859,7 +862,7 @@ private:
  * int main(int argc, char ** argv) {
  *
  *     rtv::Trie<char, std::string> dictionary('$');
- *     
+ *
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
  *
  *     if (dictionary.hasKey("karma$")) {
@@ -885,7 +888,7 @@ private:
  * int main(int argc, char ** argv) {
  *
  *     rtv::Trie<char, std::string> dictionary('$');
- *     
+ *
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
  *
  *     typedef std::vector< std::pair < std::vector<char> , std::string &> > TrieResult;
@@ -955,7 +958,7 @@ private:
  * int main(int argc, char ** argv) {
  *
  *     rtv::Trie<char, std::string> dictionary('\0');
- *     
+ *
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
  *
  *     rtv::Trie<char, std::string>::Iterator iter = dictionary.begin();
@@ -971,10 +974,10 @@ private:
  * @endcode
 
  */
-template<typename T,
+template < typename T,
          typename V,
-         typename Cmp=std::less<T>,
-         typename Items=SetItems<T, V, Cmp> > class Trie
+         typename Cmp = std::less<T>,
+         typename Items = SetItems<T, V, Cmp> > class Trie
 {
 public:
     typedef typename Node<T, V, Cmp, Items>::Iterator Iterator;
@@ -984,7 +987,7 @@ public:
     /*!
      * @param endSymbol The symbol which marks the end of key input
      */
-    Trie(const T & endSymbol)
+    Trie(const T &endSymbol)
         : mRoot(endSymbol)
     {}
 
@@ -994,7 +997,7 @@ public:
      * @param value The value that is to be set with the key
      * @return An std::pair with pair::first set to a pointer points to the value and pair::second to true is key is newly inserted, false otherwise
      */
-    std::pair<V *, bool> insert(const T * key, V const & value) {
+    std::pair<V *, bool> insert(const T *key, V const &value) {
         return mRoot.insert(key, value);
     }
 
@@ -1003,7 +1006,7 @@ public:
      * @param key Key which should be erased, should be terminated by 'end' symbol
      * @return true if the given key is erased in to the Trie, false otherwise
      */
-    bool erase(const T * key) {
+    bool erase(const T *key) {
         return mRoot.erase(key);
     }
 
@@ -1012,7 +1015,7 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Constant pointer to value for the given key, 0 on failure
      */
-    const V * get(const T * key) const {
+    const V *get(const T *key) const {
         return mRoot.get(key);
     }
 
@@ -1021,7 +1024,7 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Pointer to value for the given key, 0 on failure
      */
-    V * get(const T * key) {
+    V *get(const T *key) {
         return mRoot.get(key);
     }
 
@@ -1032,7 +1035,7 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Reference to value for the given key
      */
-    V & operator[](const T * key) {
+    V &operator[](const T *key) {
         std::pair<V *, bool> result = insert(key, V());
         return *(result.first);
     }
@@ -1042,7 +1045,7 @@ public:
      * @param key Key to be searched for, should be terminated by 'end' symol
      * @return true if the key is present
      */
-    bool hasKey(const T * key) const {
+    bool hasKey(const T *key) const {
         return mRoot.hasKey(key);
     }
 
@@ -1075,17 +1078,17 @@ public:
      * @param values Vector of key, value pair
      * @param count Maximum number of elements that should be returned
      */
-    void startsWith(const T * key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) const {
+    void startsWith(const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) const {
         mRoot.startsWith(key, values, count);
     }
 
     /*!
      * Traverse through the Trie
-     * @param c The functor class which will be called when a node is reached. Functor takes two arguments, 
+     * @param c The functor class which will be called when a node is reached. Functor takes two arguments,
      *          first argument is const T * and second V &
      */
     template <typename CB>
-    void traverse(CB const & c) const {
+    void traverse(CB const &c) const {
         mRoot.traverse(c);
     }
 
@@ -1131,7 +1134,7 @@ public:
 
 private:
     Trie(Trie const &);
-    Trie & operator=(Trie const &);
+    Trie &operator=(Trie const &);
 
 private:
     Node<T, V, Cmp, Items> mRoot;
