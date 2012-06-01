@@ -570,8 +570,6 @@ private:
     }
 
 private:
-    friend class Iterator;
-
     typedef typename Items::iterator ItemsContainerIter;
     typedef typename Items::const_iterator ItemsContainerConsIter;
 
