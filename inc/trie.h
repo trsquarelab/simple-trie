@@ -512,7 +512,7 @@ private:
     }
 
     std::pair<V *, bool> insertData(const T *key, V const &value, int i) {
-        std::pair<V *, bool> result(0, false);
+        std::pair<V *, bool> result((V *)0, false);
         std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
         NodeItemClass *item = itemPair.first;
         if (itemPair.second) {
@@ -636,7 +636,7 @@ public:
     }
 
     std::pair<Item *, bool> insertItem(T const &k) {
-        std::pair<Item *, bool> ret(0, false);
+        std::pair<Item *, bool> ret((Item *)0, false);
         if (!getItem(k)) {
             assignItem(k, mNode->createNodeItem(k));
             ret.first = getItem(k);
@@ -731,7 +731,7 @@ public:
     }
 
     std::pair<Item *, bool> insertItem(T const &k) {
-        std::pair<Item *, bool> ret(0, false);
+        std::pair<Item *, bool> ret((Item*)0, false);
         Item tmp(mEndSymbol, k);
         iterator iter = mItems.find(&tmp);
         if (iter == mItems.end()) {
