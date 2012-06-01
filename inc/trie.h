@@ -161,15 +161,14 @@ private:
 
 public:
     Node(const T & eSymbol)
-        : mItems(0),
+        : mItems(eSymbol),
           mEndSymbol(eSymbol),
           mSize(0) {
-        mItems = new Items(eSymbol, this);
+        mItems.setNode(this);
     }
 
     ~Node() {
         clear();
-        delete mItems;
     }
 
     T endSymbol() const {
@@ -177,8 +176,8 @@ public:
     }
 
     void clear() {
-        std::for_each(mItems->begin(), mItems->end(), deleteItem);
-        mItems->clear();
+        std::for_each(mItems.begin(), mItems.end(), deleteItem);
+        mItems.clear();
         mSize = 0;
     }
 
@@ -249,7 +248,7 @@ public:
         void next() {
             while (!mNodeStack.empty()) {
                 NodeClass * currentNode = mNodeStack.top();
-                ItemsContainerIter iterEnd = currentNode->mItems->end();
+                ItemsContainerIter iterEnd = currentNode->mItems.end();
                 ItemsContainerIter iter = mIterStack.top();
 
                 mIterStack.pop();
@@ -273,7 +272,7 @@ public:
                             pushNode(item.getChilds());
                             currentNode = mNodeStack.top();
                             iter = mIterStack.top();
-                            iterEnd = currentNode->mItems->end();
+                            iterEnd = currentNode->mItems.end();
                             break;
                         }
                     }
@@ -294,7 +293,7 @@ public:
         void pushNode(NodeClass * node) {
             if (node) {
                 mNodeStack.push(node);
-                mIterStack.push(node->mItems->begin());
+                mIterStack.push(node->mItems.begin());
                 mKeyStack.push_back(node->endSymbol());
             }
         }
@@ -413,9 +412,9 @@ private:
 
     template <typename CB>
     void traverse(std::vector<T> & key, CB const & cb) const {
-        ItemsContainerConsIter iterEnd = mItems->end();
+        ItemsContainerConsIter iterEnd = mItems.end();
 
-        for (ItemsContainerConsIter iter = mItems->begin(); iter != iterEnd; ++iter) {
+        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd; ++iter) {
             if (*iter) {
                 NodeItemClass & item = *(NodeItemClass *) *iter;
                 if (item == mEndSymbol) {
@@ -438,7 +437,7 @@ private:
             return;
         }
 
-        NodeItemClass * item = mItems->getItem(key[i]);
+        const NodeItemClass * item = mItems.getItem(key[i]);
         if (!item) {
             return;
         } else if (*item == key[i]) {
@@ -448,8 +447,8 @@ private:
     }
 
     void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
-        ItemsContainerConsIter iterEnd = mItems->end();
-        for (ItemsContainerConsIter iter = mItems->begin(); iter != iterEnd && count > 0; ++iter) {
+        ItemsContainerConsIter iterEnd = mItems.end();
+        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
                 const NodeItemClass & item = *(const NodeItemClass *)*iter;
                 if (item == mEndSymbol) {
@@ -467,7 +466,7 @@ private:
     }
 
     const V * get(const T * key, int i) const {
-        const NodeItemClass * item = mItems->getItem(key[i]);
+        const NodeItemClass * item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
         }
@@ -481,7 +480,7 @@ private:
     }
 
     V * get(const T * key, int i) {
-        NodeItemClass * item = mItems->getItem(key[i]);
+        NodeItemClass * item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
         }
@@ -495,7 +494,7 @@ private:
     }
 
     bool hasKey(const T * key, int i) const {
-        const NodeItemClass * item = mItems->getItem(key[i]);
+        const NodeItemClass * item = mItems.getItem(key[i]);
         if (!item) {
             return false;
         }
@@ -511,7 +510,7 @@ private:
 
     std::pair<V*, bool> insertData(const T * key, V const & value, int i) {
 	std::pair<V*, bool> result(0, false);
-        std::pair<typename Items::Item *, bool> itemPair = mItems->insertItem(key[i]);
+        std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
         NodeItemClass * item = itemPair.first;
         if (itemPair.second) {
             result.first = &(((EndNodeItemClass*)item)->getValue());
@@ -530,20 +529,20 @@ private:
 
     bool erase(const T * key, int i, bool & finished) {
         bool erased = false;
-        NodeItemClass * item = mItems->getItem(key[i]);
+        NodeItemClass * item = mItems.getItem(key[i]);
         if (!item) {
             return erased;
         }
         if (key[i] == mEndSymbol && *item == mEndSymbol) {
             int count = 0;
-            ItemsContainerIter iterEnd = mItems->end();
-            for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd; ++iter) {
+            ItemsContainerIter iterEnd = mItems.end();
+            for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
                 if (*iter != 0) {
                     ++count;
                 }
             }
             if (count > 1) {
-                mItems->eraseItem(key[i]);
+                mItems.eraseItem(key[i]);
                 finished = true;
             }
             erased = true;
@@ -551,17 +550,17 @@ private:
             erased = item->getChilds()->erase(key, i+1, finished);
             if (erased && !finished) {
                 int count = 0;
-                ItemsContainerIter iterEnd = mItems->end();
-                for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd; ++iter) {
+                ItemsContainerIter iterEnd = mItems.end();
+                for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
                     if (*iter != 0) {
                         ++count;
                     }
                 }
                 if (count > 1) {
-                    mItems->eraseItem(key[i]);
+                    mItems.eraseItem(key[i]);
                     finished = true;
                 } else if (count == 1) {
-                    mItems->eraseItem(key[i]);
+                    mItems.eraseItem(key[i]);
                 }
 
             }
@@ -573,7 +572,7 @@ private:
     typedef typename Items::iterator ItemsContainerIter;
     typedef typename Items::const_iterator ItemsContainerConsIter;
 
-    Items * mItems;
+    Items mItems;
     const T mEndSymbol;
     unsigned int mSize;
 };
@@ -600,13 +599,18 @@ public:
     typedef std::vector<Item *> Items;
     typedef typename Items::iterator iterator;
     typedef typename Items::const_iterator const_iterator;
+    typedef Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > NodeClass;
 
 public:
-    VectorItems(T const & endSymbol, Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > * node)
+    VectorItems(T const & endSymbol, NodeClass * node = 0)
         : mEndSymbol(endSymbol),
           mItems(Max, (Item *)0),
           mNode(node)
     {}
+
+    void setNode(NodeClass * node) {
+        mNode = node;
+    }
 
     iterator begin() {
         return mItems.begin();
@@ -669,7 +673,7 @@ public:
 private:
     const T mEndSymbol;
     Items mItems;
-    Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > * mNode;
+    NodeClass * mNode;
 };
 
 /*!
@@ -692,12 +696,17 @@ public:
     typedef std::set<Item *, NodeItemPtrCompare<T, V, Cmp, SetItems<T, V, Cmp> > > Items;
     typedef typename Items::iterator iterator;
     typedef typename Items::const_iterator const_iterator;
+    typedef Node<T, V, Cmp, SetItems<T, V, Cmp> > NodeClass;
 
 public:
-    SetItems(T const & endSymbol, Node<T, V, Cmp, SetItems<T, V, Cmp> > * node)
+    SetItems(T const & endSymbol, NodeClass * node = 0)
         : mEndSymbol(endSymbol),
           mNode(node)
     {}
+
+    void setNode(NodeClass * node) {
+        mNode = node;
+    }
 
     iterator begin() {
         return mItems.begin();
@@ -751,7 +760,7 @@ public:
     const Item * getItem(T const & k) const {
         Item tmp(mEndSymbol, k);
 
-        iterator iter = mItems.find(&tmp);
+        iterator iter = const_cast<SetItems *>(this)->mItems.find(&tmp);
         if (iter == mItems.end()) {
             return 0;
         }
@@ -771,7 +780,7 @@ public:
 private:
     const T mEndSymbol;
     Items mItems;
-    Node<T, V, Cmp, SetItems<T, V, Cmp> > * mNode;
+    NodeClass * mNode;
 };
 
 /*!
