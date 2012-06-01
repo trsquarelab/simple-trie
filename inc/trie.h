@@ -592,7 +592,7 @@ private:
  * @tparam Cmp Comparison functor
  * @tparam Max Maximum element that a Trie node can have
  */
-template < typename T,
+template <typename T,
          typename V,
          typename Cmp,
          int Max = 256 > class VectorItems
@@ -605,10 +605,10 @@ public:
     typedef Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > NodeClass;
 
 public:
-    VectorItems(T const &endSymbol, NodeClass *node = 0)
+    VectorItems(T const &endSymbol)
         : mEndSymbol(endSymbol),
           mItems(Max, (Item *)0),
-          mNode(node)
+          mNode(0)
     {}
 
     void setNode(NodeClass *node) {
@@ -637,9 +637,9 @@ public:
 
     std::pair<Item *, bool> insertItem(T const &k) {
         std::pair<Item *, bool> ret(0, false);
-        if (!mItems[k]) {
-            assignItem(mNode->createNodeItem(k));
-            ret.first = mItems[k];
+        if (!getItem(k)) {
+            assignItem(k, mNode->createNodeItem(k));
+            ret.first = getItem(k);
         } else {
             ret.first = mItems[k];
             if (k == mEndSymbol) {
@@ -650,17 +650,16 @@ public:
     }
 
     bool eraseItem(T const &k) {
-        if (mItems[k]) {
-            delete mItems[k];
-            mItems[k] = (Item *)0;
+        Item * item = getItem(k);
+        if (item) {
+            delete item;
+            assignItem(k, (Item *)0);
             return true;
         } else {
             return false;
         }
     }
 
-    // In case key symbol should be stored in a different index
-    // derive from this class and override getItem and assignItem
     Item *getItem(T const &k) {
         return mItems[k];
     }
@@ -669,11 +668,11 @@ public:
         return mItems[k];
     }
 
-    void assignItem(Item *i) {
-        mItems[i->get()] = i;
+    void assignItem(T k, Item *i) {
+        mItems[k] = i;
     }
 
-private:
+protected:
     const T mEndSymbol;
     Items mItems;
     NodeClass *mNode;
@@ -702,9 +701,9 @@ public:
     typedef Node<T, V, Cmp, SetItems<T, V, Cmp> > NodeClass;
 
 public:
-    SetItems(T const &endSymbol, NodeClass *node = 0)
+    SetItems(T const &endSymbol)
         : mEndSymbol(endSymbol),
-          mNode(node)
+          mNode(0)
     {}
 
     void setNode(NodeClass *node) {
@@ -780,7 +779,7 @@ public:
         return (Item *)(*iter);
     }
 
-private:
+protected:
     const T mEndSymbol;
     Items mItems;
     NodeClass *mNode;

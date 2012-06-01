@@ -16,21 +16,22 @@ namespace
 {
 
 void test1();
-
 bool testCaseAdded = TrieTestCases::instance()->addTestCase(test1);
+
+typedef rtv::SetItems<char, std::string, TrieCompare > SetItemClass;
 
 void test1()
 {
     (void)testCaseAdded;
     std::cout << "Executing Test Case 1 ... ";
 
-    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary1('$');
+    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary1('$');
     TrieTestCases::instance()->testSuite(dictionary1);
 
-    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary2('#');
+    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary2('#');
     TrieTestCases::instance()->testSuite(dictionary2);
 
-    rtv::Trie<char, std::string, TrieCompare, rtv::SetItems<char, std::string, TrieCompare > > dictionary3('\0');
+    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary3('\0');
     TrieTestCases::instance()->testSuite(dictionary3);
 
     std::cout << "Succeeded" << std::endl;
