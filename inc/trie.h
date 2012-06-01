@@ -764,7 +764,7 @@ public:
         if (iter == mItems.end()) {
             return 0;
         }
-        return (Item *) (*iter);
+        return (const Item *) (*iter);
     }
 
     Item * getItem(T const & k) {

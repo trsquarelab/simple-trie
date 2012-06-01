@@ -134,10 +134,9 @@ public:
         TrieTestCases::testResult(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 
-    template <typename D>
-    std::string keyToString(D &aTrie, const char * key) {
+    std::string keyToString(char endSymbol, const char * key) {
         int i=0;
-        for (; key[i] != aTrie.endSymbol(); ++i) {
+        for (; key[i] != endSymbol; ++i) {
         }
         return std::string(key, i+1);
     }
@@ -170,7 +169,7 @@ public:
         // operator++()
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
             iter != ((const D &)aTrie).end(); ++iter, ++siter) {
-                std::string iterStr = keyToString(aTrie, iter->first);
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! \nExpected Key",
@@ -185,7 +184,7 @@ public:
         siter = copySamples.begin();
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
             iter != ((const D &)aTrie).end(); iter++, siter++) {
-                std::string iterStr = keyToString(aTrie, iter->first);
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
@@ -204,7 +203,7 @@ public:
         // operator++()
         for (typename D::Iterator iter = aTrie.begin();
             iter != aTrie.end(); ++iter, ++siter) {
-                std::string iterStr = keyToString(aTrie, iter->first);
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
@@ -219,7 +218,7 @@ public:
         siter = copySamples.begin();
         for (typename D::Iterator iter = aTrie.begin();
             iter != aTrie.end(); iter++, siter++) {
-                std::string iterStr = keyToString(aTrie, iter->first);
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length()-1);
                 testResult(siter->first.compare(iterStr) == 0,
                     "Error in Trie::Iterator traversal!!! Expected Key",
