@@ -96,7 +96,8 @@ public:
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
             char endSymbol = aTrie.endSymbol();
-            std::string key = iter->first + std::string(&endSymbol, 1);
+            std::string key = iter->first;
+            key.append(&endSymbol, 1);
             TrieTestCases::testAndAddToTrie(aTrie, key, iter->second);
         }
     }
@@ -244,7 +245,7 @@ public:
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
        	    std::string key = iter->first;
-            key.append(std::string(&endSymbol, 1));
+            key.append(&endSymbol, 1);
             testKeyInTrie(aTrie, key, true);
         }
         std::string negKey("something which is not in the Trie");
@@ -299,10 +300,12 @@ public:
              iter != mSampleValues.end(); ++iter) {
        	    std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
-            testResult(aTrie[key.c_str()] == *aTrie.get(key.c_str()), "operator[] != Trie::get()!!!");
+            bool res = aTrie[key.c_str()].compare(*aTrie.get(key.c_str())) == 0;
+            testResult(res, "operator[] != Trie::get()!!!");
         }
         aTrie[negKey.c_str()] = "test";
-        testResult(aTrie[negKey.c_str()] == *aTrie.get(negKey.c_str()), "operator[] != Trie::get()!!!");
+        bool res = aTrie[negKey.c_str()].compare(*aTrie.get(negKey.c_str())) == 0;
+        testResult(res, "operator[] != Trie::get()!!!");
         aTrie.erase(negKey.c_str());
 
         //Test Trie::hasKey functionality

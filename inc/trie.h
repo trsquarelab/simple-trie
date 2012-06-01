@@ -304,7 +304,7 @@ public:
     private:
         typedef IteratorBase<std::pair<const T *, const V *> > IteratorParent;
         typedef typename IteratorParent::KeyValuePair KeyValuePair;
-
+    
     public:
         ConstIterator(const NodeClass * node) 
             : IteratorParent(const_cast<NodeClass *>(node)) 
