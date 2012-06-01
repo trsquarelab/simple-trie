@@ -413,14 +413,14 @@ private:
 
     template <typename CB>
     void traverse(std::vector<T> & key, CB const & cb) const {
-        ItemsContainerIter iterEnd = mItems->end();
+        ItemsContainerConsIter iterEnd = mItems->end();
 
-        for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd; ++iter) {
+        for (ItemsContainerConsIter iter = mItems->begin(); iter != iterEnd; ++iter) {
             if (*iter) {
                 NodeItemClass & item = *(NodeItemClass *) *iter;
                 if (item == mEndSymbol) {
                     key.push_back(item.get());
-                    cb((const T *)&key[0], ((EndNodeItemClass&)item).getValue());
+                    cb((const T *)&key[0], ((const EndNodeItemClass&)item).getValue());
                     key.pop_back();
                 } else {
                     key.push_back(item.get());
@@ -448,14 +448,14 @@ private:
     }
 
     void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
-        ItemsContainerIter iterEnd = mItems->end();
-        for (ItemsContainerIter iter = mItems->begin(); iter != iterEnd && count > 0; ++iter) {
+        ItemsContainerConsIter iterEnd = mItems->end();
+        for (ItemsContainerConsIter iter = mItems->begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
-                NodeItemClass & item = *(NodeItemClass *)*iter;
+                const NodeItemClass & item = *(const NodeItemClass *)*iter;
                 if (item == mEndSymbol) {
                     std::vector<T> result;
                     result.assign(key.begin(), key.end());
-                    values.push_back(std::make_pair(result, ((EndNodeItemClass&)item).getValue()));
+                    values.push_back(std::make_pair(result, ((const EndNodeItemClass&)item).getValue()));
                     --count;
                 } else {
                     key.push_back(item.get());
@@ -467,37 +467,35 @@ private:
     }
 
     const V * get(const T * key, int i) const {
-        NodeItemClass * itemp = mItems->getItem(key[i]);
-        if (!itemp) {
+        const NodeItemClass * item = mItems->getItem(key[i]);
+        if (!item) {
             return 0;
         }
-        NodeItemClass & item = *itemp;
-        if (key[i] == mEndSymbol && item == mEndSymbol) {
-            return &(((EndNodeItemClass&)item).getValue());
-        } else if (item == key[i]) {
-            return item.getChilds()->get(key, ++i);
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            return &(((const EndNodeItemClass *)item)->getValue());
+        } else if (*item == key[i]) {
+            return item->getChilds()->get(key, ++i);
         } else {
             return 0;
         }
     }
 
     V * get(const T * key, int i) {
-        NodeItemClass * itemp = mItems->getItem(key[i]);
-        if (!itemp) {
+        NodeItemClass * item = mItems->getItem(key[i]);
+        if (!item) {
             return 0;
         }
-        NodeItemClass & item = *itemp;
-        if (key[i] == mEndSymbol && item == mEndSymbol) {
-            return &(((EndNodeItemClass&)item).getValue());
-        } else if (item == key[i]) {
-            return item.getChilds()->get(key, ++i);
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            return &(((EndNodeItemClass *)item)->getValue());
+        } else if (*item == key[i]) {
+            return item->getChilds()->get(key, ++i);
         } else {
             return 0;
         }
     }
 
     bool hasKey(const T * key, int i) const {
-        NodeItemClass * item = mItems->getItem(key[i]);
+        const NodeItemClass * item = mItems->getItem(key[i]);
         if (!item) {
             return false;
         }
@@ -575,7 +573,7 @@ private:
     friend class Iterator;
 
     typedef typename Items::iterator ItemsContainerIter;
-    typedef typename Items::const_iterator ItemsContainerConster;
+    typedef typename Items::const_iterator ItemsContainerConsIter;
 
     Items * mItems;
     const T mEndSymbol;
@@ -659,6 +657,10 @@ public:
     // In case key symbol should be stored in a different index
     // derive from this class and override getItem and assignItem
     Item * getItem(T const & k) {
+        return mItems[k];
+    }
+
+    const Item * getItem(T const & k) const {
         return mItems[k];
     }
 
@@ -746,6 +748,16 @@ public:
         } else {
             return false;
         }
+    }
+
+    const Item * getItem(T const & k) const {
+        Item tmp(mEndSymbol, k);
+
+        iterator iter = mItems.find(&tmp);
+        if (iter == mItems.end()) {
+            return 0;
+        }
+        return (Item *) (*iter);
     }
 
     Item * getItem(T const & k) {
