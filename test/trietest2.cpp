@@ -21,6 +21,28 @@ void test2();
 bool testCaseAdded = TrieTestCases::instance()->addTestCase(test2);
 
 // key to vector index converter
+// includes alphabets, space and end symbol
+class CaseSensitiveAlphaToIndex
+{
+public:
+    unsigned int operator()(const char & c) const {
+        unsigned int index = 0;
+        if (c == '\0') {
+            index = 52;
+        } else if (c == ' ') {
+            index = 53;
+        } else if (c >= 'A' && c <= 'Z') {
+            index = c - 'A';
+        } else if (c >= 'a' && c <= 'z') {
+            index = 26 + c - 'a';
+        } else {
+            throw std::exception();
+        }
+        return index;
+    }
+};
+
+// key to vector index converter
 // case insensitive and includes alphabets, space and end symbol
 class AlphaToIndex
 {
@@ -61,6 +83,9 @@ void test2()
 
     rtv::Trie<char, std::string, TrieCaseInsensitiveCompare, rtv::VectorItems<char, std::string, TrieCaseInsensitiveCompare, 28, AlphaToIndex> > dictionary4('\0');
     TrieTestCases::instance()->testSuite(dictionary4);
+
+    rtv::Trie<char, std::string, std::less<char>, rtv::VectorItems<char, std::string, std::less<char>, 54, CaseSensitiveAlphaToIndex> > dictionary5('\0');
+    TrieTestCases::instance()->testSuite(dictionary5);
 
     std::cout << "Succeeded" << std::endl;
 }

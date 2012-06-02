@@ -443,7 +443,7 @@ private:
         const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return;
-        } else if (*item == key[i]) {
+        } else {
             keySoFar.push_back(item->get());
             item->getChilds()->startsWith(keySoFar, key, values, count, ++i);
         }
@@ -472,13 +472,10 @@ private:
         const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
-        }
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
             return &(((const EndNodeItemClass *)item)->getValue());
-        } else if (*item == key[i]) {
-            return item->getChilds()->get(key, ++i);
         } else {
-            return 0;
+            return item->getChilds()->get(key, ++i);
         }
     }
 
@@ -486,13 +483,10 @@ private:
         NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return 0;
-        }
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
             return &(((EndNodeItemClass *)item)->getValue());
-        } else if (*item == key[i]) {
-            return item->getChilds()->get(key, ++i);
         } else {
-            return 0;
+            return item->getChilds()->get(key, ++i);
         }
     }
 
@@ -500,14 +494,10 @@ private:
         const NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
             return false;
-        }
-
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
             return true;
-        } else if (*item == key[i]) {
-            return item->getChilds()->hasKey(key, ++i);
         } else {
-            return false;
+            return item->getChilds()->hasKey(key, ++i);
         }
     }
 
@@ -519,12 +509,13 @@ private:
             result.first = &(((EndNodeItemClass *)item)->getValue());
             return result;
         }
-
-        if (key[i] == mEndSymbol) {
+        if (!item) {
+            return result;
+        } else if (key[i] == mEndSymbol) {
             ((EndNodeItemClass *)item)->set(key[i], value);
             result.first = &(((EndNodeItemClass *)item)->getValue());
             result.second = true;
-        } else if (*item == key[i]) {
+        } else {
             return item->getChilds()->insertData(key, value, ++i);
         }
         return result;
