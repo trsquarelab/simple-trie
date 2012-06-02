@@ -158,6 +158,45 @@ public:
         //Test Trie::insert functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
 
+        //Test Trie::get functionality
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string key = iter->first;
+            key.append(&endSymbol, 1);
+            testResult((aTrie.get(key.c_str()))->compare(iter->second) == 0, "Trie::get() failed!!!");
+
+            int rn = std::rand() % iter->first.length();
+            if (!rn) {
+                rn = 1;
+            }
+            key = iter->first.substr(0, rn);
+            key.append(&endSymbol, 1);
+
+            if (!isPresent(key)) {
+                testResult(aTrie.get(key.c_str()) == 0, "For negative test Trie::get() failed!!! Found key", key.c_str());
+            }
+        }
+
+        //Test Trie::get() const functionality
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string key = iter->first;
+            key.append(&endSymbol, 1);
+            testResult((((D const &)aTrie).get(key.c_str()))->compare(iter->second) == 0, "Trie::get() failed!!!");
+
+            int rn = std::rand() % iter->first.length();
+            if (!rn) {
+                rn = 1;
+            }
+            key = iter->first.substr(0, rn);
+            key.append(&endSymbol, 1);
+
+            if (!isPresent(key)) {
+                testResult(((D const &)aTrie).get(key.c_str()) == 0, "For negative test Trie::get() failed!!!");
+            }
+        }
+
+
         //Test Trie::size functionality
         testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
                    "Trie::size returned", aTrie.size(),
@@ -249,7 +288,19 @@ public:
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             testKeyInTrie(aTrie, key, true);
+
+            int rn = std::rand() % iter->first.length();
+            if (!rn) {
+                rn = 1;
+            }
+            key = iter->first.substr(0, rn);
+            key.append(&endSymbol, 1);
+
+            if (!isPresent(key)) {
+                testKeyInTrie(aTrie, key, false);
+            }
         }
+
         std::string negKey("something which is not in the Trie");
         negKey.append(std::string(&endSymbol, 1));
         TrieTestCases::testKeyInTrie(aTrie, negKey, false);
@@ -387,6 +438,16 @@ public:
                       message5 << std::endl;
             std::exit(1);
         }
+    }
+
+    bool isPresent(std::string const & key) {
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+                 if (iter->first.compare(key) == 0) {
+                     return true;
+                 }
+        }
+        return false;
     }
 
 private:

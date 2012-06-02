@@ -28,8 +28,9 @@ int main(int argc, char **argv)
         std::cout << "0 : To Exit" << std::endl;
         std::cout << "1 : Add a word " << std::endl;
         std::cout << "2 : Remove a word " << std::endl;
-        std::cout << "3 : Search a word (Enter starting letters)" << std::endl;
-        std::cout << "4 : List all words " << std::endl;
+        std::cout << "3 : Get a word " << std::endl;
+        std::cout << "4 : Search a word (Enter starting letters)" << std::endl;
+        std::cout << "5 : List all words " << std::endl;
         std::cout << "******************************************" << std::endl;
 
         std::cout << std::endl << "Enter Choice : ";
@@ -72,6 +73,20 @@ int main(int argc, char **argv)
             std::cout << "Enter the word : ";
             std::cin.ignore();
             std::cin.get(word, sizeof(word), '\n');
+            std::string * meaning = dictionary.get(word);
+            if (meaning) {
+                std::cout << word << " : " << meaning->c_str() << std::endl;
+            } else {
+                std::cout << "Could not find " << word << std::endl;
+            }
+            break;
+        }
+
+        case '4': {
+            char word[80];
+            std::cout << "Enter the word : ";
+            std::cin.ignore();
+            std::cin.get(word, sizeof(word), '\n');
             std::cout << "Searching ... ";
 
             std::vector< std::pair < std::vector<char> , std::string> > result;
@@ -90,7 +105,7 @@ int main(int argc, char **argv)
             }
             break;
         }
-        case '4': {
+        case '5': {
             std::cout << "*****************************************" << std::endl;
             rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.begin();
             rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iend = dictionary.end();
