@@ -581,6 +581,17 @@ private:
 };
 
 /*!
+ *
+ */
+template <typename T> class SymbolToIndexMapper
+{
+public:
+	unsigned int operator()(const T & c) const {
+		return static_cast<unsigned int>(c);
+	}
+};
+
+/*!
  * @brief Container representing each node in the Trie.
  *
  *
@@ -593,16 +604,17 @@ private:
  * @tparam Max Maximum element that a Trie node can have
  */
 template <typename T,
-         typename V,
-         typename Cmp,
-         int Max = 256 > class VectorItems
+          typename V,
+          typename Cmp,
+          int Max = 256,
+          typename M = SymbolToIndexMapper<T> > class VectorItems
 {
 public:
-    typedef NodeItem<T, V, Cmp, VectorItems<T, V, Cmp, Max> > Item;
+    typedef NodeItem<T, V, Cmp, VectorItems<T, V, Cmp, Max, M> > Item;
     typedef std::vector<Item *> Items;
     typedef typename Items::iterator iterator;
     typedef typename Items::const_iterator const_iterator;
-    typedef Node<T, V, Cmp, VectorItems<T, V, Cmp, Max> > NodeClass;
+    typedef Node<T, V, Cmp, VectorItems<T, V, Cmp, Max, M> > NodeClass;
 
 public:
     VectorItems(T const &endSymbol)
@@ -641,7 +653,7 @@ public:
             assignItem(k, mNode->createNodeItem(k));
             ret.first = getItem(k);
         } else {
-            ret.first = mItems[k];
+            ret.first = getItem(k);
             if (k == mEndSymbol) {
                 ret.second = true;
             }
@@ -661,21 +673,22 @@ public:
     }
 
     Item *getItem(T const &k) {
-        return mItems[k];
+        return mItems[mSymolToIndex(k)];
     }
 
     const Item *getItem(T const &k) const {
-        return mItems[k];
+        return mItems[mSymolToIndex(k)];
     }
 
     void assignItem(T k, Item *i) {
-        mItems[k] = i;
+        mItems[mSymolToIndex(k)] = i;
     }
 
 protected:
     const T mEndSymbol;
     Items mItems;
     NodeClass *mNode;
+	M mSymolToIndex;
 };
 
 /*!

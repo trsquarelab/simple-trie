@@ -305,8 +305,10 @@ public:
             bool res = aTrie[key.c_str()].compare(*aTrie.get(key.c_str())) == 0;
             testResult(res, "operator[] != Trie::get()!!!");
         }
+
         aTrie[negKey.c_str()] = "test";
-        bool res = aTrie[negKey.c_str()].compare(*aTrie.get(negKey.c_str())) == 0;
+        bool res = false;
+		res = aTrie[negKey.c_str()].compare(*aTrie.get(negKey.c_str())) == 0;
         testResult(res, "operator[] != Trie::get()!!!");
         aTrie.erase(negKey.c_str());
 
