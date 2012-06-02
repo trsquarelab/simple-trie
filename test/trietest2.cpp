@@ -26,17 +26,13 @@ class CaseSensitiveAlphaToIndex
 {
 public:
     unsigned int operator()(const char & c) const {
-        unsigned int index = 0;
-        if (c == '\0') {
+        unsigned int index = 53;
+        if (c == ' ') {
             index = 52;
-        } else if (c == ' ') {
-            index = 53;
         } else if (c >= 'A' && c <= 'Z') {
             index = c - 'A';
         } else if (c >= 'a' && c <= 'z') {
             index = 26 + c - 'a';
-        } else {
-            throw std::exception();
         }
         return index;
     }
@@ -48,17 +44,13 @@ class AlphaToIndex
 {
 public:
     unsigned int operator()(const char & c) const {
-        unsigned int index = 0;
-        if (c == '\0') {
+        unsigned int index = 27;
+        if (c == ' ') {
             index = 26;
-        } else if (c == ' ') {
-            index = 27;
         } else if (c >= 'A' && c <= 'Z') {
             index = c - 'A';
         } else if (c >= 'a' && c <= 'z') {
             index = c - 'a';
-        } else {
-            throw std::exception();
         }
         return index;
     }
