@@ -38,9 +38,8 @@ public:
     NodeItem(const T &endSymbol, T const &key)
         : mEndSymbol(endSymbol),
           mKey(key),
-          mChilds(0) {
-        createChilds();
-    }
+          mChilds(0)
+    {}
 
     virtual ~NodeItem() {
         delete mChilds;
@@ -64,7 +63,6 @@ public:
 
     void set(T const &key) {
         mKey = key;
-        createChilds();
     }
 
     const T &get() const {
@@ -76,6 +74,10 @@ public:
     }
 
     NodeClass *getChilds() {
+        return mChilds;
+    }
+
+    NodeClass *getOrCreateChilds() {
         createChilds();
         return mChilds;
     }
@@ -516,7 +518,7 @@ private:
             result.first = &(((EndNodeItemClass *)item)->getValue());
             result.second = true;
         } else {
-            return item->getChilds()->insertData(key, value, ++i);
+            return item->getOrCreateChilds()->insertData(key, value, ++i);
         }
         return result;
     }
@@ -958,16 +960,12 @@ protected:
  * public:
  *     unsigned int operator()(const char & c) const {
  *         unsigned int index = 0;
- *         if (c == '\0') {
- *             index = 26;
- *         } else if (c == ' ') {
+ *         if (c == ' ') {
  *             index = 27;
  *         } else if (c >= 'A' && c <= 'Z') {
- *             index = c - 'A';
+ *             index = c - 'A' + 1;
  *         } else if (c >= 'a' && c <= 'z') {
- *             index = c - 'a';
- *         } else {
- *             throw std::exception();
+ *             index = c - 'a' + 1;
  *         }
  *         return index;
  *     }

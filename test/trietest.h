@@ -172,10 +172,18 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(key)) {
+            if (!isPresent(iter->first)) {
                 testResult(aTrie.get(key.c_str()) == 0, "For negative test Trie::get() failed!!! Found key", key.c_str());
             }
         }
+
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+                iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            testResult(aTrie.get(negKey.c_str()) == 0, "For negative test Trie::get() failed!!! Found key", negKey.c_str());
+        }
+
 
         //Test Trie::get() const functionality
         for (SampleValuesIter iter = mSampleValues.begin();
@@ -191,11 +199,17 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(key)) {
+            if (!isPresent(iter->first)) {
                 testResult(((D const &)aTrie).get(key.c_str()) == 0, "For negative test Trie::get() failed!!!");
             }
         }
 
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+                iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            testResult(((D const &)aTrie).get(negKey.c_str()) == 0, "For negative test Trie::get() failed!!! Found key", negKey.c_str());
+        }
 
         //Test Trie::size functionality
         testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
@@ -296,14 +310,17 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(key)) {
+            if (!isPresent(iter->first)) {
                 testKeyInTrie(aTrie, key, false);
             }
         }
 
-        std::string negKey("something which is not in the Trie");
-        negKey.append(std::string(&endSymbol, 1));
-        TrieTestCases::testKeyInTrie(aTrie, negKey, false);
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+             iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            TrieTestCases::testKeyInTrie(aTrie, negKey, false);
+        }
 
         //Test Trie::startsWith functionality
         for (SampleValuesIter iter = mSampleValues.begin();
@@ -315,7 +332,6 @@ public:
                 teststartsWith(aTrie, keyPart);
             }
         }
-        teststartsWith(aTrie, negKey);
 
         //Test Trie::erase functionality
         unsigned int trieSize = aTrie.size();
@@ -331,6 +347,13 @@ public:
             ttcb.mPrint = false;
             aTrie.traverse(ttcb);
             testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
+        }
+
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+             iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            testResult(aTrie.erase(negKey.c_str()) == false, "Negative test for Trie::erase(", negKey.c_str(), ")failed!!!");
         }
 
         //Test Trie::clear functionality
@@ -356,33 +379,13 @@ public:
             bool res = aTrie[key.c_str()].compare(*aTrie.get(key.c_str())) == 0;
             testResult(res, "operator[] != Trie::get()!!!");
         }
-
-        aTrie[negKey.c_str()] = "test";
-        bool res = false;
-		res = aTrie[negKey.c_str()].compare(*aTrie.get(negKey.c_str())) == 0;
-        testResult(res, "operator[] != Trie::get()!!!");
-        aTrie.erase(negKey.c_str());
-
-        //Test Trie::hasKey functionality
-        {
-            aTrie.clear();
-            TrieTestCases::populateTrieWithSampleValues(aTrie);
-            const D &constTrie = aTrie;
-
-            for (SampleValuesIter iter = mSampleValues.begin();
-                 iter != mSampleValues.end(); ++iter) {
-                std::string key = iter->first;
-                key.append(std::string(&endSymbol, 1));
-                testResult(iter->second.compare(*constTrie.get(key.c_str())) == 0, "Trie::get() const failed!!!");
-            }
-        }
     }
 
     template <typename T>
     void testResult(bool result, const T &message) {
         if (!result) {
             std::cerr << message << std::endl;
-            std::exit(1);
+            std::abort();
         }
     }
 
@@ -393,7 +396,7 @@ public:
         if (!result) {
             std::cerr << message1 << " " <<
                       message2 << std::endl;
-            std::exit(1);
+            std::abort();
         }
     }
 
@@ -406,7 +409,7 @@ public:
             std::cerr << message1 << " " <<
                       message2 << " " <<
                       message3 << std::endl;
-            std::exit(1);
+            std::abort();
         }
     }
 
@@ -421,7 +424,7 @@ public:
                       message2 << " " <<
                       message3 << " " <<
                       message4 << std::endl;
-            std::exit(1);
+            std::abort();
         }
     }
 
@@ -436,7 +439,7 @@ public:
             std::cerr << message1 << " " << message2 << " " <<
                       message3 << " " << message4 << " " <<
                       message5 << std::endl;
-            std::exit(1);
+            std::abort();
         }
     }
 
@@ -465,30 +468,47 @@ private:
 
     TrieTestCases() {
         const std::pair<std::string, std::string> sampleValues[] = {
-            std::pair<std::string, std::string>(std::string("Multiset"),
-            std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
-            std::pair<std::string, std::string>(std::string("Deque"),
-            std::string("Double-ended queue")),
-            std::pair<std::string, std::string>(std::string("Multimap"),
-            std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
-            std::pair<std::string, std::string>(std::string("Stack"),
-            std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
-            std::pair<std::string, std::string>(std::string("Set"),
-            std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
-            std::pair<std::string, std::string>(std::string("Vector"),
-            std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
-            std::pair<std::string, std::string>(std::string("Array"),
-            std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
-            std::pair<std::string, std::string>(std::string("Map"),
-            std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
-            std::pair<std::string, std::string>(std::string("List"),
-            std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
-            std::pair<std::string, std::string>(std::string("Bitset"),
-            std::string("A bitset is a special container class that is designed to store bits")),
+            std::make_pair(std::string("Multiset"), std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
+            std::make_pair(std::string("Deque"), std::string("Double-ended queue")),
+            std::make_pair(std::string("Multimap"), std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
+            std::make_pair(std::string("Stack"), std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
+            std::make_pair(std::string("Set"), std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
+            std::make_pair(std::string("Vector"), std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
+            std::make_pair(std::string("Array"), std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
+            std::make_pair(std::string("Map"), std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
+            std::make_pair(std::string("List"), std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
+            std::make_pair(std::string("Bitset"), std::string("A bitset is a special container class that is designed to store bits"))
+        };
+
+        const std::string negativeSampleValues[] = {
+            std::string("Multiset negative"),
+            std::string("Deque negative"),
+            std::string("Multimap negative"),
+            std::string("Stack negative"),
+            std::string("Set negative"),
+            std::string("Vector negative"),
+            std::string("Array negative"),
+            std::string("Map negative"),
+            std::string("List negative"),
+            std::string("Bitset negative"),
+            std::string("Bit"),
+            std::string("Multi"),
+            std::string("Se"),
+            std::string("vect"),
+            std::string("zsfdgferg"),
+            std::string("!@%^&*()"),
+            std::string("~23435678656565764"),
+            std::string("11111111111"),
+            std::string("aaaaaaaaaaa"),
+            std::string("AAAAAAAAAAA")
         };
 
         for (unsigned int i = 0; i < sizeof(sampleValues) / sizeof(sampleValues[0]); ++i) {
             mSampleValues.insert(mSampleValues.begin(), sampleValues[i]);
+        }
+
+        for (unsigned int i = 0; i < sizeof(negativeSampleValues) / sizeof(negativeSampleValues[0]); ++i) {
+            mNegativeSampleValues.push_back(negativeSampleValues[i]);
         }
     }
 
@@ -500,8 +520,13 @@ private:
     typedef SampleValues::iterator SampleValuesIter;
     typedef SampleValues::const_iterator SampleValuesConstIter;
 
+    typedef std::vector<std::string> NegativeSampleValues;
+    typedef NegativeSampleValues::iterator NegativeSampleValuesIter;
+    typedef NegativeSampleValues::const_iterator NegativeSampleValuesConstIter;
+
     std::vector<TestCaseFunction> mTestCases;
     SampleValues mSampleValues;
+    NegativeSampleValues mNegativeSampleValues;
 };
 
 #endif
