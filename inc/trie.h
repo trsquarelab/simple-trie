@@ -586,9 +586,9 @@ private:
 template <typename T> class SymbolToIndexMapper
 {
 public:
-	unsigned int operator()(const T & c) const {
-		return static_cast<unsigned int>(c);
-	}
+    unsigned int operator()(const T & c) const {
+        return static_cast<unsigned int>(c);
+    }
 };
 
 /*!
@@ -688,7 +688,7 @@ protected:
     const T mEndSymbol;
     Items mItems;
     NodeClass *mNode;
-	M mSymolToIndex;
+    M mSymolToIndex;
 };
 
 /*!
@@ -862,6 +862,7 @@ protected:
  *
  *     return 0;
  * }
+ *
  * @endcode
  * @subsection usage_retrieval Retrieval of Value
  * Value for a key can be retrieved using Trie::get method and
@@ -938,6 +939,71 @@ protected:
  * }
  * @endcode
  *
+ * @subsection usage_vector_item Efficient use of Trie for alphabets
+ * Below example shows how to use Trie to operate on alphabets efficiently.
+ * Here VectorItems is used to store alphabets with size of 28 (26 alphabets + space + end symbol).
+ *
+ * @code
+ * #include <trie.h>
+ * #include <string>
+ * #include <iostream>
+ * #include <vector>
+ * #include <cctype>
+ *
+ * class TrieCaseInsensitiveCompare
+ * {
+ * public:
+ *     bool operator()(char v1, char v2) {
+ *         int i1 = std::tolower(v1);
+ *         int i2 = std::tolower(v2);
+ *         return i1 < i2;
+ *     }
+ * };
+ * 
+ * // key to vector index converter
+ * // case insensitive and includes alphabets, space and end symbol
+ * class AlphaToIndex
+ * {
+ * public:
+ *     unsigned int operator()(const char & c) const {
+ *         unsigned int index = 0;
+ *         if (c == '\0') {
+ *             index = 26;
+ *         } else if (c == ' ') {
+ *             index = 27;
+ *         } else if (c >= 'A' && c <= 'Z') {
+ *             index = c - 'A';
+ *         } else if (c >= 'a' && c <= 'z') {
+ *             index = c - 'a';
+ *         } else {
+ *             throw std::exception();
+ *         }
+ *         return index;
+ *     }
+ * };
+ *
+ * int main(int argc, char ** argv) {
+ *
+ *     rtv::Trie<char, std::string,
+ *               TrieCaseInsensitiveCompare,
+ *               rtv::VectorItems<char, std::string, TrieCaseInsensitiveCompare, 28, AlphaToIndex>
+ *               > dictionary('\0');
+ *
+ *     // adding key value pair to the Trie
+ *     if (dictionary.insert("karma", "Destiny or fate, following as effect from cause")) {
+ *         std::cout << "added karma" << std::endl;
+ *     }
+ *
+ *     // removing key from the Trie
+ *     if (dictionary.erase("karma")) {
+ *         std::cout << "removed karma" << std::endl;
+ *     }
+ *
+ *     return 0;
+ * }
+ *
+ * @endcode
+ *
  * @subsection usage_set_of_node Trie with each Node as a set
  * Here each node will be an ordered set.
  * Here there will be no extra usage of space but search for a symbol in the node takes logarithmic time.
@@ -984,7 +1050,6 @@ protected:
  *     return 0;
  * }
  * @endcode
-
  */
 template < typename T,
          typename V,
