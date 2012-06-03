@@ -469,9 +469,9 @@ private:
         }
     }
 
-    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
+    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int & count) const {
         const NodeItemClass *item = mItems.getItem(mEndSymbol);
-        if (item) {
+        if (item && count > 0) {
             std::vector<T> result;
             result.assign(key.begin(), key.end());
             values.push_back(std::make_pair(result, ((const EndNodeItemClass *)item)->getValue()));

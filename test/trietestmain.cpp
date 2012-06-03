@@ -90,7 +90,7 @@ int main(int argc, char **argv)
             std::cout << "Searching ... ";
 
             std::vector< std::pair < std::vector<char> , std::string> > result;
-            dictionary.startsWith(&word[0], result);
+            dictionary.startsWith(&word[0], result, 1000);
             std::vector< std::pair < std::vector<char> , std::string> >::iterator iter = result.begin();
 
             if (result.size() == 0) {
