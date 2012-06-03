@@ -163,7 +163,7 @@ public:
              iter != mSampleValues.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
-            D::Iterator titer = aTrie.find(key.c_str());
+            typename D::Iterator titer = aTrie.find(key.c_str());
             testResult(key.compare(keyToString(aTrie.endSymbol(), titer->first)) == 0, "Trie::find() failed for key!!!");
             testResult(iter->second.compare(*(titer->second)) == 0, "Trie::find() failed for value!!!");
 
@@ -192,7 +192,7 @@ public:
              iter != mSampleValues.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
-            D::ConstIterator titer = ((const D &) (aTrie)).find(key.c_str());
+            typename D::ConstIterator titer = ((const D &) (aTrie)).find(key.c_str());
             testResult(key.compare(keyToString(aTrie.endSymbol(), titer->first)) == 0, "Trie::find() failed for key!!!");
             testResult(iter->second.compare(*(titer->second)) == 0, "Trie::find() failed for value!!!");
 
