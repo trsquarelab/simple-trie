@@ -433,16 +433,18 @@ private:
 
     template <typename CB>
     void traverse(std::vector<T> & key, CB const &cb) const {
-        ItemsContainerConsIter iterEnd = mItems.end();
+        const NodeItemClass *item = mItems.getItem(mEndSymbol);
+        if (item) {
+            key.push_back(item->get());
+            cb((const T *)&key[0], ((const EndNodeItemClass *)item)->getValue());
+            key.pop_back();
+        }
 
+        ItemsContainerConsIter iterEnd = mItems.end();
         for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd; ++iter) {
             if (*iter) {
                 NodeItemClass &item = *(NodeItemClass *) * iter;
-                if (item == mEndSymbol) {
-                    key.push_back(item.get());
-                    cb((const T *)&key[0], ((const EndNodeItemClass &)item).getValue());
-                    key.pop_back();
-                } else {
+                if (item != mEndSymbol) {
                     key.push_back(item.get());
                     item.getChilds()->traverse(key, cb);
                     key.pop_back();
@@ -468,16 +470,19 @@ private:
     }
 
     void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
+        const NodeItemClass *item = mItems.getItem(mEndSymbol);
+        if (item) {
+            std::vector<T> result;
+            result.assign(key.begin(), key.end());
+            values.push_back(std::make_pair(result, ((const EndNodeItemClass *)item)->getValue()));
+            --count;
+        }
+
         ItemsContainerConsIter iterEnd = mItems.end();
         for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
             if (*iter != 0) {
                 const NodeItemClass &item = *(const NodeItemClass *) * iter;
-                if (item == mEndSymbol) {
-                    std::vector<T> result;
-                    result.assign(key.begin(), key.end());
-                    values.push_back(std::make_pair(result, ((const EndNodeItemClass &)item).getValue()));
-                    --count;
-                } else {
+                if (item != mEndSymbol) {
                     key.push_back(item.get());
                     item.getChilds()->accumulate(key, values, count);
                     key.pop_back();

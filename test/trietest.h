@@ -476,6 +476,7 @@ private:
             std::make_pair(std::string("Vector"), std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
             std::make_pair(std::string("Array"), std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
             std::make_pair(std::string("Map"), std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
+            std::make_pair(std::string("Maps"), std::string("A group of Map")),
             std::make_pair(std::string("List"), std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
             std::make_pair(std::string("Bitset"), std::string("A bitset is a special container class that is designed to store bits"))
         };

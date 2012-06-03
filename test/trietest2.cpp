@@ -26,13 +26,13 @@ class CaseSensitiveAlphaToIndex
 {
 public:
     unsigned int operator()(const char & c) const {
-        unsigned int index = 0;
+        unsigned int index = 53;
         if (c == ' ') {
-            index = 52 + 1;
+            index = 52;
         } else if (c >= 'A' && c <= 'Z') {
-            index = c - 'A' + 1;
+            index = c - 'A';
         } else if (c >= 'a' && c <= 'z') {
-            index = 26 + c - 'a' + 1;
+            index = 26 + c - 'a';
         }
         return index;
     }
