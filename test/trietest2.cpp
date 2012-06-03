@@ -44,13 +44,13 @@ class AlphaToIndex
 {
 public:
     unsigned int operator()(const char & c) const {
-        unsigned int index = 0;
+        unsigned int index = 27;
         if (c == ' ') {
-            index = 26 + 1;
+            index = 26;
         } else if (c >= 'A' && c <= 'Z') {
-            index = c - 'A' + 1;
+            index = c - 'A';
         } else if (c >= 'a' && c <= 'z') {
-            index = c - 'a' + 1;
+            index = c - 'a';
         }
         return index;
     }

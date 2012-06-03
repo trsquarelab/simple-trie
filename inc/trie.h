@@ -61,6 +61,14 @@ public:
         return !Cmp()(this->mKey, oth.mKey) && !Cmp()(oth.mKey, this->mKey);
     }
 
+    bool operator!=(T const &key) const {
+        return !((*this) == key);
+    }
+
+    bool operator!=(NodeItemClass const &oth) const {
+        return !((*this) == oth);
+    }
+
     void set(T const &key) {
         mKey = key;
     }
@@ -259,16 +267,22 @@ public:
                 mKeyStack.pop_back();
 
                 for (; iter != iterEnd; ++iter) {
+                    if (mCheckKey) {
+                        mCheckKey = false;
+                        NodeItemClass *item = currentNode->mItems.getItem(currentNode->endSymbol());
+                        if (item) {
+                            mKeyStack.push_back(item->get());
+                            mKeyValuePair.first = &(mKeyStack[0]);
+                            mKeyValuePair.second = &(((EndNodeItemClass *)item)->getValue());
+                            mNodeStack.push(currentNode);
+                            mIterStack.push(iter);
+                            return;
+                        }
+                    }
+
                     if (*iter) {
                         NodeItemClass &item = *(NodeItemClass *) * iter;
-                        if (item == currentNode->endSymbol()) {
-                            mKeyStack.push_back(item.get());
-                            mKeyValuePair.first = &(mKeyStack[0]);
-                            mKeyValuePair.second = &(((EndNodeItemClass &)item).getValue());
-                            mNodeStack.push(currentNode);
-                            mIterStack.push(++iter);
-                            return;
-                        } else {
+                        if (item != currentNode->endSymbol()) {
                             mKeyStack.push_back(item.get());
                             mNodeStack.push(currentNode);
                             mIterStack.push(++iter);
@@ -291,6 +305,7 @@ public:
         std::stack<NodeClass *> mNodeStack;
         std::vector<T> mKeyStack;
         KeyValuePair mKeyValuePair;
+        bool mCheckKey;
 
     protected:
         void pushNode(NodeClass *node) {
@@ -298,6 +313,7 @@ public:
                 mNodeStack.push(node);
                 mIterStack.push(node->mItems.begin());
                 mKeyStack.push_back(node->endSymbol());
+                mCheckKey = true;
             }
         }
     };
