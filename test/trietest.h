@@ -158,6 +158,63 @@ public:
         //Test Trie::insert functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
 
+        //Test Trie::find functionality
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string key = iter->first;
+            key.append(&endSymbol, 1);
+            D::Iterator titer = aTrie.find(key.c_str());
+            testResult(key.compare(keyToString(aTrie.endSymbol(), titer->first)) == 0, "Trie::find() failed for key!!!");
+            testResult(iter->second.compare(*(titer->second)) == 0, "Trie::find() failed for value!!!");
+
+            int rn = std::rand() % iter->first.length();
+            if (!rn) {
+                rn = 1;
+            }
+            key = iter->first.substr(0, rn);
+            key.append(&endSymbol, 1);
+
+            if (!isPresent(iter->first)) {
+                testResult(aTrie.find(key.c_str()) == aTrie.end(), "For negative test Trie::find() failed!!! Found key", key.c_str());
+            }
+        }
+
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+                iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            testResult(aTrie.find(negKey.c_str()) == aTrie.end(), "For negative test Trie::get() failed!!! Found key", negKey.c_str());
+        }
+
+
+        //Test Trie::find() const functionality
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string key = iter->first;
+            key.append(&endSymbol, 1);
+            D::ConstIterator titer = ((const D &) (aTrie)).find(key.c_str());
+            testResult(key.compare(keyToString(aTrie.endSymbol(), titer->first)) == 0, "Trie::find() failed for key!!!");
+            testResult(iter->second.compare(*(titer->second)) == 0, "Trie::find() failed for value!!!");
+
+            int rn = std::rand() % iter->first.length();
+            if (!rn) {
+                rn = 1;
+            }
+            key = iter->first.substr(0, rn);
+            key.append(&endSymbol, 1);
+
+            if (!isPresent(iter->first)) {
+                testResult(((const D &) (aTrie)).find(key.c_str()) == ((const D &) (aTrie)).end(), "For negative test Trie::find() failed!!! Found key", key.c_str());
+            }
+        }
+
+        for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
+                iter != mNegativeSampleValues.end(); ++iter) {
+            std::string negKey = *iter;
+            negKey.append(std::string(&endSymbol, 1));
+            testResult(((const D &) (aTrie)).find(negKey.c_str()) == ((const D &) (aTrie)).end(), "For negative test Trie::get() failed!!! Found key", negKey.c_str());
+        }
+
         //Test Trie::get functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {

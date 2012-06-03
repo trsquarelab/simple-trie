@@ -170,6 +170,378 @@ private:
     typedef Node<T, V, Cmp, Items> NodeClass;
 
 public:
+    template <typename KV>
+    class IteratorBase
+    {
+    public:
+        IteratorBase(NodeClass *node) {
+            pushNode(node);
+            next();
+        }
+
+        IteratorBase(NodeClass *node, const T * key, int i) {
+            pushNode(node, key, i);
+            next();
+        }
+
+        void next() {
+            while (!mNodeStack.empty()) {
+                NodeClass *currentNode = mNodeStack.top();
+                ItemsContainerIter iterEnd = currentNode->mItems.end();
+                ItemsContainerIter iter = mIterStack.top();
+
+                mIterStack.pop();
+                mNodeStack.pop();
+                mKeyStack.pop_back();
+
+                for (; iter != iterEnd; ++iter) {
+                    if (mCheckKey) {
+                        mCheckKey = false;
+                        NodeItemClass *item = currentNode->mItems.getItem(currentNode->endSymbol());
+                        if (item) {
+                            mKeyStack.push_back(item->get());
+                            mKeyValuePair.first = &(mKeyStack[0]);
+                            mKeyValuePair.second = &(((EndNodeItemClass *)item)->getValue());
+                            mNodeStack.push(currentNode);
+                            mIterStack.push(iter);
+                            return;
+                        }
+                    }
+
+                    if (*iter) {
+                        NodeItemClass &item = *(NodeItemClass *) * iter;
+                        if (item != currentNode->endSymbol()) {
+                            mKeyStack.push_back(item.get());
+                            mNodeStack.push(currentNode);
+                            mIterStack.push(++iter);
+                            pushNode(item.getChilds());
+                            currentNode = mNodeStack.top();
+                            iter = mIterStack.top();
+                            iterEnd = currentNode->mItems.end();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+    protected:
+        typedef typename NodeClass::ItemsContainerIter ItemsContainerIter;
+        typedef KV KeyValuePair;
+
+        std::stack<ItemsContainerIter> mIterStack;
+        std::stack<NodeClass *> mNodeStack;
+        std::vector<T> mKeyStack;
+        KeyValuePair mKeyValuePair;
+        bool mCheckKey;
+
+    protected:
+        void pushNode(NodeClass *node) {
+            if (node) {
+                mNodeStack.push(node);
+                mIterStack.push(node->mItems.begin());
+                mKeyStack.push_back(node->endSymbol());
+                mCheckKey = true;
+            }
+        }
+
+        void pushNode(NodeClass *node, const T * key, int index) {
+
+            if (node) {
+                for (int i=0; i <= index; ++i) {
+                    mKeyStack.push_back(key[i]);
+                }
+                ItemsContainerIter iter = node->mItems.begin();
+                for (; iter != node->mItems.end(); ++ iter) {
+                    if (*iter) {
+                        NodeItemClass &item = *(NodeItemClass *) * iter;
+                        if (item == key[index]) {
+                            break;
+                        }
+                    }
+                }
+                mNodeStack.push(node);
+                mIterStack.push(iter);
+                mCheckKey = true;
+            }
+        }
+    };
+
+    class ConstIterator : public IteratorBase<std::pair<const T *, const V *> >
+    {
+    private:
+        typedef IteratorBase<std::pair<const T *, const V *> > IteratorParent;
+        typedef typename IteratorParent::KeyValuePair KeyValuePair;
+
+    public:
+        ConstIterator(const NodeClass *node)
+            : IteratorParent(const_cast<NodeClass *>(node))
+        {}
+
+        ConstIterator(const NodeClass *node, const T * key, int i)
+            : IteratorParent(const_cast<NodeClass *>(node), key, i)
+        {}
+
+        const KeyValuePair &operator*() const {
+            return this->mKeyValuePair;
+        }
+
+        const KeyValuePair *operator->() const {
+            return &this->mKeyValuePair;
+        }
+
+        bool operator==(ConstIterator const &oth) const {
+            return this->mNodeStack == oth.mNodeStack &&
+                   this->mIterStack == oth.mIterStack;
+        }
+
+        bool operator!=(ConstIterator const &oth) const {
+            return !(*this == oth);
+        }
+
+        bool operator!() const {
+            return this->mNodeStack.empty() && this->mIterStack.empty();
+        }
+
+        ConstIterator operator++(int) {
+            ConstIterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        ConstIterator &operator++() {
+            this->next();
+            return *this;
+        }
+    };
+
+    class Iterator : public IteratorBase<std::pair<const T *, V *> >
+    {
+    private:
+        typedef IteratorBase<std::pair<const T *, V *> > IteratorParent;
+        typedef typename IteratorParent::KeyValuePair KeyValuePair;
+
+    public:
+        Iterator(NodeClass *node)
+            : IteratorParent(node)
+        {}
+
+        Iterator(NodeClass *node, const T * key, int i)
+            : IteratorParent(node, key, i)
+        {}
+
+        KeyValuePair &operator*() {
+            return this->mKeyValuePair;
+        }
+
+        KeyValuePair *operator->() {
+            return &(this->mKeyValuePair);
+        }
+
+        bool operator==(Iterator const &oth) const {
+            return this->mNodeStack == oth.mNodeStack &&
+                   this->mIterStack == oth.mIterStack;
+        }
+
+        bool operator!=(Iterator const &oth) const {
+            return !(*this == oth);
+        }
+
+        bool operator!() const {
+            return this->mNodeStack.empty() &&
+                   this->mIterStack.empty();
+        }
+
+        Iterator operator++(int) {
+            Iterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        Iterator &operator++() {
+            this->next();
+            return *this;
+        }
+    };
+
+private:
+    Node(Node const &);
+    Node &operator=(Node const &);
+
+    static void deleteItem(NodeItemClass *item) {
+        delete item;
+    }
+
+    template <typename CB>
+    void traverse(std::vector<T> & key, CB const &cb) const {
+        const NodeItemClass *item = mItems.getItem(mEndSymbol);
+        if (item) {
+            key.push_back(item->get());
+            cb((const T *)&key[0], ((const EndNodeItemClass *)item)->getValue());
+            key.pop_back();
+        }
+
+        ItemsContainerConsIter iterEnd = mItems.end();
+        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+            if (*iter) {
+                NodeItemClass &item = *(NodeItemClass *) * iter;
+                if (item != mEndSymbol) {
+                    key.push_back(item.get());
+                    item.getChilds()->traverse(key, cb);
+                    key.pop_back();
+                }
+            }
+        }
+    }
+
+    void startsWith(std::vector<T> & keySoFar, const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
+
+        if (key[i] == mEndSymbol) {
+            accumulate(keySoFar, values, count);
+            return;
+        }
+
+        const NodeItemClass *item = mItems.getItem(key[i]);
+        if (!item) {
+            return;
+        } else {
+            keySoFar.push_back(item->get());
+            item->getChilds()->startsWith(keySoFar, key, values, count, ++i);
+        }
+    }
+
+    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int & count) const {
+        const NodeItemClass *item = mItems.getItem(mEndSymbol);
+        if (item && count > 0) {
+            std::vector<T> result;
+            result.assign(key.begin(), key.end());
+            values.push_back(std::make_pair(result, ((const EndNodeItemClass *)item)->getValue()));
+            --count;
+        }
+
+        ItemsContainerConsIter iterEnd = mItems.end();
+        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
+            if (*iter != 0) {
+                const NodeItemClass &item = *(const NodeItemClass *) * iter;
+                if (item != mEndSymbol) {
+                    key.push_back(item.get());
+                    item.getChilds()->accumulate(key, values, count);
+                    key.pop_back();
+                }
+            }
+        }
+    }
+
+    const V *get(const T *key, int i) const {
+        return const_cast<NodeClass *>(this)->get(key, i);
+    }
+
+    V *get(const T *key, int i) {
+        NodeItemClass *item = mItems.getItem(key[i]);
+        if (!item) {
+            return 0;
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            return &(((EndNodeItemClass *)item)->getValue());
+        } else {
+            return item->getChilds()->get(key, ++i);
+        }
+    }
+
+    class FindData {
+    public:
+        FindData(NodeClass * node = 0, int i = 0)
+            : mNode(node),
+              mIndex(i)
+        {}
+
+        NodeClass * mNode;
+        int mIndex;
+    };
+
+    FindData findKey(const T *key, int i) {
+        NodeItemClass *item = mItems.getItem(key[i]);
+        if (!item) {
+            return FindData();
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            return FindData(this, i);
+        } else {
+            return item->getChilds()->findKey(key, ++i);
+        }
+    }
+
+    bool hasKey(const T *key, int i) const {
+        const NodeItemClass *item = mItems.getItem(key[i]);
+        if (!item) {
+            return false;
+        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            return true;
+        } else {
+            return item->getChilds()->hasKey(key, ++i);
+        }
+    }
+
+    std::pair<V *, bool> insertData(const T *key, V const &value, int i) {
+        std::pair<V *, bool> result((V *)0, false);
+        std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
+        NodeItemClass *item = itemPair.first;
+        if (itemPair.second) {
+            result.first = &(((EndNodeItemClass *)item)->getValue());
+            return result;
+        }
+        if (!item) {
+            return result;
+        } else if (key[i] == mEndSymbol) {
+            ((EndNodeItemClass *)item)->set(key[i], value);
+            result.first = &(((EndNodeItemClass *)item)->getValue());
+            result.second = true;
+        } else {
+            return item->getOrCreateChilds()->insertData(key, value, ++i);
+        }
+        return result;
+    }
+
+    bool erase(const T *key, int i, bool &finished) {
+        bool erased = false;
+        NodeItemClass *item = mItems.getItem(key[i]);
+        if (!item) {
+            return erased;
+        }
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            int count = 0;
+            ItemsContainerIter iterEnd = mItems.end();
+            for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+                if (*iter != 0) {
+                    ++count;
+                }
+            }
+            if (count > 1) {
+                mItems.eraseItem(key[i]);
+                finished = true;
+            }
+            erased = true;
+        } else {
+            erased = item->getChilds()->erase(key, i + 1, finished);
+            if (erased && !finished) {
+                int count = 0;
+                ItemsContainerIter iterEnd = mItems.end();
+                for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+                    if (*iter != 0) {
+                        ++count;
+                    }
+                }
+                if (count > 1) {
+                    mItems.eraseItem(key[i]);
+                    finished = true;
+                } else if (count == 1) {
+                    mItems.eraseItem(key[i]);
+                }
+
+            }
+        }
+        return erased;
+    }
+
+public:
     Node(const T &eSymbol)
         : mItems(eSymbol),
           mEndSymbol(eSymbol),
@@ -247,166 +619,6 @@ public:
         }
     }
 
-    template <typename KV>
-    class IteratorBase
-    {
-    public:
-        IteratorBase(NodeClass *node) {
-            pushNode(node);
-            next();
-        }
-
-        void next() {
-            while (!mNodeStack.empty()) {
-                NodeClass *currentNode = mNodeStack.top();
-                ItemsContainerIter iterEnd = currentNode->mItems.end();
-                ItemsContainerIter iter = mIterStack.top();
-
-                mIterStack.pop();
-                mNodeStack.pop();
-                mKeyStack.pop_back();
-
-                for (; iter != iterEnd; ++iter) {
-                    if (mCheckKey) {
-                        mCheckKey = false;
-                        NodeItemClass *item = currentNode->mItems.getItem(currentNode->endSymbol());
-                        if (item) {
-                            mKeyStack.push_back(item->get());
-                            mKeyValuePair.first = &(mKeyStack[0]);
-                            mKeyValuePair.second = &(((EndNodeItemClass *)item)->getValue());
-                            mNodeStack.push(currentNode);
-                            mIterStack.push(iter);
-                            return;
-                        }
-                    }
-
-                    if (*iter) {
-                        NodeItemClass &item = *(NodeItemClass *) * iter;
-                        if (item != currentNode->endSymbol()) {
-                            mKeyStack.push_back(item.get());
-                            mNodeStack.push(currentNode);
-                            mIterStack.push(++iter);
-                            pushNode(item.getChilds());
-                            currentNode = mNodeStack.top();
-                            iter = mIterStack.top();
-                            iterEnd = currentNode->mItems.end();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-    protected:
-        typedef typename NodeClass::ItemsContainerIter ItemsContainerIter;
-        typedef KV KeyValuePair;
-
-        std::stack<ItemsContainerIter> mIterStack;
-        std::stack<NodeClass *> mNodeStack;
-        std::vector<T> mKeyStack;
-        KeyValuePair mKeyValuePair;
-        bool mCheckKey;
-
-    protected:
-        void pushNode(NodeClass *node) {
-            if (node) {
-                mNodeStack.push(node);
-                mIterStack.push(node->mItems.begin());
-                mKeyStack.push_back(node->endSymbol());
-                mCheckKey = true;
-            }
-        }
-    };
-
-    class ConstIterator : public IteratorBase<std::pair<const T *, const V *> >
-    {
-    private:
-        typedef IteratorBase<std::pair<const T *, const V *> > IteratorParent;
-        typedef typename IteratorParent::KeyValuePair KeyValuePair;
-
-    public:
-        ConstIterator(const NodeClass *node)
-            : IteratorParent(const_cast<NodeClass *>(node))
-        {}
-
-        const KeyValuePair &operator*() const {
-            return this->mKeyValuePair;
-        }
-
-        const KeyValuePair *operator->() const {
-            return &this->mKeyValuePair;
-        }
-
-        bool operator==(ConstIterator const &oth) const {
-            return this->mNodeStack == oth.mNodeStack &&
-                   this->mIterStack == oth.mIterStack;
-        }
-
-        bool operator!=(ConstIterator const &oth) const {
-            return !(*this == oth);
-        }
-
-        bool operator!() const {
-            return this->mNodeStack.empty() && this->mIterStack.empty();
-        }
-
-        ConstIterator operator++(int) {
-            ConstIterator iter = *this;
-            ++(*this);
-            return iter;
-        }
-
-        ConstIterator &operator++() {
-            this->next();
-            return *this;
-        }
-    };
-
-    class Iterator : public IteratorBase<std::pair<const T *, V *> >
-    {
-    private:
-        typedef IteratorBase<std::pair<const T *, V *> > IteratorParent;
-        typedef typename IteratorParent::KeyValuePair KeyValuePair;
-
-    public:
-        Iterator(NodeClass *node)
-            : IteratorParent(node)
-        {}
-
-        KeyValuePair &operator*() {
-            return this->mKeyValuePair;
-        }
-
-        KeyValuePair *operator->() {
-            return &(this->mKeyValuePair);
-        }
-
-        bool operator==(Iterator const &oth) const {
-            return this->mNodeStack == oth.mNodeStack &&
-                   this->mIterStack == oth.mIterStack;
-        }
-
-        bool operator!=(Iterator const &oth) const {
-            return !(*this == oth);
-        }
-
-        bool operator!() const {
-            return this->mNodeStack.empty() &&
-                   this->mIterStack.empty();
-        }
-
-        Iterator operator++(int) {
-            Iterator iter = *this;
-            ++(*this);
-            return iter;
-        }
-
-        Iterator &operator++() {
-            this->next();
-            return *this;
-        }
-    };
-
     ConstIterator begin() const {
         return ConstIterator(this);
     }
@@ -423,166 +635,14 @@ public:
         return Iterator(0);
     }
 
-private:
-    Node(Node const &);
-    Node &operator=(Node const &);
-
-    static void deleteItem(NodeItemClass *item) {
-        delete item;
+    ConstIterator find(const T *key) const {
+        FindData d = const_cast<NodeClass *>(this)->findKey(key, 0);
+        return ConstIterator(d.mNode, key, d.mIndex); 
     }
 
-    template <typename CB>
-    void traverse(std::vector<T> & key, CB const &cb) const {
-        const NodeItemClass *item = mItems.getItem(mEndSymbol);
-        if (item) {
-            key.push_back(item->get());
-            cb((const T *)&key[0], ((const EndNodeItemClass *)item)->getValue());
-            key.pop_back();
-        }
-
-        ItemsContainerConsIter iterEnd = mItems.end();
-        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd; ++iter) {
-            if (*iter) {
-                NodeItemClass &item = *(NodeItemClass *) * iter;
-                if (item != mEndSymbol) {
-                    key.push_back(item.get());
-                    item.getChilds()->traverse(key, cb);
-                    key.pop_back();
-                }
-            }
-        }
-    }
-
-    void startsWith(std::vector<T> & keySoFar, const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
-
-        if (key[i] == mEndSymbol) {
-            accumulate(keySoFar, values, count);
-            return;
-        }
-
-        const NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return;
-        } else {
-            keySoFar.push_back(item->get());
-            item->getChilds()->startsWith(keySoFar, key, values, count, ++i);
-        }
-    }
-
-    void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int & count) const {
-        const NodeItemClass *item = mItems.getItem(mEndSymbol);
-        if (item && count > 0) {
-            std::vector<T> result;
-            result.assign(key.begin(), key.end());
-            values.push_back(std::make_pair(result, ((const EndNodeItemClass *)item)->getValue()));
-            --count;
-        }
-
-        ItemsContainerConsIter iterEnd = mItems.end();
-        for (ItemsContainerConsIter iter = mItems.begin(); iter != iterEnd && count > 0; ++iter) {
-            if (*iter != 0) {
-                const NodeItemClass &item = *(const NodeItemClass *) * iter;
-                if (item != mEndSymbol) {
-                    key.push_back(item.get());
-                    item.getChilds()->accumulate(key, values, count);
-                    key.pop_back();
-                }
-            }
-        }
-    }
-
-    const V *get(const T *key, int i) const {
-        const NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return 0;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return &(((const EndNodeItemClass *)item)->getValue());
-        } else {
-            return item->getChilds()->get(key, ++i);
-        }
-    }
-
-    V *get(const T *key, int i) {
-        NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return 0;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return &(((EndNodeItemClass *)item)->getValue());
-        } else {
-            return item->getChilds()->get(key, ++i);
-        }
-    }
-
-    bool hasKey(const T *key, int i) const {
-        const NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return false;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return true;
-        } else {
-            return item->getChilds()->hasKey(key, ++i);
-        }
-    }
-
-    std::pair<V *, bool> insertData(const T *key, V const &value, int i) {
-        std::pair<V *, bool> result((V *)0, false);
-        std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
-        NodeItemClass *item = itemPair.first;
-        if (itemPair.second) {
-            result.first = &(((EndNodeItemClass *)item)->getValue());
-            return result;
-        }
-        if (!item) {
-            return result;
-        } else if (key[i] == mEndSymbol) {
-            ((EndNodeItemClass *)item)->set(key[i], value);
-            result.first = &(((EndNodeItemClass *)item)->getValue());
-            result.second = true;
-        } else {
-            return item->getOrCreateChilds()->insertData(key, value, ++i);
-        }
-        return result;
-    }
-
-    bool erase(const T *key, int i, bool &finished) {
-        bool erased = false;
-        NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return erased;
-        }
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            int count = 0;
-            ItemsContainerIter iterEnd = mItems.end();
-            for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
-                if (*iter != 0) {
-                    ++count;
-                }
-            }
-            if (count > 1) {
-                mItems.eraseItem(key[i]);
-                finished = true;
-            }
-            erased = true;
-        } else {
-            erased = item->getChilds()->erase(key, i + 1, finished);
-            if (erased && !finished) {
-                int count = 0;
-                ItemsContainerIter iterEnd = mItems.end();
-                for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
-                    if (*iter != 0) {
-                        ++count;
-                    }
-                }
-                if (count > 1) {
-                    mItems.eraseItem(key[i]);
-                    finished = true;
-                } else if (count == 1) {
-                    mItems.eraseItem(key[i]);
-                }
-
-            }
-        }
-        return erased;
+    Iterator find(const T *key) {
+        FindData d = this->findKey(key, 0);
+        return Iterator(d.mNode, key, d.mIndex); 
     }
 
 private:
@@ -787,13 +847,7 @@ public:
     }
 
     const Item *getItem(T const &k) const {
-        Item tmp(mEndSymbol, k);
-
-        iterator iter = const_cast<SetItems *>(this)->mItems.find(&tmp);
-        if (iter == mItems.end()) {
-            return 0;
-        }
-        return (const Item *)(*iter);
+        return const_cast<SetItems *>(this)->getItem(k);
     }
 
     Item *getItem(T const &k) {
@@ -1201,6 +1255,22 @@ public:
      */
     Iterator end() {
         return mRoot.end();
+    }
+
+    /*!
+     * @param key Key to be searched for, should be terminated by 'end' symbol
+     * @return Iterator to the element or end
+     */
+    Iterator find(const T *key) {
+        return mRoot.find(key);
+    }
+
+    /*!
+     * @param key Key to be searched for, should be terminated by 'end' symbol
+     * @return ConstIterator to the element or end
+     */
+    ConstIterator find(const T *key) const {
+        return mRoot.find(key);
     }
 
     /*!
