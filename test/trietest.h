@@ -123,21 +123,60 @@ public:
     }
 
     template<typename D>
-    void teststartsWith(D &aTrie, const std::string &key) {
-        unsigned int countForKey = 0;
-        for (SampleValuesIter iter = mSampleValues.begin();
-             iter != mSampleValues.end(); ++iter) {
-            int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
-            if (cv == 0) {
-                ++countForKey;
+    void teststartsWith(D & aTrie, const std::string &key) {
+        if (key.length() > 0) {
+            unsigned int countForKey = 0;
+            for (SampleValuesIter iter = mSampleValues.begin();
+                 iter != mSampleValues.end(); ++iter) {
+                int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
+                if (cv == 0) {
+                    ++countForKey;
+                }
             }
+            typename D::Iterator iter = aTrie.startsWith(key.c_str());
+            int countStartsWith = 0;
+            for (; iter != aTrie.end(); ++iter) {
+                std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
+                keyStr.erase(keyStr.length()-1);
+                bool res = isPresent(keyStr);
+                TrieTestCases::testResult(res, "Invalid key in Iterator returned from Trie::startsWith!!! For prefix",
+                    key.c_str(), "Returned Key",
+                    keyToString(aTrie.endSymbol(), iter->first).c_str());
+                ++countStartsWith;
+            }
+
+            TrieTestCases::testResult(countStartsWith == countForKey, "Invalid count returned by Trie::startsWith!!!");
         }
-        std::vector< std::pair < std::vector<char> , std::string> > result;
-        aTrie.startsWith(key.c_str(), result, mSampleValues.size());
-        TrieTestCases::testResult(result.size() == countForKey, "Error in Trie::startsWith functionality!!!");
     }
 
-    std::string keyToString(char endSymbol, const char *key) {
+    template<typename D>
+    void teststartsWith(const D & aTrie, const std::string &key) const {
+        if (key.length() > 0) {
+            unsigned int countForKey = 0;
+            for (SampleValuesConstIter iter = mSampleValues.begin();
+                 iter != mSampleValues.end(); ++iter) {
+                int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
+                if (cv == 0) {
+                    ++countForKey;
+                }
+            }
+            typename D::ConstIterator iter = aTrie.startsWith(key.c_str());
+            int countStartsWith = 0;
+            for (; iter != aTrie.end(); ++iter) {
+                std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
+                keyStr.erase(keyStr.length()-1);
+                bool res = isPresent(keyStr);
+                TrieTestCases::testResult(res, "Invalid key in Iterator returned from Trie::startsWith!!! For prefix",
+                    key.c_str(), "Returned Key",
+                    keyToString(aTrie.endSymbol(), iter->first).c_str());
+                ++countStartsWith;
+            }
+
+            TrieTestCases::testResult(countStartsWith == countForKey, "Invalid count returned by Trie::startsWith!!!");
+        }
+    }
+
+    std::string keyToString(char endSymbol, const char *key) const{
         int i = 0;
         for (; key[i] != endSymbol; ++i) {
         }
@@ -380,6 +419,9 @@ public:
         }
 
         //Test Trie::startsWith functionality
+        char endKeyStr[] = {endSymbol, '\0'};
+        teststartsWith(aTrie, endKeyStr);
+
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
             std::string keyStr = iter->first;
@@ -387,6 +429,19 @@ public:
                 std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
                 keyPart.append(std::string(&endSymbol, 1));
                 teststartsWith(aTrie, keyPart);
+            }
+        }
+
+        //Test Trie::startsWith() const functionality
+        ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, endKeyStr);
+
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string keyStr = iter->first;
+            if (keyStr.length() > 0) {
+                std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
+                keyPart.append(std::string(&endSymbol, 1));
+                ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, keyPart);
             }
         }
 
@@ -439,7 +494,7 @@ public:
     }
 
     template <typename T>
-    void testResult(bool result, const T &message) {
+    void testResult(bool result, const T &message) const {
         if (!result) {
             std::cerr << message << std::endl;
             std::abort();
@@ -449,7 +504,7 @@ public:
     template <typename T1, typename T2>
     void testResult(bool result,
                     const T1 &message1,
-                    const T2 &message2) {
+                    const T2 &message2) const {
         if (!result) {
             std::cerr << message1 << " " <<
                       message2 << std::endl;
@@ -461,7 +516,7 @@ public:
     void testResult(bool result,
                     const T1 &message1,
                     const T2 &message2,
-                    const T3 &message3) {
+                    const T3 &message3) const {
         if (!result) {
             std::cerr << message1 << " " <<
                       message2 << " " <<
@@ -475,7 +530,7 @@ public:
                     const T1 &message1,
                     const T2 &message2,
                     const T3 &message3,
-                    const T4 &message4) {
+                    const T4 &message4) const {
         if (!result) {
             std::cerr << message1 << " " <<
                       message2 << " " <<
@@ -491,7 +546,7 @@ public:
                     const T2 &message2,
                     const T3 &message3,
                     const T4 &message4,
-                    const T5 &message5) {
+                    const T5 &message5) const {
         if (!result) {
             std::cerr << message1 << " " << message2 << " " <<
                       message3 << " " << message4 << " " <<
@@ -500,8 +555,8 @@ public:
         }
     }
 
-    bool isPresent(std::string const & key) {
-        for (SampleValuesIter iter = mSampleValues.begin();
+    bool isPresent(std::string const & key) const {
+        for (SampleValuesConstIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
                  if (iter->first.compare(key) == 0) {
                      return true;
