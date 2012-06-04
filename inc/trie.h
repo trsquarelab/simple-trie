@@ -1174,6 +1174,19 @@ public:
     }
 
     /*!
+     * Remove the entry with the given key from the Trie
+     * @param pos Iterator pointing to a single element to be removed from the Trie
+     * @return true if the given key is erased in to the Trie, false otherwise
+     */
+    bool erase(Iterator pos) {
+        if (pos != end()) {
+            return mRoot.erase(pos->first);
+        } else {
+            return false;
+        }
+    }
+
+    /*!
      * Retrieves the value for the given key
      * @param key Key to be searched for, should be terminated by 'end' symbol
      * @return Constant pointer to value for the given key, 0 on failure

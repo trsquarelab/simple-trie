@@ -37,6 +37,7 @@ public:
     }
 };
 
+
 class TrieTraverseCallBack
 {
 public:
@@ -462,11 +463,6 @@ public:
             testResult(aTrie.erase(key.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
             testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
             testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
-
-            TrieTraverseCallBack ttcb(aTrie.endSymbol());
-            ttcb.mPrint = false;
-            aTrie.traverse(ttcb);
-            testResult(aTrie.size() == ttcb.mCount, "Trie size is not updated after remove operation!!!");
         }
 
         for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
@@ -474,6 +470,17 @@ public:
             std::string negKey = *iter;
             negKey.append(std::string(&endSymbol, 1));
             testResult(aTrie.erase(negKey.c_str()) == false, "Negative test for Trie::erase(", negKey.c_str(), ")failed!!!");
+        }
+
+        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        trieSize = aTrie.size();
+        for (SampleValuesIter iter = mSampleValues.begin();
+             iter != mSampleValues.end(); ++iter) {
+            std::string key = iter->first;
+            key.append(std::string(&endSymbol, 1));
+            testResult(aTrie.erase(aTrie.find(key.c_str())), "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
         }
 
         //Test Trie::clear functionality
