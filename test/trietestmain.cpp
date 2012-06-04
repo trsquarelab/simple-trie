@@ -89,17 +89,16 @@ int main(int argc, char **argv)
             std::cin.get(word, sizeof(word), '\n');
             std::cout << "Searching ... ";
 
-            std::vector< std::pair < std::vector<char> , std::string> > result;
-            dictionary.startsWith(&word[0], result, 1000);
-            std::vector< std::pair < std::vector<char> , std::string> >::iterator iter = result.begin();
+            rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.startsWith(&word[0]);
 
-            if (result.size() == 0) {
+            if (iter == dictionary.end()) {
                 std::cout << "Could not find the given word";
             } else {
                 std::cout << std::endl << "*****************************************";
-                for (; iter != result.end(); ++iter) {
-                    iter->first.push_back(0);
-                    std::cout << std::endl << &((iter->first)[0]) << " : " << iter->second.c_str();
+                for (; iter != dictionary.end(); ++iter) {
+                    std::cout << std::endl
+                              << TrieTestCases::instance()->keyToString(dictionary.endSymbol(), iter->first).c_str()
+                              << " : " << iter->second->c_str();
                 }
                 std::cout << std::endl << "*****************************************";
             }

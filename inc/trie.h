@@ -179,8 +179,8 @@ public:
             next();
         }
 
-        IteratorBase(NodeClass *node, const T * key, int i) {
-            pushNode(node, key, i);
+        IteratorBase(NodeClass *node, const T * key, int i, bool findSymbol) {
+            pushNode(node, key, i, findSymbol);
             next();
         }
 
@@ -245,18 +245,20 @@ public:
             }
         }
 
-        void pushNode(NodeClass *node, const T * key, int index) {
+        void pushNode(NodeClass *node, const T * key, int index, bool findSymbol) {
 
             if (node) {
                 for (int i=0; i <= index; ++i) {
                     mKeyStack.push_back(key[i]);
                 }
                 ItemsContainerIter iter = node->mItems.begin();
-                for (; iter != node->mItems.end(); ++ iter) {
-                    if (*iter) {
-                        NodeItemClass &item = *(NodeItemClass *) * iter;
-                        if (item == key[index]) {
-                            break;
+                if (findSymbol) {
+                    for (; iter != node->mItems.end(); ++ iter) {
+                        if (*iter) {
+                            NodeItemClass &item = *(NodeItemClass *) * iter;
+                            if (item == key[index]) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -278,8 +280,8 @@ public:
             : IteratorParent(const_cast<NodeClass *>(node))
         {}
 
-        ConstIterator(const NodeClass *node, const T * key, int i)
-            : IteratorParent(const_cast<NodeClass *>(node), key, i)
+        ConstIterator(const NodeClass *node, const T * key, int i, bool findSymbol)
+            : IteratorParent(const_cast<NodeClass *>(node), key, i, findSymbol)
         {}
 
         const KeyValuePair &operator*() const {
@@ -326,8 +328,8 @@ public:
             : IteratorParent(node)
         {}
 
-        Iterator(NodeClass *node, const T * key, int i)
-            : IteratorParent(node, key, i)
+        Iterator(NodeClass *node, const T * key, int i, bool findSymbol)
+            : IteratorParent(node, key, i, findSymbol)
         {}
 
         KeyValuePair &operator*() {
@@ -394,22 +396,6 @@ private:
         }
     }
 
-    void startsWith(std::vector<T> & keySoFar, const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count, int i) const {
-
-        if (key[i] == mEndSymbol) {
-            accumulate(keySoFar, values, count);
-            return;
-        }
-
-        const NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return;
-        } else {
-            keySoFar.push_back(item->get());
-            item->getChilds()->startsWith(keySoFar, key, values, count, ++i);
-        }
-    }
-
     void accumulate(std::vector<T> key, std::vector< std::pair<std::vector<T>, V> > & values, int & count) const {
         const NodeItemClass *item = mItems.getItem(mEndSymbol);
         if (item && count > 0) {
@@ -466,6 +452,18 @@ private:
             return FindData(this, i);
         } else {
             return item->getChilds()->findKey(key, ++i);
+        }
+    }
+
+    FindData startsWith(const T *prefix, int i) {
+        if (prefix[i] == mEndSymbol) {
+            return FindData(this, i);
+        }
+        NodeItemClass *item = mItems.getItem(prefix[i]);
+        if (!item) {
+            return FindData();
+        } else {
+            return item->getChilds()->startsWith(prefix, ++i);
         }
     }
 
@@ -600,11 +598,6 @@ public:
         return hasKey(key, 0);
     }
 
-    void startsWith(const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count) const {
-        std::vector<T> keySoFar;
-        startsWith(keySoFar, key, values, count, 0);
-    }
-
     template <typename CB>
     void traverse(CB const &cb) const {
         std::vector<T> v;
@@ -637,12 +630,22 @@ public:
 
     ConstIterator find(const T *key) const {
         FindData d = const_cast<NodeClass *>(this)->findKey(key, 0);
-        return ConstIterator(d.mNode, key, d.mIndex); 
+        return ConstIterator(d.mNode, key, d.mIndex, true); 
     }
 
     Iterator find(const T *key) {
         FindData d = this->findKey(key, 0);
-        return Iterator(d.mNode, key, d.mIndex); 
+        return Iterator(d.mNode, key, d.mIndex, true); 
+    }
+
+    Iterator startsWith(const T *prefix) {
+        FindData d = this->startsWith(prefix, 0);
+        return Iterator(d.mNode, prefix, d.mIndex, false);
+    }
+
+    ConstIterator startsWith(const T *prefix) const {
+        FindData d = const_cast<NodeClass *>(this)->startsWith(prefix, 0);
+        return ConstIterator(d.mNode, prefix, d.mIndex, false);
     }
 
 private:
@@ -958,7 +961,7 @@ protected:
  * }
  * @endcode
  *
- * @subsection usage_searching Searching keys which begins with the given charactars
+ * @subsection usage_searching Searching keys which have common prefix
  * Keys which begins with a specific charactars can be retrieved using Trie::startsWith method
  * @code
  * #include <trie.h>
@@ -968,18 +971,13 @@ protected:
  *
  * int main(int argc, char ** argv) {
  *
- *     rtv::Trie<char, std::string> dictionary('$');
+ *     rtv::Trie<char, std::string> dictionary('\n');
  *
  *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
+ *     rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.startsWith("kar$");
  *
- *     typedef std::vector< std::pair < std::vector<char> , std::string &> > TrieResult;
- *     TrieResult result;
- *
- *     dictionary.startsWith("kar$", result);
- *
- *     for (TrieResult::iterator iter = result.begin(); iter != result.end(); ++iter) {
- *         iter->first.push_back(0);
- *         std::cout << &((iter->first)[0]) << " : " << iter->second.c_str() << std::endl;
+ *     for (; iter != dictionary.end(); ++iter) {
+ *         std::cout << iter->first << " : " << iter->second->c_str() << std::endl;
  *     }
  *
  *     return 0;
@@ -1214,13 +1212,21 @@ public:
     }
 
     /*!
-     * Retrieves all the key value pair which starts with the given key
-     * @param key Part of the key which should be searched, should be terminated by 'end' symbol
-     * @param values Vector of key, value pair
-     * @param count Maximum number of elements that should be returned
+     * Retrieves Iterator to the elements with common prefix
+     * @param prefix Part of the key which should be searched, should be terminated by 'end' symbol
+     * @return Iterator to the elements with prefix specified in 'prefix'
      */
-    void startsWith(const T *key, std::vector< std::pair<std::vector<T>, V> > & values, int count = 5) const {
-        mRoot.startsWith(key, values, count);
+    Iterator startsWith(const T *prefix) {
+        return mRoot.startsWith(prefix);
+    }
+
+    /*!
+     * Retrieves ConstIterator to the elements with common prefix
+     * @param prefix Part of the key which should be searched, should be terminated by 'end' symbol
+     * @return ConstIterator to the elements with prefix specified in 'prefix'
+     */
+    ConstIterator startsWith(const T *prefix) const {
+        return mRoot.startsWith(prefix);
     }
 
     /*!
