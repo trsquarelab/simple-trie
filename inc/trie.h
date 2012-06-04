@@ -1212,8 +1212,7 @@ public:
      * @return Reference to value for the given key
      */
     V &operator[](const T *key) {
-        std::pair<Iterator, bool> result = insert(key, V());
-        return *(result.first->second);
+        return *(insert(key, V()).first->second);
     }
 
     /*!
