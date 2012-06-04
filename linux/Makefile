@@ -1,4 +1,4 @@
-bin_PROGRAMME = trie_test
+bin_PROGRAMME = trie_test_$(shell uname -n)_$(shell uname -m)
 trie_test_SOURCES = ../test/trietest1.cpp  ../test/trietest2.cpp  ../test/trietestmain.cpp
 trie_test_OBJ = $(patsubst ../test/%.cpp, %.o, $(trie_test_SOURCES))
 CXX = g++
