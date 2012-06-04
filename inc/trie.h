@@ -879,7 +879,7 @@ protected:
  * <li>Adding key, value pair
  * <li>Removing an element by key
  * <li>Checking the existence of a key
- * <li>Traversing the Trie
+ * <li>Retrieving value by key
  * <li>Find elements with common prefix
  * <li>Iterator
  * </ul>
