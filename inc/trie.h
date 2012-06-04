@@ -1167,7 +1167,7 @@ public:
     /*!
      * Remove the entry with the given key from the Trie
      * @param key Key which should be erased, should be terminated by 'end' symbol
-     * @return true if the given key is erased in to the Trie, false otherwise
+     * @return true if the given key is erased from the Trie, false otherwise
      */
     bool erase(const T *key) {
         return mRoot.erase(key);
@@ -1176,7 +1176,7 @@ public:
     /*!
      * Remove the entry with the given key from the Trie
      * @param pos Iterator pointing to a single element to be removed from the Trie
-     * @return true if the given key is erased in to the Trie, false otherwise
+     * @return true if the given key is erased form the Trie, false otherwise
      */
     bool erase(Iterator pos) {
         if (pos != end()) {
