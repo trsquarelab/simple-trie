@@ -1258,16 +1258,18 @@ public:
     }
 
     /*!
+     * Searches the Trie for an element with 'key' as key
      * @param key Key to be searched for, should be terminated by 'end' symbol
-     * @return Iterator to the element or end
+     * @return Iterator to the element with key 'key' if found, otherwise an Iterator to Trie::end 
      */
     Iterator find(const T *key) {
         return mRoot.find(key);
     }
 
     /*!
+     * Searches the Trie for an element with 'key' as key
      * @param key Key to be searched for, should be terminated by 'end' symbol
-     * @return ConstIterator to the element or end
+     * @return ConstIterator to the element with key 'key' if found, otherwise an ConstIterator to Trie::end 
      */
     ConstIterator find(const T *key) const {
         return mRoot.find(key);
