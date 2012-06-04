@@ -38,6 +38,7 @@
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -956,56 +957,56 @@
 <a name="l01229"></a>01229         <span class="keywordflow">return</span> mRoot.startsWith(prefix);
 <a name="l01230"></a>01230     }
 <a name="l01231"></a>01231 
-<a name="l01237"></a>01237     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
-<a name="l01238"></a><a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">01238</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">traverse</a>(CB <span class="keyword">const</span> &amp;c)<span class="keyword"> const </span>{
-<a name="l01239"></a>01239         mRoot.traverse(c);
-<a name="l01240"></a>01240     }
-<a name="l01241"></a>01241 
-<a name="l01246"></a><a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">01246</a>     T <a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a>()<span class="keyword"> const </span>{
-<a name="l01247"></a>01247         <span class="keywordflow">return</span> mRoot.endSymbol();
-<a name="l01248"></a>01248     }
-<a name="l01249"></a>01249 
-<a name="l01254"></a><a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">01254</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a>() {
-<a name="l01255"></a>01255         <span class="keywordflow">return</span> mRoot.begin();
-<a name="l01256"></a>01256     }
-<a name="l01257"></a>01257 
-<a name="l01262"></a><a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">01262</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a>() {
-<a name="l01263"></a>01263         <span class="keywordflow">return</span> mRoot.end();
-<a name="l01264"></a>01264     }
-<a name="l01265"></a>01265 
-<a name="l01271"></a><a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">01271</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">find</a>(<span class="keyword">const</span> T *key) {
-<a name="l01272"></a>01272         <span class="keywordflow">return</span> mRoot.find(key);
-<a name="l01273"></a>01273     }
-<a name="l01274"></a>01274 
-<a name="l01280"></a><a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">01280</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">find</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
-<a name="l01281"></a>01281         <span class="keywordflow">return</span> mRoot.find(key);
-<a name="l01282"></a>01282     }
-<a name="l01283"></a>01283 
-<a name="l01288"></a><a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">01288</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">begin</a>()<span class="keyword"> const </span>{
-<a name="l01289"></a>01289         <span class="keywordflow">return</span> mRoot.begin();
-<a name="l01290"></a>01290     }
-<a name="l01291"></a>01291 
-<a name="l01296"></a><a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">01296</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">end</a>()<span class="keyword"> const </span>{
-<a name="l01297"></a>01297         <span class="keywordflow">return</span> mRoot.end();
-<a name="l01298"></a>01298     }
-<a name="l01299"></a>01299 
-<a name="l01300"></a>01300 <span class="keyword">private</span>:
-<a name="l01301"></a>01301     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l01302"></a>01302     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> &amp;operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l01303"></a>01303 
-<a name="l01304"></a>01304 <span class="keyword">private</span>:
-<a name="l01305"></a>01305     Node&lt;T, V, Cmp, Items&gt; mRoot;
-<a name="l01306"></a>01306 };
-<a name="l01307"></a>01307 
-<a name="l01308"></a>01308 }
-<a name="l01309"></a>01309 
-<a name="l01310"></a>01310 <span class="preprocessor">#endif</span>
+<a name="l01238"></a>01238     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
+<a name="l01239"></a><a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">01239</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">traverse</a>(CB <span class="keyword">const</span> &amp;c)<span class="keyword"> const </span>{
+<a name="l01240"></a>01240         mRoot.traverse(c);
+<a name="l01241"></a>01241     }
+<a name="l01242"></a>01242 
+<a name="l01247"></a><a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">01247</a>     T <a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a>()<span class="keyword"> const </span>{
+<a name="l01248"></a>01248         <span class="keywordflow">return</span> mRoot.endSymbol();
+<a name="l01249"></a>01249     }
+<a name="l01250"></a>01250 
+<a name="l01255"></a><a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">01255</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a>() {
+<a name="l01256"></a>01256         <span class="keywordflow">return</span> mRoot.begin();
+<a name="l01257"></a>01257     }
+<a name="l01258"></a>01258 
+<a name="l01263"></a><a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">01263</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a>() {
+<a name="l01264"></a>01264         <span class="keywordflow">return</span> mRoot.end();
+<a name="l01265"></a>01265     }
+<a name="l01266"></a>01266 
+<a name="l01272"></a><a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">01272</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">find</a>(<span class="keyword">const</span> T *key) {
+<a name="l01273"></a>01273         <span class="keywordflow">return</span> mRoot.find(key);
+<a name="l01274"></a>01274     }
+<a name="l01275"></a>01275 
+<a name="l01281"></a><a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">01281</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">find</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
+<a name="l01282"></a>01282         <span class="keywordflow">return</span> mRoot.find(key);
+<a name="l01283"></a>01283     }
+<a name="l01284"></a>01284 
+<a name="l01289"></a><a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">01289</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">begin</a>()<span class="keyword"> const </span>{
+<a name="l01290"></a>01290         <span class="keywordflow">return</span> mRoot.begin();
+<a name="l01291"></a>01291     }
+<a name="l01292"></a>01292 
+<a name="l01297"></a><a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">01297</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">end</a>()<span class="keyword"> const </span>{
+<a name="l01298"></a>01298         <span class="keywordflow">return</span> mRoot.end();
+<a name="l01299"></a>01299     }
+<a name="l01300"></a>01300 
+<a name="l01301"></a>01301 <span class="keyword">private</span>:
+<a name="l01302"></a>01302     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l01303"></a>01303     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> &amp;operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l01304"></a>01304 
+<a name="l01305"></a>01305 <span class="keyword">private</span>:
+<a name="l01306"></a>01306     Node&lt;T, V, Cmp, Items&gt; mRoot;
+<a name="l01307"></a>01307 };
+<a name="l01308"></a>01308 
+<a name="l01309"></a>01309 }
+<a name="l01310"></a>01310 
+<a name="l01311"></a>01311 <span class="preprocessor">#endif</span>
 </pre></div></div>
 </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 4 2012 14:29:22 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2012 14:35:58 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

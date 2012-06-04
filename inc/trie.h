@@ -1231,6 +1231,7 @@ public:
 
     /*!
      * Traverse through the Trie
+     * @deprecated Use Iterator instead of traverse
      * @param c The functor class which will be called when a node is reached. Functor takes two arguments,
      *          first argument is const T * and second V &
      */
