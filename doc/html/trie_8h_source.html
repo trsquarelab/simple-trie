@@ -944,93 +944,101 @@
 <a name="l01173"></a>01173         <span class="keywordflow">return</span> mRoot.erase(key);
 <a name="l01174"></a>01174     }
 <a name="l01175"></a>01175 
-<a name="l01181"></a><a class="code" href="classrtv_1_1_trie.html#ada63d93630ac7ca4c4eb046f8e26424a">01181</a>     <span class="keyword">const</span> V *<span class="keyword">get</span>(<span class="keyword">const</span> T *key) <span class="keyword">const</span> {
-<a name="l01182"></a>01182         <span class="keywordflow">return</span> mRoot.get(key);
-<a name="l01183"></a>01183     }
-<a name="l01184"></a>01184 
-<a name="l01190"></a><a class="code" href="classrtv_1_1_trie.html#a37f27dc4bdf4f18d8a484f348a1fdb93">01190</a>     V *<span class="keyword">get</span>(<span class="keyword">const</span> T *key) {
-<a name="l01191"></a>01191         <span class="keywordflow">return</span> mRoot.get(key);
-<a name="l01192"></a>01192     }
-<a name="l01193"></a>01193 
-<a name="l01201"></a><a class="code" href="classrtv_1_1_trie.html#a0080b8c445c25251b0ba4a99d039bef6">01201</a>     V &amp;<a class="code" href="classrtv_1_1_trie.html#a0080b8c445c25251b0ba4a99d039bef6">operator[]</a>(<span class="keyword">const</span> T *key) {
-<a name="l01202"></a>01202         std::pair&lt;Iterator, bool&gt; result = <a class="code" href="classrtv_1_1_trie.html#aa9e051ae8d75ad29548412074d33e07a">insert</a>(key, V());
-<a name="l01203"></a>01203         <span class="keywordflow">return</span> *(result.first-&gt;second);
-<a name="l01204"></a>01204     }
-<a name="l01205"></a>01205 
-<a name="l01211"></a><a class="code" href="classrtv_1_1_trie.html#af673e2895cb16c69144f9fd1a284a7ce">01211</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af673e2895cb16c69144f9fd1a284a7ce">hasKey</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
-<a name="l01212"></a>01212         <span class="keywordflow">return</span> mRoot.hasKey(key);
-<a name="l01213"></a>01213     }
-<a name="l01214"></a>01214 
-<a name="l01219"></a><a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">01219</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">empty</a>()<span class="keyword"> const </span>{
-<a name="l01220"></a>01220         <span class="keywordflow">return</span> mRoot.empty();
-<a name="l01221"></a>01221     }
-<a name="l01222"></a>01222 
-<a name="l01227"></a><a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">01227</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">size</a>()<span class="keyword"> const </span>{
-<a name="l01228"></a>01228         <span class="keywordflow">return</span> mRoot.size();
-<a name="l01229"></a>01229     }
-<a name="l01230"></a>01230 
-<a name="l01234"></a><a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">01234</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">clear</a>() {
-<a name="l01235"></a>01235         mRoot.clear();
-<a name="l01236"></a>01236     }
-<a name="l01237"></a>01237 
-<a name="l01243"></a><a class="code" href="classrtv_1_1_trie.html#a695a6caef52055b86efad4f3277e61fe">01243</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a695a6caef52055b86efad4f3277e61fe">startsWith</a>(<span class="keyword">const</span> T *prefix) {
-<a name="l01244"></a>01244         <span class="keywordflow">return</span> mRoot.startsWith(prefix);
-<a name="l01245"></a>01245     }
-<a name="l01246"></a>01246 
-<a name="l01252"></a><a class="code" href="classrtv_1_1_trie.html#a3a3559142b5bcbeae08af08df53c9925">01252</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a3a3559142b5bcbeae08af08df53c9925">startsWith</a>(<span class="keyword">const</span> T *prefix)<span class="keyword"> const </span>{
-<a name="l01253"></a>01253         <span class="keywordflow">return</span> mRoot.startsWith(prefix);
-<a name="l01254"></a>01254     }
-<a name="l01255"></a>01255 
-<a name="l01262"></a>01262     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
-<a name="l01263"></a><a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">01263</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">traverse</a>(CB <span class="keyword">const</span> &amp;c)<span class="keyword"> const </span>{
-<a name="l01264"></a>01264         mRoot.traverse(c);
-<a name="l01265"></a>01265     }
-<a name="l01266"></a>01266 
-<a name="l01271"></a><a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">01271</a>     T <a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a>()<span class="keyword"> const </span>{
-<a name="l01272"></a>01272         <span class="keywordflow">return</span> mRoot.endSymbol();
-<a name="l01273"></a>01273     }
-<a name="l01274"></a>01274 
-<a name="l01279"></a><a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">01279</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a>() {
-<a name="l01280"></a>01280         <span class="keywordflow">return</span> mRoot.begin();
-<a name="l01281"></a>01281     }
-<a name="l01282"></a>01282 
-<a name="l01287"></a><a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">01287</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a>() {
-<a name="l01288"></a>01288         <span class="keywordflow">return</span> mRoot.end();
-<a name="l01289"></a>01289     }
-<a name="l01290"></a>01290 
-<a name="l01296"></a><a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">01296</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">find</a>(<span class="keyword">const</span> T *key) {
-<a name="l01297"></a>01297         <span class="keywordflow">return</span> mRoot.find(key);
-<a name="l01298"></a>01298     }
-<a name="l01299"></a>01299 
-<a name="l01305"></a><a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">01305</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">find</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
-<a name="l01306"></a>01306         <span class="keywordflow">return</span> mRoot.find(key);
-<a name="l01307"></a>01307     }
-<a name="l01308"></a>01308 
-<a name="l01313"></a><a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">01313</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">begin</a>()<span class="keyword"> const </span>{
-<a name="l01314"></a>01314         <span class="keywordflow">return</span> mRoot.begin();
-<a name="l01315"></a>01315     }
-<a name="l01316"></a>01316 
-<a name="l01321"></a><a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">01321</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">end</a>()<span class="keyword"> const </span>{
-<a name="l01322"></a>01322         <span class="keywordflow">return</span> mRoot.end();
-<a name="l01323"></a>01323     }
-<a name="l01324"></a>01324 
-<a name="l01325"></a>01325 <span class="keyword">private</span>:
-<a name="l01326"></a>01326     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l01327"></a>01327     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> &amp;operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
-<a name="l01328"></a>01328 
-<a name="l01329"></a>01329 <span class="keyword">private</span>:
-<a name="l01330"></a>01330     Node&lt;T, V, Cmp, Items&gt; mRoot;
-<a name="l01331"></a>01331 };
-<a name="l01332"></a>01332 
-<a name="l01333"></a>01333 }
-<a name="l01334"></a>01334 
-<a name="l01335"></a>01335 <span class="preprocessor">#endif</span>
+<a name="l01181"></a><a class="code" href="classrtv_1_1_trie.html#a56453752511af2396dba211d7b304cfd">01181</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#a56453752511af2396dba211d7b304cfd">erase</a>(Iterator pos) {
+<a name="l01182"></a>01182         <span class="keywordflow">if</span> (pos != <a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a>()) {
+<a name="l01183"></a>01183             <span class="keywordflow">return</span> mRoot.erase(pos-&gt;first);
+<a name="l01184"></a>01184         } <span class="keywordflow">else</span> {
+<a name="l01185"></a>01185             <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l01186"></a>01186         }
+<a name="l01187"></a>01187     }
+<a name="l01188"></a>01188 
+<a name="l01194"></a><a class="code" href="classrtv_1_1_trie.html#ada63d93630ac7ca4c4eb046f8e26424a">01194</a>     <span class="keyword">const</span> V *<span class="keyword">get</span>(<span class="keyword">const</span> T *key) <span class="keyword">const</span> {
+<a name="l01195"></a>01195         <span class="keywordflow">return</span> mRoot.get(key);
+<a name="l01196"></a>01196     }
+<a name="l01197"></a>01197 
+<a name="l01203"></a><a class="code" href="classrtv_1_1_trie.html#a37f27dc4bdf4f18d8a484f348a1fdb93">01203</a>     V *<span class="keyword">get</span>(<span class="keyword">const</span> T *key) {
+<a name="l01204"></a>01204         <span class="keywordflow">return</span> mRoot.get(key);
+<a name="l01205"></a>01205     }
+<a name="l01206"></a>01206 
+<a name="l01214"></a><a class="code" href="classrtv_1_1_trie.html#a0080b8c445c25251b0ba4a99d039bef6">01214</a>     V &amp;<a class="code" href="classrtv_1_1_trie.html#a0080b8c445c25251b0ba4a99d039bef6">operator[]</a>(<span class="keyword">const</span> T *key) {
+<a name="l01215"></a>01215         std::pair&lt;Iterator, bool&gt; result = <a class="code" href="classrtv_1_1_trie.html#aa9e051ae8d75ad29548412074d33e07a">insert</a>(key, V());
+<a name="l01216"></a>01216         <span class="keywordflow">return</span> *(result.first-&gt;second);
+<a name="l01217"></a>01217     }
+<a name="l01218"></a>01218 
+<a name="l01224"></a><a class="code" href="classrtv_1_1_trie.html#af673e2895cb16c69144f9fd1a284a7ce">01224</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af673e2895cb16c69144f9fd1a284a7ce">hasKey</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
+<a name="l01225"></a>01225         <span class="keywordflow">return</span> mRoot.hasKey(key);
+<a name="l01226"></a>01226     }
+<a name="l01227"></a>01227 
+<a name="l01232"></a><a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">01232</a>     <span class="keywordtype">bool</span> <a class="code" href="classrtv_1_1_trie.html#af52269f118a233aa902e7eaa165b5b30">empty</a>()<span class="keyword"> const </span>{
+<a name="l01233"></a>01233         <span class="keywordflow">return</span> mRoot.empty();
+<a name="l01234"></a>01234     }
+<a name="l01235"></a>01235 
+<a name="l01240"></a><a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">01240</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classrtv_1_1_trie.html#a353b6353bcf7f3d8cea69f1999a857f3">size</a>()<span class="keyword"> const </span>{
+<a name="l01241"></a>01241         <span class="keywordflow">return</span> mRoot.size();
+<a name="l01242"></a>01242     }
+<a name="l01243"></a>01243 
+<a name="l01247"></a><a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">01247</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">clear</a>() {
+<a name="l01248"></a>01248         mRoot.clear();
+<a name="l01249"></a>01249     }
+<a name="l01250"></a>01250 
+<a name="l01256"></a><a class="code" href="classrtv_1_1_trie.html#a695a6caef52055b86efad4f3277e61fe">01256</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a695a6caef52055b86efad4f3277e61fe">startsWith</a>(<span class="keyword">const</span> T *prefix) {
+<a name="l01257"></a>01257         <span class="keywordflow">return</span> mRoot.startsWith(prefix);
+<a name="l01258"></a>01258     }
+<a name="l01259"></a>01259 
+<a name="l01265"></a><a class="code" href="classrtv_1_1_trie.html#a3a3559142b5bcbeae08af08df53c9925">01265</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a3a3559142b5bcbeae08af08df53c9925">startsWith</a>(<span class="keyword">const</span> T *prefix)<span class="keyword"> const </span>{
+<a name="l01266"></a>01266         <span class="keywordflow">return</span> mRoot.startsWith(prefix);
+<a name="l01267"></a>01267     }
+<a name="l01268"></a>01268 
+<a name="l01275"></a>01275     <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CB&gt;
+<a name="l01276"></a><a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">01276</a>     <span class="keywordtype">void</span> <a class="code" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">traverse</a>(CB <span class="keyword">const</span> &amp;c)<span class="keyword"> const </span>{
+<a name="l01277"></a>01277         mRoot.traverse(c);
+<a name="l01278"></a>01278     }
+<a name="l01279"></a>01279 
+<a name="l01284"></a><a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">01284</a>     T <a class="code" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a>()<span class="keyword"> const </span>{
+<a name="l01285"></a>01285         <span class="keywordflow">return</span> mRoot.endSymbol();
+<a name="l01286"></a>01286     }
+<a name="l01287"></a>01287 
+<a name="l01292"></a><a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">01292</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a>() {
+<a name="l01293"></a>01293         <span class="keywordflow">return</span> mRoot.begin();
+<a name="l01294"></a>01294     }
+<a name="l01295"></a>01295 
+<a name="l01300"></a><a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">01300</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a>() {
+<a name="l01301"></a>01301         <span class="keywordflow">return</span> mRoot.end();
+<a name="l01302"></a>01302     }
+<a name="l01303"></a>01303 
+<a name="l01309"></a><a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">01309</a>     Iterator <a class="code" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">find</a>(<span class="keyword">const</span> T *key) {
+<a name="l01310"></a>01310         <span class="keywordflow">return</span> mRoot.find(key);
+<a name="l01311"></a>01311     }
+<a name="l01312"></a>01312 
+<a name="l01318"></a><a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">01318</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">find</a>(<span class="keyword">const</span> T *key)<span class="keyword"> const </span>{
+<a name="l01319"></a>01319         <span class="keywordflow">return</span> mRoot.find(key);
+<a name="l01320"></a>01320     }
+<a name="l01321"></a>01321 
+<a name="l01326"></a><a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">01326</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">begin</a>()<span class="keyword"> const </span>{
+<a name="l01327"></a>01327         <span class="keywordflow">return</span> mRoot.begin();
+<a name="l01328"></a>01328     }
+<a name="l01329"></a>01329 
+<a name="l01334"></a><a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">01334</a>     ConstIterator <a class="code" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">end</a>()<span class="keyword"> const </span>{
+<a name="l01335"></a>01335         <span class="keywordflow">return</span> mRoot.end();
+<a name="l01336"></a>01336     }
+<a name="l01337"></a>01337 
+<a name="l01338"></a>01338 <span class="keyword">private</span>:
+<a name="l01339"></a>01339     <a class="code" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a>(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l01340"></a>01340     <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> &amp;operator=(<a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> <span class="keyword">const</span> &amp;);
+<a name="l01341"></a>01341 
+<a name="l01342"></a>01342 <span class="keyword">private</span>:
+<a name="l01343"></a>01343     Node&lt;T, V, Cmp, Items&gt; mRoot;
+<a name="l01344"></a>01344 };
+<a name="l01345"></a>01345 
+<a name="l01346"></a>01346 }
+<a name="l01347"></a>01347 
+<a name="l01348"></a>01348 <span class="preprocessor">#endif</span>
 </pre></div></div>
 </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 4 2012 16:40:51 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2012 16:54:07 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

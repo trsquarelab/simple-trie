@@ -77,6 +77,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a> (const T &amp;endSymbol)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::pair&lt; Iterator, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#aa9e051ae8d75ad29548412074d33e07a">insert</a> (const T *key, V const &amp;value)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">erase</a> (const T *key)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a56453752511af2396dba211d7b304cfd">erase</a> (Iterator pos)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const V *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ada63d93630ac7ca4c4eb046f8e26424a">get</a> (const T *key) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">V *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a37f27dc4bdf4f18d8a484f348a1fdb93">get</a> (const T *key)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">V &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a0080b8c445c25251b0ba4a99d039bef6">operator[]</a> (const T *key)</td></tr>
@@ -495,6 +496,33 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
 
 </div>
 </div>
+<a class="anchor" id="a56453752511af2396dba211d7b304cfd"></a><!-- doxytag: member="rtv::Trie::erase" ref="a56453752511af2396dba211d7b304cfd" args="(Iterator pos)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::erase </td>
+          <td>(</td>
+          <td class="paramtype">Iterator&#160;</td>
+          <td class="paramname"><em>pos</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Remove the entry with the given key from the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>Iterator pointing to a single element to be removed from the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if the given key is erased in to the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a>, false otherwise </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aff63a96092a71a856698faba94048080"></a><!-- doxytag: member="rtv::Trie::find" ref="aff63a96092a71a856698faba94048080" args="(const T *key)" -->
 <div class="memitem">
 <div class="memproto">
@@ -805,7 +833,7 @@ template&lt;typename CB &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 4 2012 16:40:52 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2012 16:54:07 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
