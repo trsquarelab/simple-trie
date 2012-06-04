@@ -973,7 +973,7 @@ protected:
  *
  *     rtv::Trie<char, std::string> dictionary('\0');
  *
- *     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
+ *     dictionary.insert("karma", "Destiny or fate, following as effect from cause");
  *     rtv::Trie<char, std::string>::Iterator iter = dictionary.startsWith("kar");
  *
  *     for (; iter != dictionary.end(); ++iter) {
