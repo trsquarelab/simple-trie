@@ -52,7 +52,13 @@ int main(int argc, char **argv)
             std::cout << "Enter the meaning : ";
             std::cin.ignore();
             std::cin.get(meaning, sizeof(meaning), '\n');
-            dictionary.insert(&word[0], meaning);
+            std::pair< rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator, bool> result = dictionary.insert(&word[0], meaning);
+            if (result.second) {
+                std::cout << "Inserted" << std::endl;
+            } else {
+                std::cout << "Insertion failed! key already present" << std::endl; 
+                std::cout << result.first->first << " : " << result.first->second->c_str() << std::endl;
+            }
             break;
         }
         case '2': {

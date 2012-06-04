@@ -75,7 +75,7 @@
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ad3f623b4e11a37e1c2eb007696ae84cd">Trie</a> (const T &amp;endSymbol)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">std::pair&lt; V *, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a54ec187e68eb538479a0a7e63903e8f7">insert</a> (const T *key, V const &amp;value)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">std::pair&lt; Iterator, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#aa9e051ae8d75ad29548412074d33e07a">insert</a> (const T *key, V const &amp;value)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">erase</a> (const T *key)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const V *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ada63d93630ac7ca4c4eb046f8e26424a">get</a> (const T *key) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">V *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a37f27dc4bdf4f18d8a484f348a1fdb93">get</a> (const T *key)</td></tr>
@@ -126,7 +126,7 @@ Declarating the Trie</h3>
  }
 </pre></div><h3><a class="anchor" id="usage_population"></a>
 Populatiion and deletion from the Trie</h3>
-<p><a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> can be populated by using the <a class="el" href="classrtv_1_1_trie.html#a54ec187e68eb538479a0a7e63903e8f7">Trie::insert</a> method and element can be removed using <a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">Trie::erase</a>. </p>
+<p><a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> can be populated by using the <a class="el" href="classrtv_1_1_trie.html#aa9e051ae8d75ad29548412074d33e07a">Trie::insert</a> method and element can be removed using <a class="el" href="classrtv_1_1_trie.html#ab1b2f24ac7981cef236b5c00314366f9">Trie::erase</a>. </p>
 <div class="fragment"><pre class="fragment"><span class="preprocessor"> #include &lt;trie.h&gt;</span>
 <span class="preprocessor"> #include &lt;string&gt;</span>
 <span class="preprocessor"> #include &lt;iostream&gt;</span>
@@ -136,7 +136,7 @@ Populatiion and deletion from the Trie</h3>
      <a class="code" href="classrtv_1_1_trie.html" title="Trie main class.">rtv::Trie&lt;char, std::string&gt;</a> dictionary(<span class="charliteral">&#39;$&#39;</span>);
 
      <span class="comment">// adding key value pair to the Trie</span>
-     <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>)) {
+     <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma$&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>).second) {
          std::cout &lt;&lt; <span class="stringliteral">&quot;added karma&quot;</span> &lt;&lt; std::endl;
      }
 
@@ -252,7 +252,7 @@ Efficient use of Trie for alphabets</h3>
                &gt; dictionary(<span class="charliteral">&#39;\0&#39;</span>);
 
      <span class="comment">// adding key value pair to the Trie</span>
-     <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>)) {
+     <span class="keywordflow">if</span> (dictionary.insert(<span class="stringliteral">&quot;karma&quot;</span>, <span class="stringliteral">&quot;Destiny or fate, following as effect from cause&quot;</span>).second) {
          std::cout &lt;&lt; <span class="stringliteral">&quot;added karma&quot;</span> &lt;&lt; std::endl;
      }
 
@@ -630,14 +630,14 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
 
 </div>
 </div>
-<a class="anchor" id="a54ec187e68eb538479a0a7e63903e8f7"></a><!-- doxytag: member="rtv::Trie::insert" ref="a54ec187e68eb538479a0a7e63903e8f7" args="(const T *key, V const &amp;value)" -->
+<a class="anchor" id="aa9e051ae8d75ad29548412074d33e07a"></a><!-- doxytag: member="rtv::Trie::insert" ref="aa9e051ae8d75ad29548412074d33e07a" args="(const T *key, V const &amp;value)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;V *, bool&gt; <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::insert </td>
+          <td class="memname">std::pair&lt;Iterator, bool&gt; <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">const T *&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -664,7 +664,7 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>An std::pair with pair::first set to a pointer points to the value and pair::second to true is key is newly inserted, false otherwise </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>An std::pair with pair::first set to the Iterator points to the element and pair::second to true is key is newly inserted, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -805,7 +805,7 @@ template&lt;typename CB &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 4 2012 14:55:22 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2012 16:40:52 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

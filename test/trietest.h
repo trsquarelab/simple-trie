@@ -117,7 +117,15 @@ public:
     template <typename D>
     void testAndAddToTrie(D &aTrie, const std::string &word, const std::string &meaning) {
         unsigned int trieSize = aTrie.size();
-        aTrie.insert(word.c_str(), meaning.c_str());
+        std::pair<typename D::Iterator, bool> res = aTrie.insert(word.c_str(), meaning.c_str());
+        if (res.second) {
+            std::string keyStr = keyToString(aTrie.endSymbol(), res.first->first);
+            testResult(word.compare(keyStr) == 0, "Error in the Iterator returned after insertion!!!Expected", word.c_str(),
+                                                  "Actual", keyStr.c_str());
+            testResult(res.first->second->compare(meaning) == 0, "Error in the Iterator returned after insertion!!! Expected",
+                                                                 meaning.c_str(), 
+                                                                 "Actual", res.first->second->c_str());
+        }
         testResult(aTrie.get(word.c_str())->compare(meaning.c_str()) == 0, "Error in Trie::insert or Trie::get !!!");
         testResult(aTrie.size() == trieSize + 1, "Trie size did not updated properly after Trie::insert!!!");
     }

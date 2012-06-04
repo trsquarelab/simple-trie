@@ -179,9 +179,33 @@ public:
             next();
         }
 
+        IteratorBase(const IteratorBase<KV> & oth)
+            : mIterStack(oth.mIterStack),
+              mNodeStack(oth.mNodeStack),
+              mKeyStack(oth.mKeyStack),
+              mCheckKey(oth.mCheckKey)
+        {
+            if (!mKeyStack.empty()) {
+                mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
+            }
+        }
+
         IteratorBase(NodeClass *node, const T * key, int i, bool findSymbol) {
             pushNode(node, key, i, findSymbol);
             next();
+        }
+
+        IteratorBase & operator=(const IteratorBase<KV> & oth) {
+            if (this != &oth) {
+                mIterStack = oth.mIterStack;
+                mNodeStack = oth.mNodeStack;
+                mKeyStack = oth.mKeyStack;
+                if (!mKeyStack.empty()) {
+                    mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
+                }
+                mCheckKey = oth.mCheckKey;
+            }
+            return *this;
         }
 
         void next() {
@@ -478,19 +502,19 @@ private:
         }
     }
 
-    std::pair<V *, bool> insertData(const T *key, V const &value, int i) {
-        std::pair<V *, bool> result((V *)0, false);
+    std::pair<Iterator, bool> insertData(const T *key, V const &value, int i) {
+        std::pair<Iterator, bool> result(end(), false);
         std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
         NodeItemClass *item = itemPair.first;
         if (itemPair.second) {
-            result.first = &(((EndNodeItemClass *)item)->getValue());
+            result.first = Iterator(this, key, i, true);
             return result;
         }
         if (!item) {
             return result;
         } else if (key[i] == mEndSymbol) {
             ((EndNodeItemClass *)item)->set(key[i], value);
-            result.first = &(((EndNodeItemClass *)item)->getValue());
+            result.first = Iterator(this, key, i, true);
             result.second = true;
         } else {
             return item->getOrCreateChilds()->insertData(key, value, ++i);
@@ -569,8 +593,8 @@ public:
         return mSize;
     }
 
-    std::pair<V *, bool> insert(const T *key, V const &value) {
-        std::pair<V *, bool> r = insertData(key, value, 0);
+    std::pair<Iterator, bool> insert(const T *key, V const &value) {
+        std::pair<Iterator, bool> r = insertData(key, value, 0);
         if (r.second) {
             ++mSize;
         }
@@ -922,7 +946,7 @@ protected:
  *     rtv::Trie<char, std::string> dictionary('$');
  *
  *     // adding key value pair to the Trie
- *     if (dictionary.insert("karma$", "Destiny or fate, following as effect from cause")) {
+ *     if (dictionary.insert("karma$", "Destiny or fate, following as effect from cause").second) {
  *         std::cout << "added karma" << std::endl;
  *     }
  *
@@ -1052,7 +1076,7 @@ protected:
  *               > dictionary('\0');
  *
  *     // adding key value pair to the Trie
- *     if (dictionary.insert("karma", "Destiny or fate, following as effect from cause")) {
+ *     if (dictionary.insert("karma", "Destiny or fate, following as effect from cause").second) {
  *         std::cout << "added karma" << std::endl;
  *     }
  *
@@ -1134,9 +1158,9 @@ public:
      * Add a key with value in to the Trie
      * @param key Key which should be inserted, should be terminated by 'end' symbol
      * @param value The value that is to be set with the key
-     * @return An std::pair with pair::first set to a pointer points to the value and pair::second to true is key is newly inserted, false otherwise
+     * @return An std::pair with pair::first set to the Iterator points to the element and pair::second to true is key is newly inserted, false otherwise
      */
-    std::pair<V *, bool> insert(const T *key, V const &value) {
+    std::pair<Iterator, bool> insert(const T *key, V const &value) {
         return mRoot.insert(key, value);
     }
 
@@ -1175,8 +1199,8 @@ public:
      * @return Reference to value for the given key
      */
     V &operator[](const T *key) {
-        std::pair<V *, bool> result = insert(key, V());
-        return *(result.first);
+        std::pair<Iterator, bool> result = insert(key, V());
+        return *(result.first->second);
     }
 
     /*!
