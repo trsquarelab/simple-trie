@@ -134,7 +134,7 @@ public:
                 }
             }
             typename D::Iterator iter = aTrie.startsWith(key.c_str());
-            int countStartsWith = 0;
+            unsigned int countStartsWith = 0;
             for (; iter != aTrie.end(); ++iter) {
                 std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
                 keyStr.erase(keyStr.length()-1);
@@ -161,7 +161,7 @@ public:
                 }
             }
             typename D::ConstIterator iter = aTrie.startsWith(key.c_str());
-            int countStartsWith = 0;
+            unsigned int countStartsWith = 0;
             for (; iter != aTrie.end(); ++iter) {
                 std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
                 keyStr.erase(keyStr.length()-1);
