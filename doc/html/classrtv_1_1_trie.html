@@ -89,6 +89,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#aff63a96092a71a856698faba94048080">find</a> (const T *key)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ConstIterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a576a35b9b7f8af09213102405f1209ba">find</a> (const T *key) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ConstIterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a8b0ae159e91f48616f1a6e56630a35ef">begin</a> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ConstIterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#af962dc8339563647a22c12bf815f8623">end</a> () const </td></tr>
 </table>
@@ -496,6 +498,58 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
 
 </div>
 </div>
+<a class="anchor" id="aff63a96092a71a856698faba94048080"></a><!-- doxytag: member="rtv::Trie::find" ref="aff63a96092a71a856698faba94048080" args="(const T *key)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Iterator <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::find </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Iterator to the element or end </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a576a35b9b7f8af09213102405f1209ba"></a><!-- doxytag: member="rtv::Trie::find" ref="a576a35b9b7f8af09213102405f1209ba" args="(const T *key) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">ConstIterator <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::find </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Key to be searched for, should be terminated by 'end' symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>ConstIterator to the element or end </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ada63d93630ac7ca4c4eb046f8e26424a"></a><!-- doxytag: member="rtv::Trie::get" ref="ada63d93630ac7ca4c4eb046f8e26424a" args="(const T *key) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -741,7 +795,7 @@ template&lt;typename CB &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jun 2 2012 19:58:04 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2012 09:59:56 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
