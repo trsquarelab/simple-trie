@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="test"
+	Name="trie_test"
 	ProjectGUID="{3865DA94-DACF-4FB6-8D61-092DCF61CB6E}"
 	RootNamespace="trie"
 	Keyword="Win32Proj"
