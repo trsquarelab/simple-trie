@@ -6,6 +6,7 @@ CXFLAGS = -g3 -Wall
 DEPS = ../inc/trie.h ../test/trietest.h
 
 all: $(bin_PROGRAMME)
+	cd ../examples/linux && make	
 	
 
 $(bin_PROGRAMME): $(trie_test_SOURCES) $(DEPS)
@@ -16,4 +17,5 @@ $(bin_PROGRAMME): $(trie_test_SOURCES) $(DEPS)
 
 clean:
 	rm -rf $(bin_PROGRAMME) $(trie_test_OBJ)
+	cd ../examples/linux && make clean
 
