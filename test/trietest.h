@@ -390,6 +390,27 @@ public:
                        siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
+        //Iterator other functionality
+        for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
+             iter != ((const D &)aTrie).end(); ++iter) {
+            bool res = (iter == ((const D &)aTrie).find(iter->first));
+            testResult(res, "Iterator different from Iterator from find method when it should be same!!!");
+            res = (iter != ++(((const D &)aTrie).find(iter->first)));
+            testResult(res, "Iterator same when it should be differnt!!!");
+            res = (iter == ((const D &)aTrie).startsWith(iter->first));
+            testResult(res, "Iterator different from Iterator from startsWith method when it should be same!!!");
+        }
+        for (typename D::Iterator iter = aTrie.begin();
+             iter != aTrie.end(); ++iter) {
+            bool res = (iter == aTrie.find(iter->first));
+            testResult(res, "Iterator different when it should be same!!!");
+            res = (iter != ++(aTrie.find(iter->first)));
+            testResult(res, "Iterator same when it should be differnt!!!");
+            typename D::ConstIterator c_iter = iter;
+            res = (c_iter == ((const D &)aTrie).find(c_iter->first));
+            testResult(res, "Iterator different when it should be same!!!");
+        }
+
         //Test Trie::traverse functionality
         do {
             TrieTraverseCallBack ttcb(aTrie.endSymbol());
