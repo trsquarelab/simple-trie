@@ -17,7 +17,11 @@ int main(int argc, char **argv)
 
     TrieTestCases::instance()->execute();
 
-    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> dictionary('\0');
+    typedef rtv::Trie<char, std::string, TrieCaseInsensitiveCompare> Dictionary;
+    typedef Dictionary::Iterator Iterator;
+    typedef Dictionary::Iterator ConstIterator;
+
+    Dictionary dictionary('\0');
 
     TrieTestCases::instance()->populateTrieWithSampleValues(dictionary);
 
@@ -52,7 +56,7 @@ int main(int argc, char **argv)
             std::cout << "Enter the meaning : ";
             std::cin.ignore();
             std::cin.get(meaning, sizeof(meaning), '\n');
-            std::pair< rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator, bool> result = dictionary.insert(&word[0], meaning);
+            std::pair<Iterator, bool> result = dictionary.insert(&word[0], meaning);
             if (result.second) {
                 std::cout << "Inserted" << std::endl;
             } else {
@@ -79,9 +83,10 @@ int main(int argc, char **argv)
             std::cout << "Enter the word : ";
             std::cin.ignore();
             std::cin.get(word, sizeof(word), '\n');
-            std::string * meaning = dictionary.get(word);
-            if (meaning) {
-                std::cout << word << " : " << meaning->c_str() << std::endl;
+            
+            Iterator iter = dictionary.find(word);
+            if (iter != dictionary.end()) {
+                std::cout << word << " : " << iter->second->c_str() << std::endl;
             } else {
                 std::cout << "Could not find " << word << std::endl;
             }
@@ -95,7 +100,7 @@ int main(int argc, char **argv)
             std::cin.get(word, sizeof(word), '\n');
             std::cout << "Searching ... ";
 
-            rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.startsWith(&word[0]);
+            Iterator iter = dictionary.startsWith(&word[0]);
 
             if (iter == dictionary.end()) {
                 std::cout << "Could not find the given word";
@@ -112,8 +117,8 @@ int main(int argc, char **argv)
         }
         case '5': {
             std::cout << "*****************************************" << std::endl;
-            rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iter = dictionary.begin();
-            rtv::Trie<char, std::string, TrieCaseInsensitiveCompare>::Iterator iend = dictionary.end();
+            Iterator iter = dictionary.begin();
+            Iterator iend = dictionary.end();
 
             for (; iter != iend; ++iter) {
                 std::string k((const char *)(iter->first));
