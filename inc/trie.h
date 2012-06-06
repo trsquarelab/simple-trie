@@ -179,7 +179,9 @@ public:
 
     public:
         ConstIterator(const NodeClass *node, const T * key = 0) 
-            : mRootNode(node) {
+            : mRootNode(node),
+              mCurrentNode(node)
+        {
             pushNode(node, key);
             next();
         }
@@ -314,7 +316,7 @@ public:
             }
 
             if (this->mCurrentNode == oth.mCurrentNode &&
-                this->mCurrentPos == oth.mCurrentPos) {
+                this->mCurrentPos  == oth.mCurrentPos) {
                     return true;
             }
 
