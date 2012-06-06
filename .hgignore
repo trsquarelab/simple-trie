@@ -23,5 +23,6 @@ Debug/
 *.vcxproj.user
 UpgradeLog*.XML
 *.sdf
+*.opensdf
 _UpgradeReport_Files/
 

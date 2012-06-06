@@ -38,7 +38,6 @@
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -87,8 +86,6 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ae7087baa9deea6e1192cd42c324ae36e">clear</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a695a6caef52055b86efad4f3277e61fe">startsWith</a> (const T *prefix)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ConstIterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a3a3559142b5bcbeae08af08df53c9925">startsWith</a> (const T *prefix) const </td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;typename CB &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ac2e1715ab49738782d6ba7e3750e6c50">traverse</a> (CB const &amp;c) const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a193ac85f06798e78576f5d1b49b56891">endSymbol</a> () const </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#ae72e5f97be19cbb9fe5da0c7f37df787">begin</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrtv_1_1_trie.html#a3bfd08ed64b9fffbb6ff18d3bbd5ff00">end</a> ()</td></tr>
@@ -797,35 +794,6 @@ template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename 
 
 </div>
 </div>
-<a class="anchor" id="ac2e1715ab49738782d6ba7e3750e6c50"></a><!-- doxytag: member="rtv::Trie::traverse" ref="ac2e1715ab49738782d6ba7e3750e6c50" args="(CB const &amp;c) const " -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T, typename V, typename Cmp = std::less&lt;T&gt;, typename Items = SetItems&lt;T, V, Cmp&gt;&gt; </div>
-<div class="memtemplate">
-template&lt;typename CB &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classrtv_1_1_trie.html">rtv::Trie</a>&lt; T, V, Cmp, Items &gt;::traverse </td>
-          <td>(</td>
-          <td class="paramtype">CB const &amp;&#160;</td>
-          <td class="paramname"><em>c</em></td><td>)</td>
-          <td> const<code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Traverse through the <a class="el" href="classrtv_1_1_trie.html" title="Trie main class.">Trie</a> </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use Iterator instead of traverse </dd></dl>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">c</td><td>The functor class which will be called when a node is reached. Functor takes two arguments, first argument is const T * and second V &amp; </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="trie_8h_source.html">trie.h</a></li>
 </ul>
@@ -833,7 +801,7 @@ template&lt;typename CB &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jun 5 2012 09:14:59 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jun 5 2012 23:32:55 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>
