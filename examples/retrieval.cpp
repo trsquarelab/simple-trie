@@ -2,14 +2,15 @@
 #include <string>
 #include <iostream>
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
 
     rtv::Trie<char, std::string> dictionary('$');
 
     dictionary.insert("karma$", "Destiny or fate, following as effect from cause");
 
     if (dictionary.hasKey("karma$")) {
-     std::cout << "key karma found" << std::endl;
+        std::cout << "key karma found" << std::endl;
     }
     std::string * result = dictionary.get("karma$");
     if (result) {
@@ -24,7 +25,7 @@ int main(int argc, char ** argv) {
         for (; iter->first[i] != dictionary.endSymbol(); ++i) {
         }
         std::string keyWithNullTermination(iter->first, i);
-        std::cout << keyWithNullTermination.c_str() << ":"<< iter->second->c_str() << std::endl;
+        std::cout << keyWithNullTermination.c_str() << ":" << iter->second->c_str() << std::endl;
     }
 
 

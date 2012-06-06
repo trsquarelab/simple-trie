@@ -21,14 +21,14 @@ namespace rtv
 {
 
 template < typename T,
-         typename V,
-         typename Cmp,
-         typename Items > class Node;
+typename V,
+typename Cmp,
+typename Items > class Node;
 
 template < typename T,
-         typename V,
-         typename Cmp,
-         typename Items > class NodeItem
+typename V,
+typename Cmp,
+typename Items > class NodeItem
 {
 private:
     typedef Node<T, V, Cmp, Items> NodeClass;
@@ -36,10 +36,9 @@ private:
 
 public:
     NodeItem(const T &endSymbol, T const &key)
-        : mEndSymbol(endSymbol),
-          mKey(key),
-          mChilds(0)
-    {}
+            : mEndSymbol(endSymbol),
+            mKey(key),
+            mChilds(0) {}
 
     virtual ~NodeItem() {
         delete mChilds;
@@ -107,22 +106,20 @@ private:
 };
 
 template < typename T,
-         typename V,
-         typename Cmp,
-         typename Items > class EndNodeItem: public NodeItem<T, V, Cmp, Items>
+typename V,
+typename Cmp,
+typename Items > class EndNodeItem: public NodeItem<T, V, Cmp, Items>
 {
 private:
     typedef NodeItem<T, V, Cmp, Items> ParentClass;
 
 public:
     EndNodeItem(const T &endSymbol, T const &key)
-        : ParentClass(endSymbol, key)
-    {}
+            : ParentClass(endSymbol, key) {}
 
     EndNodeItem(const T &endSymbol, T const &key, V const &value)
-        : ParentClass(endSymbol, key),
-          mValue(value)
-    {}
+            : ParentClass(endSymbol, key),
+            mValue(value) {}
 
     void set(T const &key, V const &value) {
         ParentClass::set(key);
@@ -146,9 +143,9 @@ private:
 };
 
 template < typename T,
-         typename V,
-         typename Cmp,
-         typename Items > class NodeItemPtrCompare
+typename V,
+typename Cmp,
+typename Items > class NodeItemPtrCompare
 {
 private:
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
@@ -160,9 +157,9 @@ public:
 };
 
 template < typename T,
-         typename V,
-         typename Cmp,
-         typename Items > class Node
+typename V,
+typename Cmp,
+typename Items > class Node
 {
 public:
     typedef NodeItem<T, V, Cmp, Items> NodeItemClass;
@@ -178,21 +175,19 @@ public:
         typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter;
 
     public:
-        ConstIterator(const NodeClass *node, const T * key = 0) 
-            : mRootNode(node),
-              mCurrentNode(node)
-        {
+        ConstIterator(const NodeClass *node, const T * key = 0)
+                : mRootNode(node),
+                mCurrentNode(node) {
             pushNode(node, key);
             next();
         }
 
         ConstIterator(const ConstIterator & oth)
-            : mRootNode(oth.mRootNode),
-              mCurrentNode(oth.mCurrentNode),
-              mCurrentPos(oth.mCurrentPos),
-              mKeyStack(oth.mKeyStack),
-              mCheckKey(oth.mCheckKey)
-        {
+                : mRootNode(oth.mRootNode),
+                mCurrentNode(oth.mCurrentNode),
+                mCurrentPos(oth.mCurrentPos),
+                mKeyStack(oth.mKeyStack),
+                mCheckKey(oth.mCheckKey) {
             if (!mKeyStack.empty()) {
                 mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
             }
@@ -306,8 +301,8 @@ public:
             }
 
             if (this->mRootNode == this->mCurrentNode &&
-                this->mCurrentPos == this->mCurrentNode->mItems.end()) {
-                    return true;
+                    this->mCurrentPos == this->mCurrentNode->mItems.end()) {
+                return true;
             }
             return false;
         }
@@ -318,8 +313,8 @@ public:
             }
 
             if (this->mCurrentNode == oth.mCurrentNode &&
-                this->mCurrentPos  == oth.mCurrentPos) {
-                    return true;
+                    this->mCurrentPos  == oth.mCurrentPos) {
+                return true;
             }
 
             return false;
@@ -328,7 +323,7 @@ public:
         void pushNode(const NodeClass *node, const T * key = 0) {
             if (node) {
                 if (key) {
-                    for (int i=0; key[i] != node->endSymbol(); ++i) {
+                    for (int i = 0; key[i] != node->endSymbol(); ++i) {
                         mKeyStack.push_back(key[i]);
                     }
                 }
@@ -354,8 +349,7 @@ public:
 
     public:
         Iterator(NodeClass *node, const T * key = 0)
-            : ConstIterator(node, key)
-        {}
+                : ConstIterator(node, key) {}
 
         MutableKeyValuePair &operator*() {
             return getPair();
@@ -451,7 +445,7 @@ private:
             bool finished = false;
             int count = 0;
             ItemsContainerIter iterEnd = node->mItems.end();
-            
+
             if (!keyIndex) {
                 while (key[keyIndex] != node->endSymbol()) {
                     ++ keyIndex;
@@ -460,7 +454,7 @@ private:
 
             while (node && !finished) {
                 ItemsContainerIter iterEnd = node->mItems.end();
-                
+
                 count = 0;
                 for (ItemsContainerIter iter = node->mItems.begin(); iter != iterEnd; ++iter) {
                     if (*iter != 0) {
@@ -503,11 +497,10 @@ private:
 
 public:
     Node(const T &eSymbol, NodeClass * parent = 0)
-        : mItems(eSymbol),
-          mEndSymbol(eSymbol),
-          mSize(0),
-          mParent(parent)
-    {}
+            : mItems(eSymbol),
+            mEndSymbol(eSymbol),
+            mSize(0),
+            mParent(parent) {}
 
     ~Node() {
         clear();
@@ -596,11 +589,11 @@ public:
     }
 
     ConstIterator find(const T *key) const {
-        return ConstIterator(const_cast<NodeClass *>(this)->findKey(key, 0), key); 
+        return ConstIterator(const_cast<NodeClass *>(this)->findKey(key, 0), key);
     }
 
     Iterator find(const T *key) {
-        return Iterator(findKey(key, 0), key); 
+        return Iterator(findKey(key, 0), key);
     }
 
     Iterator startsWith(const T *prefix) {
@@ -644,11 +637,11 @@ public:
  * @tparam Cmp Comparison functor
  * @tparam Max Maximum element that a Trie node can have
  */
-template <typename T,
-          typename V,
-          typename Cmp,
-          int Max = 256,
-          typename M = SymbolToIndexMapper<T> > class VectorItems
+template < typename T,
+typename V,
+typename Cmp,
+int Max = 256,
+typename M = SymbolToIndexMapper<T> > class VectorItems
 {
 public:
     typedef NodeItem<T, V, Cmp, VectorItems<T, V, Cmp, Max, M> > Item;
@@ -661,9 +654,8 @@ public:
 
 public:
     VectorItems(T const &endSymbol)
-        : mEndSymbol(endSymbol),
-          mItems(Max, (Item *)0)
-    {}
+            : mEndSymbol(endSymbol),
+            mItems(Max, (Item *)0) {}
 
     const_iterator find(const T & k) const {
         const_iterator iter = mItems.begin();
@@ -776,8 +768,8 @@ protected:
  * @tparam Cmp Comparison functor
  */
 template < typename T,
-         typename V,
-         typename Cmp > class SetItems
+typename V,
+typename Cmp > class SetItems
 {
 public:
     typedef NodeItem<T, V, Cmp, SetItems<T, V, Cmp> > Item;
@@ -790,8 +782,7 @@ public:
 
 public:
     SetItems(T const &endSymbol)
-        : mEndSymbol(endSymbol)
-    {}
+            : mEndSymbol(endSymbol) {}
 
     const_iterator find(const T & k) const {
         return const_cast<SetItems<T, V, Cmp> *>(this)->find(k);
@@ -1034,7 +1025,7 @@ protected:
  *         return i1 < i2;
  *     }
  * };
- * 
+ *
  * // key to vector index converter
  * // case insensitive and includes alphabets, space and end symbol
  * class AlphaToIndex
@@ -1123,9 +1114,9 @@ protected:
  * @endcode
  */
 template < typename T,
-         typename V,
-         typename Cmp = std::less<T>,
-         typename Items = SetItems<T, V, Cmp> > class Trie
+typename V,
+typename Cmp = std::less<T>,
+typename Items = SetItems<T, V, Cmp> > class Trie
 {
 public:
     typedef typename Node<T, V, Cmp, Items>::Iterator Iterator;
@@ -1136,8 +1127,7 @@ public:
      * @param endSymbol The symbol which marks the end of key input
      */
     Trie(const T &endSymbol)
-        : mRoot(endSymbol)
-    {}
+            : mRoot(endSymbol) {}
 
     /*!
      * Add a key with value in to the Trie
@@ -1273,7 +1263,7 @@ public:
     /*!
      * Searches the Trie for an element with 'key' as key
      * @param key Key to be searched for, should be terminated by 'end' symbol
-     * @return Iterator to the element with key 'key' if found, otherwise an Iterator to Trie::end 
+     * @return Iterator to the element with key 'key' if found, otherwise an Iterator to Trie::end
      */
     Iterator find(const T *key) {
         return mRoot.find(key);
@@ -1282,7 +1272,7 @@ public:
     /*!
      * Searches the Trie for an element with 'key' as key
      * @param key Key to be searched for, should be terminated by 'end' symbol
-     * @return ConstIterator to the element with key 'key' if found, otherwise an ConstIterator to Trie::end 
+     * @return ConstIterator to the element with key 'key' if found, otherwise an ConstIterator to Trie::end
      */
     ConstIterator find(const T *key) const {
         return mRoot.find(key);

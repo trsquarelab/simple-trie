@@ -32,15 +32,16 @@ public:
     }
 };
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
 
-    rtv::Trie<char, std::string,
-              TrieCaseInsensitiveCompare,
-              rtv::VectorItems<char, std::string, TrieCaseInsensitiveCompare,
-                               28,  // size of each node (alphabets + endsymbol + space)
-                               AlphaToIndex // key symbol to index converter
-                              >
-              > dictionary('\0');
+    rtv::Trie < char, std::string,
+    TrieCaseInsensitiveCompare,
+    rtv::VectorItems < char, std::string, TrieCaseInsensitiveCompare,
+    28,  // size of each node (alphabets + endsymbol + space)
+    AlphaToIndex // key symbol to index converter
+    >
+    > dictionary('\0');
 
     // adding key value pair to the Trie
     if (dictionary.insert("karma", "Destiny or fate, following as effect from cause").second) {
