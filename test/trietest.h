@@ -37,41 +37,6 @@ public:
     }
 };
 
-
-class TrieTraverseCallBack
-{
-public:
-    mutable unsigned int mCount;
-    bool mPrint;
-    char mEndSymbol;
-
-    TrieTraverseCallBack(char endSymbol)
-        : mCount(0),
-          mPrint(true),
-          mEndSymbol(endSymbol)
-    {}
-
-    void operator()(const char *key, std::string const &value) const {
-        if (mPrint) {
-            std::string k;
-            for (int i = 0; key[i] != mEndSymbol; ++i) {
-                char astr[2] = {'\0', '\0'};
-                astr[0] = key[i];
-                k.append(astr);
-            }
-
-            std::cout.width(10);
-            k.insert(0, "[");
-            k.insert(k.length(), "]");
-            std::cout << std::left << k.c_str() << " : ";
-            std::cout.width(0);
-            std::cout.width(70);
-            std::cout << std::left << value.c_str() << std::endl;
-        }
-        ++mCount;
-    }
-};
-
 class TrieTestCases
 {
 private:
@@ -411,17 +376,6 @@ public:
             testResult(res, "Iterator different when it should be same!!!");
         }
 
-        //Test Trie::traverse functionality
-        do {
-            TrieTraverseCallBack ttcb(aTrie.endSymbol());
-            ttcb.mPrint = false;
-            aTrie.traverse(ttcb);
-            testResult(ttcb.mCount == mSampleValues.size(),
-                       "Error in Trie::traverse functionality!!! Expected count",
-                       mSampleValues.size(),
-                       "Actual count", ttcb.mCount);
-        } while (0);
-
         //Test Trie::hasKey functionality
         for (SampleValuesIter iter = mSampleValues.begin();
              iter != mSampleValues.end(); ++iter) {
@@ -507,16 +461,15 @@ public:
         //Test Trie::clear functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
         aTrie.clear();
+        int elementCount = 0;
+        for (typename D::Iterator iter = aTrie.begin();
+             iter != aTrie.end(); ++iter) {
+                 ++elementCount;
+        }
+        testResult(elementCount == 0,
+                    "Error in Trie::clear functionality!!! Expected count", 0,
+                    "Actual count", elementCount);
         testResult(aTrie.empty(), "Trie::clear failed!!!");
-        do {
-            TrieTraverseCallBack ttcb(aTrie.endSymbol());
-            ttcb.mPrint = false;
-            aTrie.traverse(ttcb);
-            testResult(ttcb.mCount == 0,
-                       "Error in Trie::clear functionality!!! Expected count",
-                       0,
-                       "Actual count", ttcb.mCount);
-        } while (0);
 
         //Test Trie::operator[] functionality
         TrieTestCases::populateTrieWithSampleValues(aTrie);
@@ -616,17 +569,17 @@ private:
 
     TrieTestCases() {
         const std::pair<std::string, std::string> sampleValues[] = {
-            std::make_pair(std::string("Multiset"), std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
-            std::make_pair(std::string("Deque"), std::string("Double-ended queue")),
-            std::make_pair(std::string("Multimap"), std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
-            std::make_pair(std::string("Stack"), std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
-            std::make_pair(std::string("Set"), std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
-            std::make_pair(std::string("Vector"), std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence")),
             std::make_pair(std::string("Array"), std::string("Arrays are fixed-size sequence containers: they hold a specific number of elements ordered in a strict linear sequence")),
+            std::make_pair(std::string("Bitset"), std::string("A bitset is a special container class that is designed to store bits")),
+            std::make_pair(std::string("Deque"), std::string("Double-ended queue")),
+            std::make_pair(std::string("List"), std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
             std::make_pair(std::string("Map"), std::string("Maps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value")),
             std::make_pair(std::string("Maps"), std::string("A group of Map")),
-            std::make_pair(std::string("List"), std::string("Lists are a kind of sequence container. As such, their elements are ordered following a linear sequence")),
-            std::make_pair(std::string("Bitset"), std::string("A bitset is a special container class that is designed to store bits"))
+            std::make_pair(std::string("Multimap"), std::string("Multimaps are a kind of associative container that stores elements formed by the combination of a key value and a mapped value, much like map containers, but allowing different elements to have the same key value")),
+            std::make_pair(std::string("Multiset"), std::string("Multisets are associative containers with the same properties as set containers, but allowing for multiple keys with equal values")),
+            std::make_pair(std::string("Set"), std::string("Sets are a kind of associative container that stores unique elements, and in which the elements themselves are the keys")),
+            std::make_pair(std::string("Stack"), std::string("Stacks are a type of container adaptor, specifically designed to operate in a LIFO context")),
+            std::make_pair(std::string("Vector"), std::string("Vectors are a kind of sequence container. As such, their elements are ordered following a strict linear sequence"))
         };
 
         const std::string negativeSampleValues[] = {
