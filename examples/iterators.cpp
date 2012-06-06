@@ -3,7 +3,8 @@
 #include <iostream>
 #include <vector>
 
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
 
     rtv::Trie<char, std::string> dictionary('\0');
 

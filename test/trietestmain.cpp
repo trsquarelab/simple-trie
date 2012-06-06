@@ -60,7 +60,7 @@ int main(int argc, char **argv)
             if (result.second) {
                 std::cout << "Inserted" << std::endl;
             } else {
-                std::cout << "Insertion failed! key already present" << std::endl; 
+                std::cout << "Insertion failed! key already present" << std::endl;
                 std::cout << result.first->first << " : " << result.first->second->c_str() << std::endl;
             }
             break;
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
             std::cout << "Enter the word : ";
             std::cin.ignore();
             std::cin.get(word, sizeof(word), '\n');
-            
+
             Iterator iter = dictionary.find(word);
             if (iter != dictionary.end()) {
                 std::cout << word << " : " << iter->second->c_str() << std::endl;
