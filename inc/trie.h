@@ -175,7 +175,7 @@ public:
     {
     protected:
         typedef std::pair<const T *, const V *> KeyValuePair;
-        typedef typename NodeClass::ItemsContainerConsIter ItemsContainerConsIter;
+        typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter;
 
     public:
         ConstIterator(const NodeClass *node, const T * key = 0) 
@@ -244,9 +244,11 @@ public:
         }
 
     protected:
+        friend class Node<T, V, Cmp, Items>;
+
         const NodeClass * mRootNode;
         const NodeClass * mCurrentNode;
-        ItemsContainerConsIter mCurrentPos;
+        ItemsContainerConstIter mCurrentPos;
         std::vector<T> mKeyStack;
         KeyValuePair mKeyValuePair;
         bool mCheckKey;
@@ -254,7 +256,7 @@ public:
     protected:
         void next() {
             while (!isEnd()) {
-                ItemsContainerConsIter iterEnd = mCurrentNode->mItems.end();
+                ItemsContainerConstIter iterEnd = mCurrentNode->mItems.end();
 
                 if (!mKeyStack.empty()) {
                     if (mKeyStack.back() == mCurrentNode->endSymbol()) {
@@ -441,44 +443,61 @@ private:
         return result;
     }
 
-    bool erase(const T *key, int i, bool &finished) {
+    bool erase(NodeClass * node, const T * key, int keyIndex = 0) {
         bool erased = false;
-        NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return erased;
-        }
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+
+        if (node && key) {
+            erased = true;
+            bool finished = false;
             int count = 0;
-            ItemsContainerIter iterEnd = mItems.end();
-            for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
-                if (*iter != 0) {
-                    ++count;
+            ItemsContainerIter iterEnd = node->mItems.end();
+            
+            if (!keyIndex) {
+                while (key[keyIndex] != node->endSymbol()) {
+                    ++ keyIndex;
                 }
             }
-            if (count > 1) {
-                mItems.eraseItem(key[i]);
-                finished = true;
-            }
-            erased = true;
-        } else {
-            erased = item->getChilds()->erase(key, i + 1, finished);
-            if (erased && !finished) {
-                int count = 0;
-                ItemsContainerIter iterEnd = mItems.end();
-                for (ItemsContainerIter iter = mItems.begin(); iter != iterEnd; ++iter) {
+
+            while (node && !finished) {
+                ItemsContainerIter iterEnd = node->mItems.end();
+                
+                count = 0;
+                for (ItemsContainerIter iter = node->mItems.begin(); iter != iterEnd; ++iter) {
                     if (*iter != 0) {
                         ++count;
                     }
                 }
+
                 if (count > 1) {
-                    mItems.eraseItem(key[i]);
+                    node->mItems.eraseItem(key[keyIndex]);
                     finished = true;
                 } else if (count == 1) {
-                    mItems.eraseItem(key[i]);
+                    node->mItems.eraseItem(key[keyIndex]);
                 }
 
+                --keyIndex;
+                node = node->parent();
             }
+
         }
+
+        return erased;
+    }
+
+    bool erase(const T *key, int i, bool &finished) {
+        bool erased = false;
+        NodeItemClass *item = mItems.getItem(key[i]);
+
+        if (!item) {
+            return erased;
+        }
+
+        if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            erased = erase(this, key, i);
+        } else {
+            erased = item->getChilds()->erase(key, i + 1, finished);
+        }
+
         return erased;
     }
 
@@ -518,6 +537,17 @@ public:
             ++mSize;
         }
         return r;
+    }
+
+    bool erase(Iterator pos) {
+        bool erased = false;
+        if (pos.mCurrentNode && pos.mCurrentPos != pos.mCurrentNode->mItems.end()) {
+            erased = erase(const_cast<NodeClass *>(pos.mCurrentNode), pos->first);
+        }
+        if (erased) {
+            --mSize;
+        }
+        return erased;
     }
 
     bool erase(const T *key) {
@@ -583,7 +613,7 @@ public:
 
 private:
     typedef typename Items::iterator ItemsContainerIter;
-    typedef typename Items::const_iterator ItemsContainerConsIter;
+    typedef typename Items::const_iterator ItemsContainerConstIter;
 
     Items mItems;
     const T mEndSymbol;
@@ -1134,11 +1164,7 @@ public:
      * @return true if the given key is erased form the Trie, false otherwise
      */
     bool erase(Iterator pos) {
-        if (pos != end()) {
-            return mRoot.erase(pos->first);
-        } else {
-            return false;
-        }
+        return mRoot.erase(pos);
     }
 
     /*!

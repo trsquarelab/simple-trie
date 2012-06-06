@@ -435,7 +435,7 @@ public:
              iter != mSampleValues.end(); ++iter) {
             std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
-            testResult(aTrie.erase(key.c_str()), "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.erase(key.c_str()), "Removing element ", iter->first.c_str(), "failed!!!");
             testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
             testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
         }
@@ -453,8 +453,8 @@ public:
              iter != mSampleValues.end(); ++iter) {
             std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
-            testResult(aTrie.erase(aTrie.find(key.c_str())), "Removing ", iter->first.c_str(), "failed!!!");
-            testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.erase(aTrie.find(key.c_str())), "Erase with Iterator argument", iter->first.c_str(), "failed!!!");
+            testResult(aTrie.hasKey(key.c_str()) == false, "Erasing ", iter->first.c_str(), "failed!!!");
             testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
         }
 
