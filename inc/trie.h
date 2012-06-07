@@ -175,11 +175,16 @@ public:
         typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter;
 
     public:
-        ConstIterator(const NodeClass *node, const T * key = 0)
+        ConstIterator(const NodeClass *node, const T * key = 0, bool mooveToEnd = false)
                 : mRootNode(node),
-                mCurrentNode(node) {
-            pushNode(node, key);
-            next();
+                  mCurrentNode(node),
+                  mCheckKeyLeft(false),
+                  mCheckKeyRight(true),
+                  mOneItemIssue(false) {
+            pushNode(node, key, mooveToEnd);
+            if (!mooveToEnd) {
+                next();
+            }
         }
 
         ConstIterator(const ConstIterator & oth)
@@ -187,7 +192,9 @@ public:
                 mCurrentNode(oth.mCurrentNode),
                 mCurrentPos(oth.mCurrentPos),
                 mKeyStack(oth.mKeyStack),
-                mCheckKey(oth.mCheckKey) {
+                mCheckKeyLeft(oth.mCheckKeyLeft),
+                mCheckKeyRight(oth.mCheckKeyRight),
+                mOneItemIssue(oth.mOneItemIssue) {
             if (!mKeyStack.empty()) {
                 mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
             }
@@ -202,7 +209,9 @@ public:
                 if (!mKeyStack.empty()) {
                     mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
                 }
-                mCheckKey = oth.mCheckKey;
+                mCheckKeyLeft = oth.mCheckKeyLeft;
+                mCheckKeyRight = oth.mCheckKeyRight;
+                mOneItemIssue = oth.mOneItemIssue;
             }
             return *this;
         }
@@ -223,10 +232,6 @@ public:
             return !(*this == oth);
         }
 
-        bool operator!() const {
-            return this->mCurrentNode == 0;
-        }
-
         ConstIterator operator++(int) {
             ConstIterator iter = *this;
             ++(*this);
@@ -238,6 +243,17 @@ public:
             return *this;
         }
 
+        ConstIterator operator--(int) {
+            ConstIterator iter = *this;
+            --(*this);
+            return iter;
+        }
+
+        ConstIterator &operator--() {
+            this->previous();
+            return *this;
+        }
+
     protected:
         friend class Node<T, V, Cmp, Items>;
 
@@ -246,9 +262,102 @@ public:
         ItemsContainerConstIter mCurrentPos;
         std::vector<T> mKeyStack;
         KeyValuePair mKeyValuePair;
-        bool mCheckKey;
+        bool mCheckKeyLeft;
+        bool mCheckKeyRight;
+        bool mOneItemIssue;
 
     protected:
+        void previous() {
+            if (mCurrentPos == mCurrentNode->mItems.end()) {
+                --mCurrentPos;
+            }
+
+            bool moveUp = false;
+            bool newNode = false;
+            bool oldNode = false;
+
+            while (mOneItemIssue || !isLeftEnd()) {
+                mOneItemIssue = false;
+                ItemsContainerConstIter iterBegin = mCurrentNode->mItems.begin();
+                if (!mKeyStack.empty()) {
+                    if (mKeyStack.back() == mCurrentNode->endSymbol()) {
+                        mKeyStack.pop_back();
+                        mCurrentPos = mCurrentNode->mItems.begin();
+                        if (isLeftEnd()) {
+                            break;
+                        }
+                    }
+                }
+
+                if (!newNode && !mKeyStack.empty()) {
+                    if (mCheckKeyLeft) {
+                        mCurrentNode = mCurrentNode->parent();
+                        mCurrentPos = mCurrentNode->mItems.find(mKeyStack.back());
+                        iterBegin = mCurrentNode->mItems.begin();
+                        mKeyStack.pop_back();
+                        mCheckKeyLeft = false;
+                        if (mCurrentPos != iterBegin) {
+                            --mCurrentPos;
+                            oldNode = false;
+                        } else {
+                            oldNode = true;
+                        }
+                    } else {
+                        ItemsContainerConstIter iter = mCurrentNode->mItems.find(mCurrentNode->endSymbol());
+                        if (iter != mCurrentNode->mItems.end()) {
+                            mCurrentPos = iter;
+                            const NodeItemClass & item = *(const NodeItemClass *) * mCurrentPos;
+                            mKeyStack.push_back(item.get());
+                            mKeyValuePair.first = &(mKeyStack[0]);
+                            mKeyValuePair.second = &(((const EndNodeItemClass &)item).getValue());
+                            mCheckKeyLeft = true;
+                            return;
+                        } else {
+                            mCurrentNode = mCurrentNode->parent();
+                            mCurrentPos = mCurrentNode->mItems.find(mKeyStack.back());
+                            iterBegin = mCurrentNode->mItems.begin();
+                            mKeyStack.pop_back();
+                            mCheckKeyLeft = false;
+                            if (mCurrentPos != iterBegin) {
+                                --mCurrentPos;
+                                oldNode = false;
+                            } else {
+                                oldNode = true;
+                            }
+                        }
+                    }
+                }
+
+                newNode = false;
+                for (; mCurrentPos != iterBegin; --mCurrentPos) {
+                    if (*mCurrentPos) {
+                        const NodeItemClass &item = *(const NodeItemClass *) * mCurrentPos;
+                        if (item != mCurrentNode->endSymbol()) {
+                            mKeyStack.push_back(item.get());
+                            pushNode(item.getChilds(), 0, true);
+                            --mCurrentPos;
+                            newNode = true;
+                            break;
+                        }
+                    }
+                    oldNode = false;
+                }
+                if (!newNode && !oldNode) {
+                    if (*mCurrentPos) {
+                        const NodeItemClass &item = *(const NodeItemClass *) * mCurrentPos;
+                        if (item != mCurrentNode->endSymbol()) {
+                            mKeyStack.push_back(item.get());
+                            pushNode(item.getChilds(), 0, true);
+                            --mCurrentPos;
+                            newNode = true;
+                        }
+                    }
+                }
+
+            }
+            mCurrentPos = mCurrentNode->mItems.end();
+        }
+
         void next() {
             while (!isEnd()) {
                 ItemsContainerConstIter iterEnd = mCurrentNode->mItems.end();
@@ -256,10 +365,7 @@ public:
                 if (!mKeyStack.empty()) {
                     if (mKeyStack.back() == mCurrentNode->endSymbol()) {
                         mKeyStack.pop_back();
-                        ++mCurrentPos;
-                        if (isEnd()) {
-                            break;
-                        }
+                        mCurrentPos = mCurrentNode->mItems.begin();
                     }
                 }
 
@@ -272,13 +378,16 @@ public:
                 }
 
                 for (; mCurrentPos != iterEnd; ++mCurrentPos) {
-                    if (mCheckKey) {
-                        mCheckKey = false;
-                        const NodeItemClass *item = mCurrentNode->mItems.getItem(mCurrentNode->endSymbol());
-                        if (item) {
-                            mKeyStack.push_back(item->get());
+                    if (mCheckKeyRight) {
+                        mCheckKeyRight = false;
+                        ItemsContainerConstIter iter = mCurrentNode->mItems.find(mCurrentNode->endSymbol());
+                        if (iter != iterEnd) {
+                            mCurrentPos = iter;
+                            const NodeItemClass & item = *(const NodeItemClass *) * mCurrentPos;
+                            mKeyStack.push_back(item.get());
                             mKeyValuePair.first = &(mKeyStack[0]);
-                            mKeyValuePair.second = &(((const EndNodeItemClass *)item)->getValue());
+                            mKeyValuePair.second = &(((const EndNodeItemClass &)item).getValue());
+                            mCheckKeyLeft = true;
                             return;
                         }
                     }
@@ -293,15 +402,20 @@ public:
                     }
                 }
             }
+            mOneItemIssue = true;
         }
 
         bool isEnd() const {
-            if (this->mRootNode == 0) {
+            if (this->mRootNode == this->mCurrentNode &&
+                this->mCurrentPos == this->mCurrentNode->mItems.end()) {
                 return true;
             }
+            return false;
+        }
 
+        bool isLeftEnd() const {
             if (this->mRootNode == this->mCurrentNode &&
-                    this->mCurrentPos == this->mCurrentNode->mItems.end()) {
+                this->mCurrentPos == this->mCurrentNode->mItems.begin()) {
                 return true;
             }
             return false;
@@ -320,16 +434,21 @@ public:
             return false;
         }
 
-        void pushNode(const NodeClass *node, const T * key = 0) {
-            if (node) {
+        void pushNode(const NodeClass *node, const T * key = 0, bool mooveToEnd = false) {
+            mCurrentNode = node;
+            mCheckKeyLeft = false;
+            if (mooveToEnd) {
+                mCurrentPos = mCurrentNode->mItems.end();
+                mOneItemIssue = true;
+                mCheckKeyRight = false;
+            } else {
                 if (key) {
                     for (int i = 0; key[i] != node->endSymbol(); ++i) {
                         mKeyStack.push_back(key[i]);
                     }
                 }
-                mCurrentNode = node;
                 mCurrentPos = node->mItems.begin();
-                mCheckKey = true;
+                mCheckKeyRight = true;
             }
         }
     };
@@ -348,8 +467,8 @@ public:
         }
 
     public:
-        Iterator(NodeClass *node, const T * key = 0)
-                : ConstIterator(node, key) {}
+        Iterator(NodeClass *node, const T * key = 0, bool mooveToEnd = false)
+                : ConstIterator(node, key, mooveToEnd) {}
 
         MutableKeyValuePair &operator*() {
             return getPair();
@@ -357,6 +476,28 @@ public:
 
         MutableKeyValuePair *operator->() {
             return &(getPair());
+        }
+
+        Iterator operator++(int) {
+            Iterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        Iterator &operator++() {
+            this->next();
+            return *this;
+        }
+
+        Iterator operator--(int) {
+            Iterator iter = *this;
+            --(*this);
+            return iter;
+        }
+
+        Iterator &operator--() {
+            this->previous();
+            return *this;
         }
     };
 
@@ -577,7 +718,7 @@ public:
     }
 
     ConstIterator end() const {
-        return ConstIterator(0);
+        return ConstIterator(this, 0, true);
     }
 
     Iterator begin() {
@@ -585,23 +726,43 @@ public:
     }
 
     Iterator end() {
-        return Iterator(0);
+        return Iterator(this, 0, true);
     }
 
     ConstIterator find(const T *key) const {
-        return ConstIterator(const_cast<NodeClass *>(this)->findKey(key, 0), key);
+        NodeClass * node = const_cast<NodeClass *>(this)->findKey(key, 0);
+        if (!node) {
+            return ConstIterator(this, 0, true);
+        } else {
+            return ConstIterator(node, key);
+        }
     }
 
     Iterator find(const T *key) {
-        return Iterator(findKey(key, 0), key);
+        NodeClass * node = this->findKey(key, 0);
+        if (!node) {
+            return Iterator(this, 0, true);
+        } else {
+            return Iterator(node, key);
+        }
     }
 
     Iterator startsWith(const T *prefix) {
-        return Iterator(startsWith(prefix, 0), prefix);
+        NodeClass * node = this->startsWith(prefix, 0);
+        if (!node) {
+            return Iterator(this, 0, true);
+        } else {
+            return Iterator(node, prefix);
+        }
     }
 
     ConstIterator startsWith(const T *prefix) const {
-        return ConstIterator(const_cast<NodeClass *>(this)->startsWith(prefix, 0), prefix);
+        NodeClass * node = const_cast<NodeClass *>(this)->startsWith(prefix, 0);
+        if (!node) {
+            return ConstIterator(this, 0, true);
+        } else {
+            return ConstIterator(node, prefix);
+        }
     }
 
 private:
@@ -691,6 +852,10 @@ public:
 
     void clear() {
         std::fill(mItems.begin(), mItems.end(), (Item *)0);
+    }
+
+    bool empty() const {
+        return mItems.empty();
     }
 
     std::pair<Item *, bool> insertItem(T const &k) {
@@ -795,6 +960,10 @@ public:
 
     const_iterator end() const {
         return mItems.end();
+    }
+
+    bool empty() const {
+        return mItems.empty();
     }
 
     void clear() {

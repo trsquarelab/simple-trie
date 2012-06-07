@@ -177,6 +177,8 @@ public:
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             typename D::Iterator titer = aTrie.find(key.c_str());
+            testResult(titer != aTrie.end(), "Trie::find() failed!!! For ", key.c_str() , "Trie::find returned Trie::end");
+
             testResult(key.compare(keyToString(aTrie.endSymbol(), titer->first)) == 0, "Trie::find() failed for key!!!");
             testResult(iter->second.compare(*(titer->second)) == 0, "Trie::find() failed for value!!!");
 
@@ -196,7 +198,7 @@ public:
                 iter != mNegativeSampleValues.end(); ++iter) {
             std::string negKey = *iter;
             negKey.append(std::string(&endSymbol, 1));
-            testResult(aTrie.find(negKey.c_str()) == aTrie.end(), "For negative test Trie::get() failed!!! Found key", negKey.c_str());
+            testResult(aTrie.find(negKey.c_str()) == aTrie.end(), "For negative test Trie::find() failed!!! Found key", negKey.c_str());
         }
 
 
@@ -306,6 +308,27 @@ public:
                        siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
+        // operator--()
+        do {
+            SampleValuesIter siter = copySamples.end();
+            typename D::ConstIterator iter = ((const D &)aTrie).end();
+
+            for (--siter, --iter; iter != ((const D &)aTrie).end(); --iter) {
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+                iterStr.erase(iterStr.length() - 1);
+                testResult(siter->first.compare(iterStr) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->second.c_str(), "Actual Key", iter->second->c_str());
+                if (siter != copySamples.begin()) {
+                    --siter;
+                }
+            }
+        } while (0);
+
         // operator++(int)
         siter = copySamples.begin();
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
@@ -320,6 +343,27 @@ public:
                        "Error in Trie::Iterator traversal!!! Expected Key",
                        siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
+
+        // operator--(int)
+        do {
+            SampleValuesIter siter = copySamples.end();
+            typename D::ConstIterator iter = ((const D &)aTrie).end();
+
+            for (siter--, iter--; iter != ((const D &)aTrie).end(); iter--) {
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+                iterStr.erase(iterStr.length() - 1);
+                testResult(siter->first.compare(iterStr) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->second.c_str(), "Actual Key", iter->second->c_str());
+                if (siter != copySamples.begin()) {
+                    siter--;
+                }
+            }
+        } while (0);
 
         //Test Trie::Iterator functionality
         std::sort(copySamples.begin(), copySamples.end(), PairSort());
@@ -340,6 +384,27 @@ public:
                        siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
+        // operator--()
+        do {
+            SampleValuesIter siter = copySamples.end();
+            typename D::Iterator iter = aTrie.end();
+
+            for (--siter, --iter; iter != aTrie.end(); --iter) {
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+                iterStr.erase(iterStr.length() - 1);
+                testResult(siter->first.compare(iterStr) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->second.c_str(), "Actual Key", iter->second->c_str());
+                if (siter != copySamples.begin()) {
+                    --siter;
+                }
+            }
+        } while (0);
+
         // operator++(int)
         siter = copySamples.begin();
         for (typename D::Iterator iter = aTrie.begin();
@@ -355,7 +420,28 @@ public:
                        siter->second.c_str(), "Actual Key", iter->second->c_str());
         }
 
-        //Iterator other functionality
+        // operator--(int)
+        do {
+            SampleValuesIter siter = copySamples.end();
+            typename D::Iterator iter = aTrie.end();
+
+            for (siter--, iter--; iter != aTrie.end(); iter--) {
+                std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
+                iterStr.erase(iterStr.length() - 1);
+                testResult(siter->first.compare(iterStr) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->first.c_str(), "Actual Key", iterStr.c_str());
+
+                testResult(siter->second.compare(iter->second->c_str()) == 0,
+                           "Error in Trie::Iterator traversal!!! Expected Key",
+                           siter->second.c_str(), "Actual Key", iter->second->c_str());
+                if (siter != copySamples.begin()) {
+                    siter--;
+                }
+            }
+        } while (0);
+
+        //Iterator other functionalities
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
                 iter != ((const D &)aTrie).end(); ++iter) {
             bool res = (iter == ((const D &)aTrie).find(iter->first));
@@ -365,6 +451,94 @@ public:
             res = (iter == ((const D &)aTrie).startsWith(iter->first));
             testResult(res, "Iterator different from Iterator from startsWith method when it should be same!!!");
         }
+
+        for (typename D::Iterator iter = aTrie.begin();
+                iter != ((const D &)aTrie).end(); ++iter) {
+            bool res = (iter == aTrie.find(iter->first));
+            testResult(res, "Iterator different from Iterator from find method when it should be same!!!");
+            res = (iter != ++(aTrie.find(iter->first)));
+            testResult(res, "Iterator same when it should be differnt!!!");
+            res = (iter == aTrie.startsWith(iter->first));
+            testResult(res, "Iterator different from Iterator from startsWith method when it should be same!!!");
+        }
+
+        for (typename D::Iterator iter = aTrie.begin();
+                iter != aTrie.end(); ++iter) {
+
+            bool res = true;
+            if (iter != aTrie.begin()) {
+                typename D::Iterator previter = iter;
+                previter = --previter;
+                testResult(iter != previter, "Iterator same when it should be differnt!!!");
+                testResult((iter == ++previter), "Iterator different when it should be same!!!");
+            }
+            if (iter != aTrie.end()) {
+                typename D::Iterator nextiter = iter;
+                nextiter = ++nextiter;
+                testResult(iter != nextiter, "Iterator same when it should be differnt!!!");
+                testResult((iter == --nextiter), "Iterator different when it should be same!!!");
+            }
+        }
+
+        do {
+            typename D::Iterator iter = aTrie.end();
+            for (--iter; iter != aTrie.end(); --iter) {
+
+                bool res = true;
+                if (iter != aTrie.begin()) {
+                    typename D::Iterator previter = iter;
+                    previter = --previter;
+                    testResult(iter != previter, "Iterator same when it should be differnt!!!");
+                    testResult((iter == ++previter), "Iterator different when it should be same!!!");
+                }
+                if (iter != aTrie.end()) {
+                    typename D::Iterator nextiter = iter;
+                    nextiter = ++nextiter;
+                    testResult(iter != nextiter, "Iterator same when it should be differnt!!!");
+                    testResult((iter == --nextiter), "Iterator different when it should be same!!!");
+                }
+            }
+        } while (0);
+
+        for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
+                iter != ((const D &)aTrie).end(); ++iter) {
+
+            bool res = true;
+            if (iter != ((const D &)aTrie).begin()) {
+                typename D::ConstIterator previter = iter;
+                previter = --previter;
+                testResult(iter != previter, "Iterator same when it should be differnt!!!");
+                testResult((iter == ++previter), "Iterator different when it should be same!!!");
+            }
+            if (iter != ((const D &)aTrie).end()) {
+                typename D::ConstIterator nextiter = iter;
+                nextiter = ++nextiter;
+                testResult(iter != nextiter, "Iterator same when it should be differnt!!!");
+                testResult((iter == --nextiter), "Iterator different when it should be same!!!");
+            }
+        }
+
+        do {
+            typename D::ConstIterator iter = ((const D &)aTrie).end();
+            for (--iter; iter != ((const D &)aTrie).end(); --iter) {
+
+                bool res = true;
+                if (iter != ((const D &)aTrie).begin()) {
+                    typename D::ConstIterator previter = iter;
+                    previter = --previter;
+                    testResult(iter != previter, "Iterator same when it should be differnt!!!");
+                    testResult((iter == ++previter), "Iterator different when it should be same!!!");
+                }
+                if (iter != ((const D &)aTrie).end()) {
+                    typename D::ConstIterator nextiter = iter;
+                    nextiter = ++nextiter;
+                    testResult(iter != nextiter, "Iterator same when it should be differnt!!!");
+                    testResult((iter == --nextiter), "Iterator different when it should be same!!!");
+                }
+            }
+        } while (0);
+
+        //Test Trie::find functionality
         for (typename D::Iterator iter = aTrie.begin();
                 iter != aTrie.end(); ++iter) {
             bool res = (iter == aTrie.find(iter->first));
