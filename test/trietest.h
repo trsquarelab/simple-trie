@@ -442,6 +442,24 @@ public:
         } while (0);
 
         //Iterator other functionalities
+        do {
+            int elementsCount = aTrie.size();
+            int rightCount = 0;
+            int leftCount = 0;
+            typename D::Iterator iter = aTrie.begin();
+            for (; iter != aTrie.end(); ++iter) {
+                    ++rightCount;
+            }
+
+            testResult(rightCount == elementsCount, "Forward Iterator count is not same as elements count!!!");
+            iter = aTrie.end();
+            for (--iter; iter != aTrie.end(); --iter) {
+                    ++leftCount;
+            }
+            testResult(leftCount == rightCount, "Backward Iterator count is not same as elements count!!!");
+
+        } while (0);
+
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
                 iter != ((const D &)aTrie).end(); ++iter) {
             bool res = (iter == ((const D &)aTrie).find(iter->first));
@@ -453,7 +471,7 @@ public:
         }
 
         for (typename D::Iterator iter = aTrie.begin();
-                iter != ((const D &)aTrie).end(); ++iter) {
+                iter != aTrie.end(); ++iter) {
             bool res = (iter == aTrie.find(iter->first));
             testResult(res, "Iterator different from Iterator from find method when it should be same!!!");
             res = (iter != ++(aTrie.find(iter->first)));
