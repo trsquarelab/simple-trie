@@ -180,7 +180,7 @@ public:
                   mCurrentNode(node),
                   mCheckKeyLeft(false),
                   mCheckKeyRight(true),
-                  mOneItemIssue(false) {
+                  mEndReached(false) {
             pushNode(node, key, mooveToEnd);
             if (!mooveToEnd) {
                 next();
@@ -194,7 +194,7 @@ public:
                 mKeyStack(oth.mKeyStack),
                 mCheckKeyLeft(oth.mCheckKeyLeft),
                 mCheckKeyRight(oth.mCheckKeyRight),
-                mOneItemIssue(oth.mOneItemIssue) {
+                mEndReached(oth.mEndReached) {
             if (!mKeyStack.empty()) {
                 mKeyValuePair = std::make_pair(&mKeyStack[0], oth.mKeyValuePair.second);
             }
@@ -211,7 +211,7 @@ public:
                 }
                 mCheckKeyLeft = oth.mCheckKeyLeft;
                 mCheckKeyRight = oth.mCheckKeyRight;
-                mOneItemIssue = oth.mOneItemIssue;
+                mEndReached = oth.mEndReached;
             }
             return *this;
         }
@@ -264,7 +264,7 @@ public:
         KeyValuePair mKeyValuePair;
         bool mCheckKeyLeft;
         bool mCheckKeyRight;
-        bool mOneItemIssue;
+        bool mEndReached;
 
     protected:
         void previous() {
@@ -276,8 +276,8 @@ public:
             bool newNode = false;
             bool oldNode = false;
 
-            while (mOneItemIssue || !isLeftEnd()) {
-                mOneItemIssue = false;
+            while (mEndReached || !isLeftEnd()) {
+                mEndReached = false;
                 ItemsContainerConstIter iterBegin = mCurrentNode->mItems.begin();
                 if (!mKeyStack.empty()) {
                     if (mKeyStack.back() == mCurrentNode->endSymbol()) {
@@ -402,7 +402,7 @@ public:
                     }
                 }
             }
-            mOneItemIssue = true;
+            mEndReached = true;
         }
 
         bool isEnd() const {
@@ -439,7 +439,7 @@ public:
             mCheckKeyLeft = false;
             if (mooveToEnd) {
                 mCurrentPos = mCurrentNode->mItems.end();
-                mOneItemIssue = true;
+                mEndReached = true;
                 mCheckKeyRight = false;
             } else {
                 if (key) {
