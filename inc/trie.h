@@ -658,31 +658,19 @@ public:
             mItems(Max, (Item *)0) {}
 
     const_iterator find(const T & k) const {
-        const_iterator iter = mItems.begin();
-        const_iterator endIter = mItems.end();
-        for (; iter != endIter; ++iter) {
-            if (*iter) {
-                const NodeItemClass &item = *(const NodeItemClass *) * iter;
-                if (item == k) {
-                    break;
-                }
-            }
+        const Item * item = getItem(k);
+        if (item) {
+            return mItems.begin() + mSymolToIndex(k);
         }
-        return iter;
+        return mItems.end();
     }
 
     iterator find(const T & k) {
-        iterator iter = mItems.begin();
-        iterator endIter = mItems.end();
-        for (; iter != endIter; ++iter) {
-            if (*iter) {
-                NodeItemClass &item = *(NodeItemClass *) * iter;
-                if (item == k) {
-                    break;
-                }
-            }
+        const Item * item = getItem(k);
+        if (item) {
+            return mItems.begin() + mSymolToIndex(k);
         }
-        return iter;
+        return mItems.end();
     }
 
     iterator begin() {
