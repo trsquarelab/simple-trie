@@ -28,11 +28,16 @@ int main(int argc, char ** argv)
     }
 
     std::cout << "Iterator with --" << std::endl;
-    iter = dictionary.end();
+    iter = iend;
     for (--iter; iter != iend; --iter) {
         std::cout << iter->first  << " " << iter->second->c_str() << std::endl;
     }
 
+    std::cout << "ConstIterator with --" << std::endl;
+    const_iter = const_iend;
+    for (--const_iter; const_iter != const_iend; --const_iter) {
+        std::cout << const_iter->first  << " " << const_iter->second->c_str() << std::endl;
+    }
 
     return 0;
 }
