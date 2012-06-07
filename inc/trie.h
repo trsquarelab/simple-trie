@@ -272,7 +272,6 @@ public:
                 --mCurrentPos;
             }
 
-            bool moveUp = false;
             bool newNode = false;
             bool oldNode = false;
 

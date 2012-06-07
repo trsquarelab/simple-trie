@@ -483,7 +483,6 @@ public:
         for (typename D::Iterator iter = aTrie.begin();
                 iter != aTrie.end(); ++iter) {
 
-            bool res = true;
             if (iter != aTrie.begin()) {
                 typename D::Iterator previter = iter;
                 previter = --previter;
@@ -501,8 +500,6 @@ public:
         do {
             typename D::Iterator iter = aTrie.end();
             for (--iter; iter != aTrie.end(); --iter) {
-
-                bool res = true;
                 if (iter != aTrie.begin()) {
                     typename D::Iterator previter = iter;
                     previter = --previter;
@@ -520,8 +517,6 @@ public:
 
         for (typename D::ConstIterator iter = ((const D &)aTrie).begin();
                 iter != ((const D &)aTrie).end(); ++iter) {
-
-            bool res = true;
             if (iter != ((const D &)aTrie).begin()) {
                 typename D::ConstIterator previter = iter;
                 previter = --previter;
@@ -539,8 +534,6 @@ public:
         do {
             typename D::ConstIterator iter = ((const D &)aTrie).end();
             for (--iter; iter != ((const D &)aTrie).end(); --iter) {
-
-                bool res = true;
                 if (iter != ((const D &)aTrie).begin()) {
                     typename D::ConstIterator previter = iter;
                     previter = --previter;
