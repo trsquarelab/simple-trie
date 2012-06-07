@@ -1244,8 +1244,8 @@ protected:
  * @endcode
  * @subsection usage_iterator Using Trie::Iterator
  * Trie iterator can be used the same way as STL iterator.
- * Trie::Iterator is only a forward iterator. Key and value can be accessed from iterator using first and secod member.
- * first is vector of key characters and second is a pointer to value.
+ * Key and value can be accessed from iterator using first and secod member.
+ * first is vector of key characters and second is a pointer to the value.
  * @code
  * #include <trie.h>
  * #include <string>
