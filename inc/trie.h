@@ -358,6 +358,18 @@ public:
         MutableKeyValuePair *operator->() {
             return &(getPair());
         }
+
+        Iterator operator++(int) {
+            Iterator iter = *this;
+            ++(*this);
+            return iter;
+        }
+
+        Iterator &operator++() {
+            this->next();
+            return *this;
+        }
+
     };
 
 private:
