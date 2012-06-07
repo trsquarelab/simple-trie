@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef TRIETEST_H_
-#define TRIETEST_H_
+#ifndef TRIETEST_H
+#define TRIETEST_H
 
 #include <iostream>
 #include <vector>
