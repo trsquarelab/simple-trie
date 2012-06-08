@@ -585,7 +585,6 @@ private:
             erased = true;
             bool finished = false;
             int count = 0;
-            ItemsContainerIter iterEnd = node->mItems.end();
 
             if (!keyIndex) {
                 while (key[keyIndex] != node->endSymbol()) {
