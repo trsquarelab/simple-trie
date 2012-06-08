@@ -355,6 +355,7 @@ public:
 
             }
             mCurrentPos = mCurrentNode->mItems.end();
+            mEndReached = true;
         }
 
         void next() {

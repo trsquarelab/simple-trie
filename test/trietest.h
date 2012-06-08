@@ -452,11 +452,14 @@ public:
             }
 
             testResult(rightCount == elementsCount, "Forward Iterator count is not same as elements count!!!");
-            iter = aTrie.end();
-            for (--iter; iter != aTrie.end(); --iter) {
-                    ++leftCount;
+
+            for (int i=0; i<5; ++i) {
+                leftCount = 0;
+                for (--iter; iter != aTrie.end(); --iter) {
+                        ++leftCount;
+                }
+                testResult(leftCount == rightCount, "Backward Iterator count is not same as elements count!!!");
             }
-            testResult(leftCount == rightCount, "Backward Iterator count is not same as elements count!!!");
 
         } while (0);
 
