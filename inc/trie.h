@@ -538,26 +538,6 @@ private:
         return 0;
     }
 
-    std::pair<Iterator, bool> insertData(const T *key, V const &value, int i) {
-        std::pair<Iterator, bool> result(end(), false);
-        std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
-        NodeItemClass *item = itemPair.first;
-        if (itemPair.second) {
-            result.first = Iterator(this, key);
-            return result;
-        }
-        if (!item) {
-            return result;
-        } else if (key[i] == mEndSymbol) {
-            ((EndNodeItemClass *)item)->set(key[i], value);
-            result.first = Iterator(this, key);
-            result.second = true;
-        } else {
-            return item->getOrCreateChilds(this)->insertData(key, value, ++i);
-        }
-        return result;
-    }
-
     bool erase(NodeClass * node, const T * key) {
         bool erased = false;
         int keyIndex = 0;
@@ -631,11 +611,32 @@ public:
     }
 
     std::pair<Iterator, bool> insert(const T *key, V const &value) {
-        std::pair<Iterator, bool> r = insertData(key, value, 0);
-        if (r.second) {
-            ++mSize;
+        std::pair<Iterator, bool> result(end(), false);
+        int i = 0;
+        NodeClass * node = this;
+
+        while (true) {
+            std::pair<typename Items::Item *, bool> itemPair = node->mItems.insertItem(key[i]);
+            NodeItemClass *item = itemPair.first;
+            if (itemPair.second) {
+                result.first = Iterator(node, key);
+                break;
+            }
+            if (!item) {
+                break;
+            } else if (key[i] == mEndSymbol) {
+                ((EndNodeItemClass *)item)->set(key[i], value);
+                result.first = Iterator(node, key);
+                result.second = true;
+                ++mSize;
+                break;
+            } else {
+                node = item->getOrCreateChilds(node);
+            }
+            ++i;
         }
-        return r;
+
+        return result;
     }
 
     bool erase(Iterator pos) {
@@ -661,9 +662,7 @@ public:
         NodeClass * node = nodeWithKey(key);
         if (node) {
             NodeItemClass *item = node->mItems.getItem(mEndSymbol);
-            if (item) {
-                return &(((EndNodeItemClass *)item)->getValue());
-            }
+            return &(((EndNodeItemClass *)item)->getValue());
         }
         return 0;
     }
