@@ -625,7 +625,7 @@ public:
             key.append(std::string(&endSymbol, 1));
             testResult(aTrie.erase(key.c_str()), "Removing element ", iter->first.c_str(), "failed!!!");
             testResult(aTrie.hasKey(key.c_str()) == false, "Removing ", iter->first.c_str(), "failed!!!");
-            testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!!");
+            testResult(--trieSize == aTrie.size(), "Trie size is not updated after remove operation!!! Actual size", aTrie.size(), "Expected", trieSize);
         }
 
         for (NegativeSampleValuesIter iter = mNegativeSampleValues.begin();
