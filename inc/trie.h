@@ -509,7 +509,7 @@ private:
         delete item;
     }
 
-    NodeClass * findKey(const T *key) {
+    NodeClass * nodeWithKey(const T *key) {
         NodeClass * node = nodeWithPrefix(key);
         if (node) {
             if (node->mItems.getItem(mEndSymbol)) {
@@ -646,7 +646,7 @@ public:
     }
 
     bool erase(const T *key) {
-        NodeClass * node = findKey(key);
+        NodeClass * node = nodeWithKey(key);
         if (node) {
             return erase(node, key);
         }
@@ -658,7 +658,7 @@ public:
     }
 
     V *get(const T *key) {
-        NodeClass * node = findKey(key);
+        NodeClass * node = nodeWithKey(key);
         if (node) {
             NodeItemClass *item = node->mItems.getItem(mEndSymbol);
             if (item) {
@@ -698,7 +698,7 @@ public:
     }
 
     ConstIterator find(const T *key) const {
-        NodeClass * node = const_cast<NodeClass *>(this)->findKey(key);
+        NodeClass * node = const_cast<NodeClass *>(this)->nodeWithKey(key);
         if (!node) {
             return ConstIterator(this, 0, true);
         } else {
@@ -707,7 +707,7 @@ public:
     }
 
     Iterator find(const T *key) {
-        NodeClass * node = this->findKey(key);
+        NodeClass * node = this->nodeWithKey(key);
         if (!node) {
             return Iterator(this, 0, true);
         } else {
