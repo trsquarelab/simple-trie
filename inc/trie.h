@@ -677,12 +677,10 @@ public:
     }
 
     V *get(const T *key) {
-        NodeClass * node = findKey(keY);
+        NodeClass * node = findKey(key);
         if (node) {
             NodeItemClass *item = node->mItems.getItem(mEndSymbol);
-            if (!item) {
-                break;
-            } else  {
+            if (item) {
                 return &(((EndNodeItemClass *)item)->getValue());
             }
         }
