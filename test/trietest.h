@@ -119,7 +119,7 @@ public:
                 ++countStartsWith;
             }
 
-            TrieTestCases::testResult(countStartsWith == countForKey, "Invalid count returned by Trie::startsWith!!!");
+            TrieTestCases::testResult(countStartsWith == countForKey, "Invalid count returned by Trie::startsWith!!!" "Expected", countStartsWith, "Actual", countForKey);
         }
     }
 
