@@ -509,32 +509,22 @@ private:
         delete item;
     }
 
-    V *get(const T *key, int i) {
+    NodeClass * findKey(const T *key) {
         int i=0;
         NodeClass * node = this;
+
         while (node) {
             NodeItemClass *item = node->mItems.getItem(key[i]);
             if (!item) {
                 break;
             } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-                return &(((EndNodeItemClass *)item)->getValue());
+                return node;
             }
 
             node = item->getChilds();
             ++i;
         }
         return 0;
-    }
-
-    NodeClass * findKey(const T *key, int i) {
-        NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return 0;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return this;
-        } else {
-            return item->getChilds()->findKey(key, ++i);
-        }
     }
 
     NodeClass * startsWith(const T *prefix, int i) {
@@ -687,8 +677,22 @@ public:
     }
 
     V *get(const T *key) {
-        return get(key, 0);
+        int i=0;
+        NodeClass * node = this;
+        while (node) {
+            NodeItemClass *item = node->mItems.getItem(key[i]);
+            if (!item) {
+                break;
+            } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+                return &(((EndNodeItemClass *)item)->getValue());
+            }
+
+            node = item->getChilds();
+            ++i;
+        }
+        return 0;
     }
+
 
     bool hasKey(const T *key) const {
         return get(key) != (V *)0;
@@ -719,7 +723,7 @@ public:
     }
 
     ConstIterator find(const T *key) const {
-        NodeClass * node = const_cast<NodeClass *>(this)->findKey(key, 0);
+        NodeClass * node = const_cast<NodeClass *>(this)->findKey(key);
         if (!node) {
             return ConstIterator(this, 0, true);
         } else {
@@ -728,7 +732,7 @@ public:
     }
 
     Iterator find(const T *key) {
-        NodeClass * node = this->findKey(key, 0);
+        NodeClass * node = this->findKey(key);
         if (!node) {
             return Iterator(this, 0, true);
         } else {
