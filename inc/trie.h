@@ -559,13 +559,14 @@ private:
         return result;
     }
 
-    bool erase(NodeClass * node, const T * key, int keyIndex = 0) {
+    bool erase(NodeClass * node, const T * key) {
         bool erased = false;
+        int keyIndex = 0;
 
         if (node && key) {
-            erased = true;
             bool finished = false;
             int count = 0;
+            erased = true;
 
             if (!keyIndex) {
                 while (key[keyIndex] != node->endSymbol()) {
@@ -573,7 +574,7 @@ private:
                 }
             }
 
-            while (node && !finished) {
+            while (node && !finished && erased) {
                 ItemsContainerIter iterEnd = node->mItems.end();
 
                 count = 0;
@@ -584,10 +585,10 @@ private:
                 }
 
                 if (count > 1) {
-                    node->mItems.eraseItem(key[keyIndex]);
+                    erased = node->mItems.eraseItem(key[keyIndex]);
                     finished = true;
                 } else if (count == 1) {
-                    node->mItems.eraseItem(key[keyIndex]);
+                    erased = node->mItems.eraseItem(key[keyIndex]);
                 }
 
                 --keyIndex;
@@ -595,24 +596,9 @@ private:
             }
 
         }
-
-        return erased;
-    }
-
-    bool erase(const T *key, int i) {
-        bool erased = false;
-        NodeItemClass *item = mItems.getItem(key[i]);
-
-        if (!item) {
-            return erased;
+        if (erased) {
+            --mSize;
         }
-
-        if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            erased = erase(this, key, i);
-        } else {
-            erased = item->getChilds()->erase(key, i + 1);
-        }
-
         return erased;
     }
 
@@ -654,22 +640,18 @@ public:
     }
 
     bool erase(Iterator pos) {
-        bool erased = false;
         if (pos.mCurrentNode && pos.mCurrentPos != pos.mCurrentNode->mItems.end()) {
-            erased = erase(const_cast<NodeClass *>(pos.mCurrentNode), pos->first);
+            return erase(const_cast<NodeClass *>(pos.mCurrentNode), pos->first);
         }
-        if (erased) {
-            --mSize;
-        }
-        return erased;
+        return false;
     }
 
     bool erase(const T *key) {
-        bool erased = erase(key, 0);
-        if (erased) {
-            --mSize;
+        NodeClass * node = findKey(key);
+        if (node) {
+            return erase(node, key);
         }
-        return erased;
+        return false;
     }
 
     const V *get(const T *key) const {
