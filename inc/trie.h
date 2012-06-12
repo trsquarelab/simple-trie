@@ -510,24 +510,16 @@ private:
     }
 
     NodeClass * findKey(const T *key) {
-        int i=0;
-        NodeClass * node = this;
-
-        while (node) {
-            NodeItemClass *item = node->mItems.getItem(key[i]);
-            if (!item) {
-                break;
-            } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+        NodeClass * node = nodeWithPrefix(key);
+        if (node) {
+            if (node->mItems.getItem(mEndSymbol)) {
                 return node;
             }
-
-            node = item->getChilds();
-            ++i;
         }
         return 0;
     }
 
-    NodeClass * startsWithPrefix(const T *prefix) {
+    NodeClass * nodeWithPrefix(const T *prefix) {
         int i=0;
         NodeClass * node = this;
 
@@ -724,7 +716,7 @@ public:
     }
 
     Iterator startsWith(const T *prefix) {
-        NodeClass * node = this->startsWithPrefix(prefix);
+        NodeClass * node = this->nodeWithPrefix(prefix);
         if (!node) {
             return Iterator(this, 0, true);
         } else {
@@ -733,7 +725,7 @@ public:
     }
 
     ConstIterator startsWith(const T *prefix) const {
-        NodeClass * node = const_cast<NodeClass *>(this)->startsWithPrefix(prefix);
+        NodeClass * node = const_cast<NodeClass *>(this)->nodeWithPrefix(prefix);
         if (!node) {
             return ConstIterator(this, 0, true);
         } else {
