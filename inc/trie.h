@@ -547,17 +547,6 @@ private:
         }
     }
 
-    bool hasKey(const T *key, int i) const {
-        const NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return false;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return true;
-        } else {
-            return item->getChilds()->hasKey(key, ++i);
-        }
-    }
-
     std::pair<Iterator, bool> insertData(const T *key, V const &value, int i) {
         std::pair<Iterator, bool> result(end(), false);
         std::pair<typename Items::Item *, bool> itemPair = mItems.insertItem(key[i]);
@@ -618,7 +607,7 @@ private:
         return erased;
     }
 
-    bool erase(const T *key, int i, bool &finished) {
+    bool erase(const T *key, int i) {
         bool erased = false;
         NodeItemClass *item = mItems.getItem(key[i]);
 
@@ -629,7 +618,7 @@ private:
         if (key[i] == mEndSymbol && *item == mEndSymbol) {
             erased = erase(this, key, i);
         } else {
-            erased = item->getChilds()->erase(key, i + 1, finished);
+            erased = item->getChilds()->erase(key, i + 1);
         }
 
         return erased;
@@ -684,8 +673,7 @@ public:
     }
 
     bool erase(const T *key) {
-        bool finished = false;
-        bool erased = erase(key, 0, finished);
+        bool erased = erase(key, 0);
         if (erased) {
             --mSize;
         }
@@ -701,7 +689,7 @@ public:
     }
 
     bool hasKey(const T *key) const {
-        return hasKey(key, 0);
+        return get(key) != (V *)0;
     }
 
     const NodeClass * parent() const {
