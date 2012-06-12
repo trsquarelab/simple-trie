@@ -509,10 +509,6 @@ private:
         delete item;
     }
 
-    const V *get(const T *key, int i) const {
-        return const_cast<NodeClass *>(this)->get(key, i);
-    }
-
     V *get(const T *key, int i) {
         NodeItemClass *item = mItems.getItem(key[i]);
         if (!item) {
@@ -681,7 +677,7 @@ public:
     }
 
     const V *get(const T *key) const {
-        return get(key, 0);
+        return const_cast<NodeClass *>(this)->get(key);
     }
 
     V *get(const T *key) {
