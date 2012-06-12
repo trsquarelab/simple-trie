@@ -677,18 +677,14 @@ public:
     }
 
     V *get(const T *key) {
-        int i=0;
-        NodeClass * node = this;
-        while (node) {
-            NodeItemClass *item = node->mItems.getItem(key[i]);
+        NodeClass * node = findKey(keY);
+        if (node) {
+            NodeItemClass *item = node->mItems.getItem(mEndSymbol);
             if (!item) {
                 break;
-            } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+            } else  {
                 return &(((EndNodeItemClass *)item)->getValue());
             }
-
-            node = item->getChilds();
-            ++i;
         }
         return 0;
     }
