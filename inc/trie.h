@@ -527,16 +527,23 @@ private:
         return 0;
     }
 
-    NodeClass * startsWith(const T *prefix, int i) {
-        if (prefix[i] == mEndSymbol) {
-            return this;
+    NodeClass * startsWithPrefix(const T *prefix) {
+        int i=0;
+        NodeClass * node = this;
+
+        while (node) {
+            if (prefix[i] == mEndSymbol) {
+                return node;
+            }
+            NodeItemClass *item = node->mItems.getItem(prefix[i]);
+            if (!item) {
+                break;
+            }
+
+            node = item->getChilds();
+            ++i;
         }
-        NodeItemClass *item = mItems.getItem(prefix[i]);
-        if (!item) {
-            return 0;
-        } else {
-            return item->getChilds()->startsWith(prefix, ++i);
-        }
+        return 0;
     }
 
     std::pair<Iterator, bool> insertData(const T *key, V const &value, int i) {
@@ -717,7 +724,7 @@ public:
     }
 
     Iterator startsWith(const T *prefix) {
-        NodeClass * node = this->startsWith(prefix, 0);
+        NodeClass * node = this->startsWithPrefix(prefix);
         if (!node) {
             return Iterator(this, 0, true);
         } else {
@@ -726,7 +733,7 @@ public:
     }
 
     ConstIterator startsWith(const T *prefix) const {
-        NodeClass * node = const_cast<NodeClass *>(this)->startsWith(prefix, 0);
+        NodeClass * node = const_cast<NodeClass *>(this)->startsWithPrefix(prefix);
         if (!node) {
             return ConstIterator(this, 0, true);
         } else {
