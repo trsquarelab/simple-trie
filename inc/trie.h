@@ -510,14 +510,20 @@ private:
     }
 
     V *get(const T *key, int i) {
-        NodeItemClass *item = mItems.getItem(key[i]);
-        if (!item) {
-            return 0;
-        } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
-            return &(((EndNodeItemClass *)item)->getValue());
-        } else {
-            return item->getChilds()->get(key, ++i);
+        int i=0;
+        NodeClass * node = this;
+        while (node) {
+            NodeItemClass *item = node->mItems.getItem(key[i]);
+            if (!item) {
+                break;
+            } else if (key[i] == mEndSymbol && *item == mEndSymbol) {
+                return &(((EndNodeItemClass *)item)->getValue());
+            }
+
+            node = item->getChilds();
+            ++i;
         }
+        return 0;
     }
 
     NodeClass * findKey(const T *key, int i) {
