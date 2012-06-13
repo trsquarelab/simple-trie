@@ -27,5 +27,10 @@
  * This example shows various method of element retrieval
  */
 
+/*!
+ * @example trie_interactive.cpp
+ * This example shows the usage of various trie operations
+ */
+
 #endif
 
