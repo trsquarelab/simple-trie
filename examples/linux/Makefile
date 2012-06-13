@@ -13,32 +13,39 @@ iterators_SOURCE = ../iterators.cpp
 retrieval = retrieval_$(shell uname -s)_$(shell uname -m)
 retrieval_SOURCE = ../retrieval.cpp
 
+trie_interactive = trie_interactive_$(shell uname -s)_$(shell uname -m)
+trie_interactive_SOURCE = ../trie_interactive.cpp
+
 bin_PROGRAMMES = $(array_node) \
 		 $(common_prefix) \
 		 $(insert_erase) \
 		 $(iterators) \
-		 $(retrieval)
+		 $(retrieval) \
+		 $(trie_interactive)
+
 CXX = g++
 CXFLAGS = -g3 -Wall -I../../inc
 DEPS = ../../inc/trie.h
 
 all: $(bin_PROGRAMMES)
 	
+$(array_node): $(array_node_SOURCE) $(DEPS)
+	$(CXX) -o $@ $< $(CXFLAGS)
 
-$(array_node):  $(DEPS) $(array_node_SOURCE)
-	$(CXX) -o $@ $(array_node_SOURCE) $(CXFLAGS)
+$(common_prefix): $(common_prefix_SOURCE) $(DEPS)
+	$(CXX) -o $@ $< $(CXFLAGS)
 
-$(common_prefix):  $(DEPS)
-	$(CXX) -o $@ $(common_prefix_SOURCE) $(CXFLAGS)
+$(insert_erase): $(insert_erase_SOURCE) $(DEPS) 
+	$(CXX) -o $@ $< $(CXFLAGS)
 
-$(insert_erase):  $(DEPS) $(insert_erase_SOURCE)
-	$(CXX) -o $@ $(insert_erase_SOURCE) $(CXFLAGS)
+$(iterators): $(iterators_SOURCE) $(DEPS) 
+	$(CXX) -o $@ $< $(CXFLAGS)
 
-$(iterators):  $(DEPS) $(iterators_SOURCE)
-	$(CXX) -o $@ $(iterators_SOURCE) $(CXFLAGS)
+$(retrieval): $(retrieval_SOURCE) $(DEPS) 
+	$(CXX) -o $@ $< $(CXFLAGS)
 
-$(retrieval):  $(DEPS) $(retrieval_SOURCE)
-	$(CXX) -o $@ $(retrieval_SOURCE) $(CXFLAGS)
+$(trie_interactive): $(trie_interactive_SOURCE) $(DEPS) 
+	$(CXX) -o $@ $< $(CXFLAGS)
 
 clean:
 	rm -rf $(bin_PROGRAMMES)
