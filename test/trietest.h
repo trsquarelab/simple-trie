@@ -42,6 +42,14 @@ class TrieTestCases
 private:
     typedef void (*TestCaseFunction)();
 
+    typedef std::vector< std::pair<std::string, std::string> > SampleValues;
+    typedef SampleValues::iterator SampleValuesIter;
+    typedef SampleValues::const_iterator SampleValuesConstIter;
+
+    typedef std::vector<std::string> NegativeSampleValues;
+    typedef NegativeSampleValues::iterator NegativeSampleValuesIter;
+    typedef NegativeSampleValues::const_iterator NegativeSampleValuesConstIter;
+
 public:
     static TrieTestCases *instance() {
         static TrieTestCases _instance;
@@ -61,9 +69,9 @@ public:
     }
 
     template <typename D>
-    void populateTrieWithSampleValues(D   &aTrie) {
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+    void populateTrieWithSampleValues(D   &aTrie, SampleValues & sv) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             char endSymbol = aTrie.endSymbol();
             std::string key = iter->first;
             key.append(&endSymbol, 1);
@@ -97,11 +105,11 @@ public:
     }
 
     template<typename D>
-    void teststartsWith(D & aTrie, const std::string &key) {
+    void teststartsWith(D & aTrie, const std::string &key, SampleValues & sv) {
         if (key.length() > 0) {
             unsigned int countForKey = 0;
-            for (SampleValuesIter iter = mSampleValues.begin();
-                    iter != mSampleValues.end(); ++iter) {
+            for (SampleValuesIter iter = sv.begin();
+                    iter != sv.end(); ++iter) {
                 int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
                 if (cv == 0) {
                     ++countForKey;
@@ -112,7 +120,7 @@ public:
             for (; iter != aTrie.end(); ++iter) {
                 std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
                 keyStr.erase(keyStr.length() - 1);
-                bool res = isPresent(keyStr);
+                bool res = isPresent(keyStr, sv);
                 TrieTestCases::testResult(res, "Invalid key in Iterator returned from Trie::startsWith!!! For prefix",
                                           key.c_str(), "Returned Key",
                                           keyToString(aTrie.endSymbol(), iter->first).c_str());
@@ -124,11 +132,11 @@ public:
     }
 
     template<typename D>
-    void teststartsWith(const D & aTrie, const std::string &key) const {
+    void teststartsWith(const D & aTrie, const std::string &key, SampleValues & sv) const {
         if (key.length() > 0) {
             unsigned int countForKey = 0;
-            for (SampleValuesConstIter iter = mSampleValues.begin();
-                    iter != mSampleValues.end(); ++iter) {
+            for (SampleValuesConstIter iter = sv.begin();
+                    iter != sv.end(); ++iter) {
                 int cv = key.compare(0, key.length() - 1, iter->first, 0, key.length() - 1);
                 if (cv == 0) {
                     ++countForKey;
@@ -139,7 +147,7 @@ public:
             for (; iter != aTrie.end(); ++iter) {
                 std::string keyStr = keyToString(aTrie.endSymbol(), iter->first);
                 keyStr.erase(keyStr.length() - 1);
-                bool res = isPresent(keyStr);
+                bool res = isPresent(keyStr, sv);
                 TrieTestCases::testResult(res, "Invalid key in Iterator returned from Trie::startsWith!!! For prefix",
                                           key.c_str(), "Returned Key",
                                           keyToString(aTrie.endSymbol(), iter->first).c_str());
@@ -159,6 +167,13 @@ public:
 
     template <typename D>
     void testSuite(D &aTrie) {
+        for (unsigned int i=0; i<mSampleValuesContainer.size(); ++i) {
+            doTestSuite(aTrie, mSampleValuesContainer[i]);
+        }
+    }
+
+    template <typename D>
+    void doTestSuite(D &aTrie, SampleValues & sv) {
 
         char endSymbol = aTrie.endSymbol();
 
@@ -169,11 +184,11 @@ public:
         testResult(aTrie.empty(), "Trie::empty failed!!!");
 
         //Test Trie::insert functionality
-        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        TrieTestCases::populateTrieWithSampleValues(aTrie, sv);
 
         //Test Trie::find functionality
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             typename D::Iterator titer = aTrie.find(key.c_str());
@@ -189,7 +204,7 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(iter->first)) {
+            if (!isPresent(iter->first, sv)) {
                 testResult(aTrie.find(key.c_str()) == aTrie.end(), "For negative test Trie::find() failed!!! Found key", key.c_str());
             }
         }
@@ -203,8 +218,8 @@ public:
 
 
         //Test Trie::find() const functionality
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             typename D::ConstIterator titer = ((const D &)(aTrie)).find(key.c_str());
@@ -218,7 +233,7 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(iter->first)) {
+            if (!isPresent(iter->first, sv)) {
                 testResult(((const D &)(aTrie)).find(key.c_str()) == ((const D &)(aTrie)).end(), "For negative test Trie::find() failed!!! Found key", key.c_str());
             }
         }
@@ -231,8 +246,8 @@ public:
         }
 
         //Test Trie::get functionality
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             testResult((aTrie.get(key.c_str()))->compare(iter->second) == 0, "Trie::get() failed!!!");
@@ -244,7 +259,7 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(iter->first)) {
+            if (!isPresent(iter->first, sv)) {
                 testResult(aTrie.get(key.c_str()) == 0, "For negative test Trie::get() failed!!! Found key", key.c_str());
             }
         }
@@ -258,8 +273,8 @@ public:
 
 
         //Test Trie::get() const functionality
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             testResult((((D const &)aTrie).get(key.c_str()))->compare(iter->second) == 0, "Trie::get() failed!!!");
@@ -271,7 +286,7 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(iter->first)) {
+            if (!isPresent(iter->first, sv)) {
                 testResult(((D const &)aTrie).get(key.c_str()) == 0, "For negative test Trie::get() failed!!!");
             }
         }
@@ -284,12 +299,12 @@ public:
         }
 
         //Test Trie::size functionality
-        testResult(aTrie.size() == mSampleValues.size(), "Trie::size failed!!!",
+        testResult(aTrie.size() == sv.size(), "Trie::size failed!!!",
                    "Trie::size returned", aTrie.size(),
-                   "Expected", mSampleValues.size());
+                   "Expected", sv.size());
 
         //Test Trie::ConstIterator functionality
-        SampleValues copySamples = mSampleValues;
+        SampleValues copySamples = sv;
         std::sort(copySamples.begin(), copySamples.end(), PairSort());
 
         SampleValuesIter siter = copySamples.begin();
@@ -565,8 +580,8 @@ public:
         }
 
         //Test Trie::hasKey functionality
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(&endSymbol, 1);
             testKeyInTrie(aTrie, key, true);
@@ -578,7 +593,7 @@ public:
             key = iter->first.substr(0, rn);
             key.append(&endSymbol, 1);
 
-            if (!isPresent(iter->first)) {
+            if (!isPresent(iter->first, sv)) {
                 testKeyInTrie(aTrie, key, false);
             }
         }
@@ -592,35 +607,35 @@ public:
 
         //Test Trie::startsWith functionality
         char endKeyStr[] = {endSymbol, '\0'};
-        teststartsWith(aTrie, endKeyStr);
+        teststartsWith(aTrie, endKeyStr, sv);
 
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string keyStr = iter->first;
             if (keyStr.length() > 0) {
                 std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
                 keyPart.append(std::string(&endSymbol, 1));
-                teststartsWith(aTrie, keyPart);
+                teststartsWith(aTrie, keyPart, sv);
             }
         }
 
         //Test Trie::startsWith() const functionality
-        ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, endKeyStr);
+        ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, endKeyStr, sv);
 
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string keyStr = iter->first;
             if (keyStr.length() > 0) {
                 std::string keyPart = keyStr.substr(0, std::rand() % keyStr.length());
                 keyPart.append(std::string(&endSymbol, 1));
-                ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, keyPart);
+                ((const TrieTestCases *)this)->teststartsWith((const D &)aTrie, keyPart, sv);
             }
         }
 
         //Test Trie::erase functionality
         unsigned int trieSize = aTrie.size();
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
             testResult(aTrie.erase(key.c_str()), "Removing element ", iter->first.c_str(), "failed!!!");
@@ -635,10 +650,10 @@ public:
             testResult(aTrie.erase(negKey.c_str()) == false, "Negative test for Trie::erase(", negKey.c_str(), ")failed!!!");
         }
 
-        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        TrieTestCases::populateTrieWithSampleValues(aTrie, sv);
         trieSize = aTrie.size();
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
             testResult(aTrie.erase(aTrie.find(key.c_str())), "Erase with Iterator argument", iter->first.c_str(), "failed!!!");
@@ -647,7 +662,7 @@ public:
         }
 
         //Test Trie::clear functionality
-        TrieTestCases::populateTrieWithSampleValues(aTrie);
+        TrieTestCases::populateTrieWithSampleValues(aTrie, sv);
         aTrie.clear();
         int elementCount = 0;
         for (typename D::Iterator iter = aTrie.begin();
@@ -660,9 +675,9 @@ public:
         testResult(aTrie.empty(), "Trie::clear failed!!!");
 
         //Test Trie::operator[] functionality
-        TrieTestCases::populateTrieWithSampleValues(aTrie);
-        for (SampleValuesIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+        TrieTestCases::populateTrieWithSampleValues(aTrie, sv);
+        for (SampleValuesIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             std::string key = iter->first;
             key.append(std::string(&endSymbol, 1));
             bool res = aTrie[key.c_str()].compare(*aTrie.get(key.c_str())) == 0;
@@ -732,9 +747,9 @@ public:
         }
     }
 
-    bool isPresent(std::string const & key) const {
-        for (SampleValuesConstIter iter = mSampleValues.begin();
-                iter != mSampleValues.end(); ++iter) {
+    bool isPresent(std::string const & key, SampleValues & sv) const {
+        for (SampleValuesConstIter iter = sv.begin();
+                iter != sv.end(); ++iter) {
             if (iter->first.compare(key) == 0) {
                 return true;
             }
@@ -793,9 +808,23 @@ private:
             std::string("AAAAAAAAAAA")
         };
 
+        SampleValues sv1;
         for (unsigned int i = 0; i < sizeof(sampleValues) / sizeof(sampleValues[0]); ++i) {
-            mSampleValues.insert(mSampleValues.begin(), sampleValues[i]);
+            sv1.insert(sv1.begin(), sampleValues[i]);
         }
+        mSampleValuesContainer.push_back(sv1);
+
+        SampleValues sv2;
+        sv2.insert(sv2.begin(), sampleValues[0]);
+        mSampleValuesContainer.push_back(sv2);
+
+        SampleValues sv3;
+        sv3.insert(sv3.begin(), sampleValues[4]);
+        sv3.insert(sv3.begin(), sampleValues[5]);
+        mSampleValuesContainer.push_back(sv3);
+
+        SampleValues sv4;
+        mSampleValuesContainer.push_back(sv4);
 
         for (unsigned int i = 0; i < sizeof(negativeSampleValues) / sizeof(negativeSampleValues[0]); ++i) {
             mNegativeSampleValues.push_back(negativeSampleValues[i]);
@@ -806,16 +835,8 @@ private:
     TrieTestCases &operator=(TrieTestCases const &);
 
 private:
-    typedef std::vector< std::pair<std::string, std::string> > SampleValues;
-    typedef SampleValues::iterator SampleValuesIter;
-    typedef SampleValues::const_iterator SampleValuesConstIter;
-
-    typedef std::vector<std::string> NegativeSampleValues;
-    typedef NegativeSampleValues::iterator NegativeSampleValuesIter;
-    typedef NegativeSampleValues::const_iterator NegativeSampleValuesConstIter;
-
     std::vector<TestCaseFunction> mTestCases;
-    SampleValues mSampleValues;
+    std::vector<SampleValues> mSampleValuesContainer;
     NegativeSampleValues mNegativeSampleValues;
 };
 
