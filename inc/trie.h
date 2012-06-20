@@ -13,7 +13,6 @@
 #define TRIE_H
 
 #include <vector>
-#include <stack>
 #include <set>
 #include <algorithm>
 
