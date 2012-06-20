@@ -175,12 +175,15 @@ public:
         typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter;
 
     public:
-        ConstIterator(const NodeClass *node, const T * key = 0, bool mooveToEnd = false)
-                : mRootNode(node),
+        ConstIterator(const NodeClass *node, const NodeClass * root, const T * key = 0, bool mooveToEnd = false)
+                : mRootNode(root),
                   mCurrentNode(node),
                   mCheckKeyLeft(false),
                   mCheckKeyRight(true),
                   mEndReached(false) {
+            if (!root) {
+                mRootNode = node;
+            }
             pushNode(node, key, mooveToEnd);
             if (!mooveToEnd) {
                 next();
@@ -467,8 +470,8 @@ public:
         }
 
     public:
-        Iterator(NodeClass *node, const T * key = 0, bool mooveToEnd = false)
-                : ConstIterator(node, key, mooveToEnd) {}
+        Iterator(NodeClass *node, NodeClass *root, const T * key = 0, bool mooveToEnd = false)
+                : ConstIterator(node, root, key, mooveToEnd) {}
 
         MutableKeyValuePair &operator*() {
             return getPair();
@@ -624,14 +627,14 @@ public:
             std::pair<typename Items::Item *, bool> itemPair = node->mItems.insertItem(key[i]);
             NodeItemClass *item = itemPair.first;
             if (itemPair.second) {
-                result.first = Iterator(node, key);
+                result.first = Iterator(node, this, key);
                 break;
             }
             if (!item) {
                 break;
             } else if (key[i] == mEndSymbol) {
                 ((EndNodeItemClass *)item)->set(key[i], value);
-                result.first = Iterator(node, key);
+                result.first = Iterator(node, this, key);
                 result.second = true;
                 ++mSize;
                 break;
@@ -686,54 +689,54 @@ public:
     }
 
     ConstIterator begin() const {
-        return ConstIterator(this);
+        return ConstIterator(this, this);
     }
 
     ConstIterator end() const {
-        return ConstIterator(this, 0, true);
+        return ConstIterator(this, this, 0, true);
     }
 
     Iterator begin() {
-        return Iterator(this);
+        return Iterator(this, this);
     }
 
     Iterator end() {
-        return Iterator(this, 0, true);
+        return Iterator(this, this, 0, true);
     }
 
     ConstIterator find(const T *key) const {
         NodeClass * node = const_cast<NodeClass *>(this)->nodeWithKey(key);
         if (!node) {
-            return ConstIterator(this, 0, true);
+            return ConstIterator(this, this, 0, true);
         } else {
-            return ConstIterator(node, key);
+            return ConstIterator(node, this, key);
         }
     }
 
     Iterator find(const T *key) {
         NodeClass * node = this->nodeWithKey(key);
         if (!node) {
-            return Iterator(this, 0, true);
+            return Iterator(this, this, 0, true);
         } else {
-            return Iterator(node, key);
+            return Iterator(node, this, key);
         }
     }
 
     Iterator startsWith(const T *prefix) {
         const NodeClass * node = const_cast<const NodeClass *>(this)->nodeWithPrefix(prefix);
         if (!node) {
-            return Iterator(this, 0, true);
+            return Iterator(this, this, 0, true);
         } else {
-            return Iterator(const_cast<NodeClass *>(node), prefix);
+            return Iterator(const_cast<NodeClass *>(node), const_cast<NodeClass *>(node), prefix);
         }
     }
 
     ConstIterator startsWith(const T *prefix) const {
         const NodeClass * node = nodeWithPrefix(prefix);
         if (!node) {
-            return ConstIterator(this, 0, true);
+            return ConstIterator(this, this, 0, true);
         } else {
-            return ConstIterator(node, prefix);
+            return ConstIterator(node, node, prefix);
         }
     }
 
