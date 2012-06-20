@@ -271,7 +271,7 @@ public:
 
     protected:
         void previous() {
-            if (mCurrentPos == mCurrentNode->mItems.end()) {
+            if (!mCurrentNode->mItems.empty() && mCurrentPos == mCurrentNode->mItems.end()) {
                 --mCurrentPos;
             }
 

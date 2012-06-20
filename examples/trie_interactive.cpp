@@ -68,7 +68,9 @@ int main(int argc, char **argv)
         std::cout << "2 : Remove a word " << std::endl;
         std::cout << "3 : Get a word " << std::endl;
         std::cout << "4 : Search a word (Enter starting letters)" << std::endl;
-        std::cout << "5 : List all words " << std::endl;
+        std::cout << "5 : List all words from a given word onwards" << std::endl;
+        std::cout << "6 : List words till a given word" << std::endl;
+        std::cout << "7 : List all words " << std::endl;
         std::cout << "******************************************" << std::endl;
 
         std::cout << std::endl << "Enter Choice : ";
@@ -149,7 +151,42 @@ int main(int argc, char **argv)
             }
             break;
         }
+
         case '5': {
+            char word[80];
+            std::cout << "Enter the word : ";
+            std::cin.ignore();
+            std::cin.get(word, sizeof(word), '\n');
+
+            Iterator iter = dictionary.find(word);
+            if (iter == dictionary.end()) {
+                std::cout << "Could not find " << word << std::endl;
+            }
+            while (iter != dictionary.end()) {
+                std::cout << iter->first << " : " << iter->second->c_str() << std::endl;
+                ++iter;
+            }
+            break;
+        }
+
+        case '6': {
+            char word[80];
+            std::cout << "Enter the word : ";
+            std::cin.ignore();
+            std::cin.get(word, sizeof(word), '\n');
+
+            Iterator iter = dictionary.find(word);
+            if (iter == dictionary.end()) {
+                std::cout << "Could not find " << word << std::endl;
+            }
+            while (iter != dictionary.end()) {
+                std::cout << iter->first << " : " << iter->second->c_str() << std::endl;
+                --iter;
+            }
+            break;
+       }
+
+       case '7': {
             std::cout << "*****************************************" << std::endl;
             Iterator iter = dictionary.begin();
             Iterator iend = dictionary.end();
