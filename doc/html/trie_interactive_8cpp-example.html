@@ -121,7 +121,9 @@
         std::cout &lt;&lt; <span class="stringliteral">&quot;2 : Remove a word &quot;</span> &lt;&lt; std::endl;
         std::cout &lt;&lt; <span class="stringliteral">&quot;3 : Get a word &quot;</span> &lt;&lt; std::endl;
         std::cout &lt;&lt; <span class="stringliteral">&quot;4 : Search a word (Enter starting letters)&quot;</span> &lt;&lt; std::endl;
-        std::cout &lt;&lt; <span class="stringliteral">&quot;5 : List all words &quot;</span> &lt;&lt; std::endl;
+        std::cout &lt;&lt; <span class="stringliteral">&quot;5 : List all words from a given word onwards&quot;</span> &lt;&lt; std::endl;
+        std::cout &lt;&lt; <span class="stringliteral">&quot;6 : List words till a given word&quot;</span> &lt;&lt; std::endl;
+        std::cout &lt;&lt; <span class="stringliteral">&quot;7 : List all words &quot;</span> &lt;&lt; std::endl;
         std::cout &lt;&lt; <span class="stringliteral">&quot;******************************************&quot;</span> &lt;&lt; std::endl;
 
         std::cout &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;Enter Choice : &quot;</span>;
@@ -202,7 +204,42 @@
             }
             <span class="keywordflow">break</span>;
         }
+
         <span class="keywordflow">case</span> <span class="charliteral">&#39;5&#39;</span>: {
+            <span class="keywordtype">char</span> word[80];
+            std::cout &lt;&lt; <span class="stringliteral">&quot;Enter the word : &quot;</span>;
+            std::cin.ignore();
+            std::cin.get(word, <span class="keyword">sizeof</span>(word), <span class="charliteral">&#39;\n&#39;</span>);
+
+            Iterator iter = dictionary.find(word);
+            <span class="keywordflow">if</span> (iter == dictionary.end()) {
+                std::cout &lt;&lt; <span class="stringliteral">&quot;Could not find &quot;</span> &lt;&lt; word &lt;&lt; std::endl;
+            }
+            <span class="keywordflow">while</span> (iter != dictionary.end()) {
+                std::cout &lt;&lt; iter-&gt;first &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; iter-&gt;second-&gt;c_str() &lt;&lt; std::endl;
+                ++iter;
+            }
+            <span class="keywordflow">break</span>;
+        }
+
+        <span class="keywordflow">case</span> <span class="charliteral">&#39;6&#39;</span>: {
+            <span class="keywordtype">char</span> word[80];
+            std::cout &lt;&lt; <span class="stringliteral">&quot;Enter the word : &quot;</span>;
+            std::cin.ignore();
+            std::cin.get(word, <span class="keyword">sizeof</span>(word), <span class="charliteral">&#39;\n&#39;</span>);
+
+            Iterator iter = dictionary.find(word);
+            <span class="keywordflow">if</span> (iter == dictionary.end()) {
+                std::cout &lt;&lt; <span class="stringliteral">&quot;Could not find &quot;</span> &lt;&lt; word &lt;&lt; std::endl;
+            }
+            <span class="keywordflow">while</span> (iter != dictionary.end()) {
+                std::cout &lt;&lt; iter-&gt;first &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; iter-&gt;second-&gt;c_str() &lt;&lt; std::endl;
+                --iter;
+            }
+            <span class="keywordflow">break</span>;
+       }
+
+       <span class="keywordflow">case</span> <span class="charliteral">&#39;7&#39;</span>: {
             std::cout &lt;&lt; <span class="stringliteral">&quot;*****************************************&quot;</span> &lt;&lt; std::endl;
             Iterator iter = dictionary.begin();
             Iterator iend = dictionary.end();
@@ -236,7 +273,7 @@
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 13 2012 20:23:08 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jun 21 2012 20:18:39 for Trie by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
