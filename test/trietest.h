@@ -823,9 +823,6 @@ private:
         sv3.insert(sv3.begin(), sampleValues[5]);
         mSampleValuesContainer.push_back(sv3);
 
-        SampleValues sv4;
-        mSampleValuesContainer.push_back(sv4);
-
         for (unsigned int i = 0; i < sizeof(negativeSampleValues) / sizeof(negativeSampleValues[0]); ++i) {
             mNegativeSampleValues.push_back(negativeSampleValues[i]);
         }
