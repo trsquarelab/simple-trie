@@ -63,6 +63,7 @@ void test2()
     typedef rtv::VectorItems<char, std::string, std::less<char>, 256> VectorItemClass;
 
     std::cout << "Executing Test Case 2 ... ";
+    std::flush(std::cout);
 
     rtv::Trie<char, std::string, std::less<char>, VectorItemClass> dictionary1('$');
     TrieTestCases::instance()->testSuite(dictionary1);

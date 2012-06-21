@@ -24,6 +24,7 @@ void test1()
 {
     (void)testCaseAdded;
     std::cout << "Executing Test Case 1 ... ";
+    std::flush(std::cout);
 
     rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary1('$');
     TrieTestCases::instance()->testSuite(dictionary1);
