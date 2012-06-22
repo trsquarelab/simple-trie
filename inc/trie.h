@@ -344,16 +344,18 @@ public:
                     oldNode = false;
                 }
                 if (!newNode && !oldNode) {
-                    if (*mCurrentPos) {
-                        const NodeItemClass &item = *(const NodeItemClass *) * mCurrentPos;
-                        if (item != mCurrentNode->endSymbol()) {
-                            mKeyStack.push_back(item.get());
-                            pushNode(item.getChilds(), 0, true);
-                            --mCurrentPos;
-                            newNode = true;
-                        }
-                    }
-                }
+					if (mCurrentPos != mCurrentNode->mItems.end()) {
+						if (*mCurrentPos) {
+					        const NodeItemClass &item = *(const NodeItemClass *) * mCurrentPos;
+				            if (item != mCurrentNode->endSymbol()) {
+			                    mKeyStack.push_back(item.get());
+		                        pushNode(item.getChilds(), 0, true);
+	                            --mCurrentPos;
+								newNode = true;
+							}
+						}
+					}
+				}
 
             }
             mCurrentPos = mCurrentNode->mItems.end();

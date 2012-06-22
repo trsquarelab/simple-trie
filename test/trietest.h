@@ -325,10 +325,17 @@ public:
 
         // operator--()
         do {
-            SampleValuesIter siter = copySamples.end();
+            SampleValuesIter siter = copySamples.begin();
+			while (siter != copySamples.end()) {
+				if (siter+1 == copySamples.end()) {
+					break;
+				}
+				++siter;
+			}
+
             typename D::ConstIterator iter = ((const D &)aTrie).end();
 
-            for (--siter, --iter; iter != ((const D &)aTrie).end(); --iter) {
+            for (--iter; iter != ((const D &)aTrie).end(); --iter) {
                 std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length() - 1);
                 testResult(siter->first.compare(iterStr) == 0,
@@ -361,10 +368,17 @@ public:
 
         // operator--(int)
         do {
-            SampleValuesIter siter = copySamples.end();
+			SampleValuesIter siter = copySamples.begin();
+			while (siter != copySamples.end()) {
+				if (siter+1 == copySamples.end()) {
+					break;
+				}
+				++siter;
+			}
+
             typename D::ConstIterator iter = ((const D &)aTrie).end();
 
-            for (siter--, iter--; iter != ((const D &)aTrie).end(); iter--) {
+            for (iter--; iter != ((const D &)aTrie).end(); iter--) {
                 std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length() - 1);
                 testResult(siter->first.compare(iterStr) == 0,
@@ -401,10 +415,17 @@ public:
 
         // operator--()
         do {
-            SampleValuesIter siter = copySamples.end();
+            SampleValuesIter siter = copySamples.begin();
+			while (siter != copySamples.end()) {
+				if (siter+1 == copySamples.end()) {
+					break;
+				}
+				++siter;
+			}
+
             typename D::Iterator iter = aTrie.end();
 
-            for (--siter, --iter; iter != aTrie.end(); --iter) {
+            for (--iter; iter != aTrie.end(); --iter) {
                 std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length() - 1);
                 testResult(siter->first.compare(iterStr) == 0,
@@ -437,10 +458,17 @@ public:
 
         // operator--(int)
         do {
-            SampleValuesIter siter = copySamples.end();
+            SampleValuesIter siter = copySamples.begin();
+			while (siter != copySamples.end()) {
+				if (siter+1 == copySamples.end()) {
+					break;
+				}
+				++siter;
+			}
+
             typename D::Iterator iter = aTrie.end();
 
-            for (siter--, iter--; iter != aTrie.end(); iter--) {
+            for (iter--; iter != aTrie.end(); iter--) {
                 std::string iterStr = keyToString(aTrie.endSymbol(), iter->first);
                 iterStr.erase(iterStr.length() - 1);
                 testResult(siter->first.compare(iterStr) == 0,
@@ -823,7 +851,10 @@ private:
         sv3.insert(sv3.begin(), sampleValues[5]);
         mSampleValuesContainer.push_back(sv3);
 
-        for (unsigned int i = 0; i < sizeof(negativeSampleValues) / sizeof(negativeSampleValues[0]); ++i) {
+        SampleValues sv4;
+		mSampleValuesContainer.push_back(sv4);
+
+		for (unsigned int i = 0; i < sizeof(negativeSampleValues) / sizeof(negativeSampleValues[0]); ++i) {
             mNegativeSampleValues.push_back(negativeSampleValues[i]);
         }
     }
