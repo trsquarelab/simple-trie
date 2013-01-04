@@ -11,14 +11,14 @@
 
 #include "trie.h"
 #include "trietest.h"
+#include "testsuite.h"
 
 #include <exception>
 
+using namespace rtv;
+
 namespace
 {
-
-void test2();
-bool testCaseAdded = TrieTestCases::instance()->addTestCase(test2);
 
 // key to vector index converter
 // includes alphabets, space and end symbol
@@ -56,31 +56,43 @@ public:
     }
 };
 
-void test2()
+
+typedef rtv::VectorItems<char, std::string, std::less<char>, 256> VectorItemClass;
+
+typedef TrieTestCases< rtv::Trie<char, std::string, std::less<char>, VectorItemClass> > TrieVectorTestCases;
+TEST_F(TrieVectorTestCases, TrieVectorImplCase_Hash_EndSymbol)
 {
-    (void)testCaseAdded;
+    TheTrie dictionary('#');
+    testSuite(dictionary);
+}
 
-    typedef rtv::VectorItems<char, std::string, std::less<char>, 256> VectorItemClass;
+TEST_F(TrieVectorTestCases, TrieVectorImplCase_Dollar_EndSymbol)
+{
+    TheTrie dictionary('$');
+    testSuite(dictionary);
+}
 
-    std::cout << "Executing Test Case 2 ... ";
-    std::flush(std::cout);
+TEST_F(TrieVectorTestCases, TrieVectorImplCase_Null_EndSymbol)
+{
+    TheTrie dictionary('\0');
+    testSuite(dictionary);
+}
 
-    rtv::Trie<char, std::string, std::less<char>, VectorItemClass> dictionary1('$');
-    TrieTestCases::instance()->testSuite(dictionary1);
+typedef TrieTestCases< rtv::Trie<char, std::string, TrieCaseInsensitiveCompare, rtv::VectorItems<char, std::string,
+                             TrieCaseInsensitiveCompare, 28, AlphaToIndex> > > TrieCaseInSensitiveCustomVectorTestCases;
+TEST_F(TrieCaseInSensitiveCustomVectorTestCases, TrieVectorImplCase_CustomVectorItemCaseInsensitive)
+{
+    TheTrie dictionary('\0');
+    testSuite(dictionary);
+}
 
-    rtv::Trie<char, std::string, std::less<char>, VectorItemClass> dictionary2('#');
-    TrieTestCases::instance()->testSuite(dictionary2);
-
-    rtv::Trie<char, std::string, std::less<char>, VectorItemClass> dictionary3('\0');
-    TrieTestCases::instance()->testSuite(dictionary3);
-
-    rtv::Trie<char, std::string, TrieCaseInsensitiveCompare, rtv::VectorItems<char, std::string, TrieCaseInsensitiveCompare, 28, AlphaToIndex> > dictionary4('\0');
-    TrieTestCases::instance()->testSuite(dictionary4);
-
-    rtv::Trie<char, std::string, std::less<char>, rtv::VectorItems<char, std::string, std::less<char>, 54, CaseSensitiveAlphaToIndex> > dictionary5('\0');
-    TrieTestCases::instance()->testSuite(dictionary5);
-
-    std::cout << "Succeeded" << std::endl;
+typedef TrieTestCases< rtv::Trie<char, std::string, std::less<char>, rtv::VectorItems<char, std::string, std::less<char>,
+                                              54, CaseSensitiveAlphaToIndex> > > TrieCaseSensitiveCustomVectorTestCases;
+TEST_F(TrieCaseSensitiveCustomVectorTestCases, TrieVectorImplCase_CustomVectorItemCaseSensitive)
+{
+    TheTrie dictionary('\0');
+    testSuite(dictionary);
 }
 
 }
+
