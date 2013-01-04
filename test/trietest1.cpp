@@ -11,31 +11,31 @@
 
 #include "trie.h"
 #include "trietest.h"
+#include "testsuite.h"
+
+using namespace rtv;
 
 namespace
 {
 
-void test1();
-bool testCaseAdded = TrieTestCases::instance()->addTestCase(test1);
-
 typedef rtv::SetItems<char, std::string, TrieCompare > SetItemClass;
 
-void test1()
-{
-    (void)testCaseAdded;
-    std::cout << "Executing Test Case 1 ... ";
-    std::flush(std::cout);
+typedef TrieTestCases< rtv::Trie<char, std::string, TrieCompare, SetItemClass> > TrieSetTestCases;
 
-    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary1('$');
-    TrieTestCases::instance()->testSuite(dictionary1);
+TEST_F(TrieSetTestCases, TrieTestCaseSetImplCase_Dollar_EndSymbol) {
+    TheTrie dictionary('$');
+    testSuite(dictionary);
+}
 
-    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary2('#');
-    TrieTestCases::instance()->testSuite(dictionary2);
+TEST_F(TrieSetTestCases, TrieTestCaseSetImplCase_Hash_EndSymbol) {
+    TheTrie dictionary('#');
+    testSuite(dictionary);
+}
 
-    rtv::Trie<char, std::string, TrieCompare, SetItemClass> dictionary3('\0');
-    TrieTestCases::instance()->testSuite(dictionary3);
-
-    std::cout << "Succeeded" << std::endl;
+TEST_F(TrieSetTestCases, TrieTestCaseSetImplCase_Null_EndSymbol) {
+    TheTrie dictionary('\0');
+    testSuite(dictionary);
 }
 
 }
+
