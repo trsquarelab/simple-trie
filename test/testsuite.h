@@ -98,6 +98,47 @@ private:
     Status mStatus;
 };
 
+class RTestWriter
+{
+public:
+    RTestWriter()
+     : mOut(&std::cout)
+    {}
+
+    RTestWriter& operator<<(std::string const &v)
+    {
+        (*mOut) << v.c_str();
+        return *this;
+    }
+
+    RTestWriter& operator<<(std::ostream& (*pf)(std::ostream&))
+    {
+        pf(*mOut);
+        return *this;
+    }
+
+    RTestWriter& operator<<(const char *v)
+    {
+        (*mOut) << v;
+        return *this;
+    }
+
+    RTestWriter& operator<<(int v)
+    {
+        (*mOut) << v;
+        return *this;
+    }
+
+    RTestWriter& operator<<(char v)
+    {
+        (*mOut) << v;
+        return *this;
+    }
+
+private:
+    std::ostream * mOut;
+};
+
 class RTestReporter
 {
 public:
@@ -170,6 +211,7 @@ protected:
     int mTestFailedCount;
     int mTestDisabledCount;
     int mGroupTestCount;
+    RTestWriter mWriter;
 };
 
 class RBltnTestReporter: public RTestReporter
@@ -193,22 +235,22 @@ public:
 
     void endLine()
     {
-        std::cout << std::endl;
+        mWriter << std::endl;
     }
 
     void horizontalLine(int w)
     {
-        std::cout << mVertChar;
+        mWriter << mVertChar;
         for (int i=0; i<w-2; ++i) {
-            std::cout << mHoriChar;
+            mWriter << mHoriChar;
         }
-        std::cout << mVertChar;
+        mWriter << mVertChar;
     }
 
     void fill(int n)
     {
         for (int i=0; i<n; ++i) {
-            std::cout << mFillChar;
+            mWriter << mFillChar;
         }
     }
 
@@ -223,15 +265,15 @@ public:
         int strL = str.length();
         int nb = (strL / w) + 1; 
         if (nb == 1) {
-            std::cout << mVertChar;
+            mWriter << mVertChar;
             int gap = (w - strL) / 2;
             fill(gap);
-            std::cout << str.c_str();
+            mWriter << str.c_str();
             fill(gap);
             if (!isEven(w-strL)) {
                 fill(1);
             }
-            std::cout << mVertChar;
+            mWriter << mVertChar;
         } else {
             unsigned int spos = 0;
             unsigned int subL = w-2;
@@ -388,25 +430,25 @@ public:
     {
         RTestReporter::startTesting(totalGroup, totalTests);
 
-        std::cout << "[***************] ";
-        std::cout << "Running " << totalTests << " tests from " << totalGroup << " test groups" << std::endl;
-        std::cout << std::endl;
+        mWriter << "[***************] ";
+        mWriter << "Running " << totalTests << " tests from " << totalGroup << " test groups" << std::endl;
+        mWriter << std::endl;
     }
 
     void endTesting()
     {
         RTestReporter::endTesting();
 
-        std::cout << "[***************] ";
-        std::cout << mTotalTests << " tests from " << mTotalTestGroups << " test group ran" << std::endl;
+        mWriter << "[***************] ";
+        mWriter << mTotalTests << " tests from " << mTotalTestGroups << " test group ran" << std::endl;
         if (mTotalTestPassed) {
-            std::cout << "[PASSED         ] " << mTotalTestPassed << std::endl;
+            mWriter << "[PASSED         ] " << mTotalTestPassed << std::endl;
         }
         if (mTotalTestFailed) {
-            std::cout << "[FAILED         ] " << mTotalTestFailed << std::endl;
+            mWriter << "[FAILED         ] " << mTotalTestFailed << std::endl;
         }
         if (mTotalTestDisabled) {
-            std::cout << "[DISABLED       ] " << mTotalTestDisabled << std::endl;
+            mWriter << "[DISABLED       ] " << mTotalTestDisabled << std::endl;
         }
     }
 
@@ -414,37 +456,37 @@ public:
     {
         RTestReporter::startGroup(name, testCount);
 
-        std::cout << "[---------------] ";
-        std::cout << testCount << " from " << name.c_str() << std::endl;
+        mWriter << "[---------------] ";
+        mWriter << testCount << " from " << name.c_str() << std::endl;
     }
     
     void endGroup()
     {
         RTestReporter::endGroup();
 
-        std::cout << "[---------------] " << std::endl;
+        mWriter << "[---------------] " << std::endl;
         
         if (mGroupTestCount) {
             if (mTestPassedCount) {
-                std::cout << "[PASSED         ] " << mTestPassedCount << std::endl;
+                mWriter << "[PASSED         ] " << mTestPassedCount << std::endl;
             }
             if (mTestFailedCount) {
-                std::cout << "[FAILED         ] " << mTestFailedCount << std::endl;
+                mWriter << "[FAILED         ] " << mTestFailedCount << std::endl;
             }
             if (mTestDisabledCount) {
-                std::cout << "[DISABLED       ] " << mTestDisabledCount << std::endl;
+                mWriter << "[DISABLED       ] " << mTestDisabledCount << std::endl;
             }
-            std::cout << "[---------------] " << std::endl;
+            mWriter << "[---------------] " << std::endl;
         }
-        std::cout << std::endl;
+        mWriter << std::endl;
     }
 
     void startTest(RTest * test)
     {
         RTestReporter::startTest(test);
 
-        std::cout << "[RUNNING        ] ";
-        std::cout << mCurrentGroup.c_str() << "::" << mCurrentTest.c_str() << std::endl;
+        mWriter << "[RUNNING        ] ";
+        mWriter << mCurrentGroup.c_str() << "::" << mCurrentTest.c_str() << std::endl;
     }
 
     void endTest(RTest * test)
@@ -453,16 +495,16 @@ public:
 
         switch (test->status()) {
             case RTest::Passed: {
-                std::cout << "[         PASSED] " << std::endl;
+                mWriter << "[         PASSED] " << std::endl;
                 break;
             }
             case RTest::Failed: {
-                std::cout << test->message() << std::endl;
-                std::cout << "[         FAILED] " << std::endl;
+                mWriter << test->message() << std::endl;
+                mWriter << "[         FAILED] " << std::endl;
                 break;
             }
             case RTest::Disabled: {
-                std::cout << "[       DISABLED] " << std::endl;
+                mWriter << "[       DISABLED] " << std::endl;
                 break;
             }
         }
