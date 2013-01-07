@@ -485,11 +485,13 @@ public:
         return &_instance;
     }
 
-    void exec()
+    int exec()
     {
         if (mTotalTests == 0) {
-            return;
+            return 0;
         }
+
+        int result = 0;
 
         mReporter->startTesting(mTotalTestGroups, mTotalTests);
     
@@ -501,6 +503,9 @@ public:
                 mReporter->startTest(currentTest);
                 if (currentTest->status() != RTest::Disabled) {
                     currentTest->exec();
+                    if (currentTest->status() != RTest::Passed) {
+                        result = 1;
+                    }
                 }
                 mReporter->endTest(currentTest);
 
@@ -508,6 +513,8 @@ public:
             mReporter->endGroup();
         }
         mReporter->endTesting();
+
+        return result;
     }
 private:
     void clearTests()
@@ -564,6 +571,13 @@ private:
 #define EXPECT_FALSE(v) TEST_BOOL_CONDITION(v, false, "(" #v ")" )
 #define EXPECT_EQ(v1, v2) TEST_BOOL_CONDITION(v1==v2, true, "(" #v1 "==" #v2 ")" )
 #define EXPECT_NE(v1, v2) TEST_BOOL_CONDITION(v1!=v2, true, "(" #v1 "!=" #v2 ")" )
+
+#define ASSERT_CONDITION(actual, expected, condition) if (!TEST_BOOL_CONDITION(actual, expected, condition)) { return; }
+
+#define ASSERT_TRUE(v) ASSERT_CONDITION(v, true, "(" #v ")" )
+#define ASSERT_FALSE(v) ASSERT_CONDITION(v, false, "(" #v ")" )
+#define ASSERT_EQ(v1, v2) ASSERT_CONDITION(v1==v2, true, "(" #v1 "==" #v2 ")" )
+#define ASSERT_NE(v1, v2) ASSERT_CONDITION(v1!=v2, true, "(" #v1 "!=" #v2 ")" )
 
 }
 
