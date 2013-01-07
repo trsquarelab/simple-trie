@@ -40,6 +40,9 @@ public:
        mStatus(Passed)
     {}
 
+    virtual ~RTest()
+    {}
+
     void setName(std::string const & name)
     {
         mName = name;
@@ -60,8 +63,7 @@ public:
         return mGroup;
     }
 
-    virtual void exec()
-    {}
+    virtual void exec() = 0;
 
     Status status() const
     {
@@ -85,7 +87,7 @@ public:
                      std::string const & condition,
                      std::string const & file, int line)
     {
-        if (mStatus != Failed) {
+        if (mStatus == Passed) {
             if (expected != actual) {
                 std::ostringstream outstream;
                 outstream << condition
@@ -94,11 +96,15 @@ public:
             
                 mMessage = outstream.str();
                 mStatus = Failed;
-            } else {
-                mStatus = Passed;
             }
         }
         return mStatus == Passed;
+    }
+
+protected:
+    void setStatus(Status s)
+    {
+        mStatus = s;
     }
 
 private:
@@ -204,6 +210,9 @@ public:
             }
             case RTest::Disabled: {
                 ++mTestDisabledCount;
+                break;
+            }
+            default: {
                 break;
             }
         }
@@ -353,6 +362,9 @@ public:
             case RTest::Disabled: {
                 outString("DISABLED", mStatusWidth);
                 endLine();
+                break;
+            }
+            default: {
                 break;
             }
         }
@@ -526,21 +538,23 @@ private:
     RTestReporter * mReporter;
 };
 
-#define TESTDEF(testcase, test, parent) \
+#define TESTDEF(testcase, test, parent, status) \
     class testcase##_##test##_test: public parent { \
     public: \
         testcase##_##test##_test() \
         { \
             setName(#test); \
             setGroup(#testcase); \
+            setStatus(status); \
         } \
         void exec(); \
     }; \
     bool testcase##_##test##_res = RTestManager::instance()->addTest(new testcase##_##test##_test()); \
     void testcase##_##test##_test::exec()
 
-#define TEST(testcase, test) TESTDEF(testcase, test, RTest)
-#define TEST_F(testcase, test) TESTDEF(testcase, test, testcase)
+#define TEST(testcase, test) TESTDEF(testcase, test, RTest, RTest::Passed)
+#define TEST_F(testcase, test) TESTDEF(testcase, test, testcase, RTest::Passed)
+#define TEST_D(testcase, test) TESTDEF(testcase, test, testcase, RTest::Disabled)
 
 #define ExcecuteTests() RTestManager::instance()->exec()
 
