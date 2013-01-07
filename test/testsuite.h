@@ -556,15 +556,15 @@ private:
         } \
         void exec(); \
     }; \
-    bool testcase##_##test##_res = RTestManager::instance()->addTest(new testcase##_##test##_test()); \
+    bool testcase##_##test##_res = rtv::RTestManager::instance()->addTest(new testcase##_##test##_test()); \
     void testcase##_##test##_test::exec()
 
-#define TEST(testcase, test) TESTDEF(testcase, test, RTest, RTest::Passed)
-#define TEST_D(testcase, test) TESTDEF(testcase, test, RTest, RTest::Disabled)
-#define TEST_F(testcase, test) TESTDEF(testcase, test, testcase, RTest::Passed)
-#define TEST_F_D(testcase, test) TESTDEF(testcase, test, testcase, RTest::Disabled)
+#define TEST(testcase, test) TESTDEF(testcase, test, rtv::RTest, rtv::RTest::Passed)
+#define TEST_D(testcase, test) TESTDEF(testcase, test, rtv::RTest, rtv::RTest::Disabled)
+#define TEST_F(testcase, test) TESTDEF(testcase, test, testcase, rtv::RTest::Passed)
+#define TEST_F_D(testcase, test) TESTDEF(testcase, test, testcase, rtv::RTest::Disabled)
 
-#define ExcecuteTests() RTestManager::instance()->exec()
+#define ExcecuteTests() rtv::RTestManager::instance()->exec()
 
 #define TEST_BOOL_CONDITION(actual, expected, condition) testCondition(actual, expected, condition, __FILE__, __LINE__)
 
