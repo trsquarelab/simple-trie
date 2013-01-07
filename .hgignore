@@ -24,6 +24,7 @@ Debug/
 UpgradeLog*.XML
 *.sdf
 *.opensdf
+*.*.orig
 _UpgradeReport_Files/
 retrieval.exe
 insert_erase.exe
