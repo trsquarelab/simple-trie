@@ -560,8 +560,9 @@ private:
     void testcase##_##test##_test::exec()
 
 #define TEST(testcase, test) TESTDEF(testcase, test, RTest, RTest::Passed)
+#define TEST_D(testcase, test) TESTDEF(testcase, test, RTest, RTest::Disabled)
 #define TEST_F(testcase, test) TESTDEF(testcase, test, testcase, RTest::Passed)
-#define TEST_D(testcase, test) TESTDEF(testcase, test, testcase, RTest::Disabled)
+#define TEST_F_D(testcase, test) TESTDEF(testcase, test, testcase, RTest::Disabled)
 
 #define ExcecuteTests() RTestManager::instance()->exec()
 
