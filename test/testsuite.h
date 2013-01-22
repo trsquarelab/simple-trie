@@ -275,7 +275,7 @@ public:
 
     bool isEven(int n)
     {
-        return (((n/2) * 2) == n);
+        return ((n & 0x01) == 0);
     }
 
     void outString(std::string const & str, int w)
@@ -556,7 +556,7 @@ private:
         } \
         void exec(); \
     }; \
-    bool testcase##_##test##_res = rtv::RTestManager::instance()->addTest(new testcase##_##test##_test()); \
+    namespace { bool testcase##_##test##_res = rtv::RTestManager::instance()->addTest(new testcase##_##test##_test()); } \
     void testcase##_##test##_test::exec()
 
 #define TEST(testcase, test) TESTDEF(testcase, test, rtv::RTest, rtv::RTest::Passed)
