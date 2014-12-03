@@ -165,13 +165,17 @@ public:
     typedef EndNodeItem<T, V, Cmp, Items> EndNodeItemClass;
     typedef Node<T, V, Cmp, Items> NodeClass;
 
+private:
+    typedef typename Items::iterator ItemsContainerIter;
+    typedef typename Items::const_iterator ItemsContainerConstIter;
+
 public:
 
     class ConstIterator
     {
     protected:
         typedef std::pair<const T *, const V *> KeyValuePair;
-        typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter;
+        typedef typename NodeClass::ItemsContainerConstIter ItemsContainerConstIter2;
 
     public:
         ConstIterator(const NodeClass *node, const NodeClass * root, const T * key = 0, bool mooveToEnd = false)
@@ -549,11 +553,10 @@ private:
 
     bool erase(NodeClass * node, const T * key) {
         bool erased = false;
-        int keyIndex = 0;
 
         if (node && key) {
             bool finished = false;
-            int count = 0;
+            int keyIndex = 0;
             erased = true;
 
             if (!keyIndex) {
@@ -564,6 +567,7 @@ private:
 
             while (node && !finished && erased) {
                 ItemsContainerIter iterEnd = node->mItems.end();
+                int count = 0;
 
                 count = 0;
                 for (ItemsContainerIter iter = node->mItems.begin(); iter != iterEnd; ++iter) {
@@ -742,9 +746,6 @@ public:
     }
 
 private:
-    typedef typename Items::iterator ItemsContainerIter;
-    typedef typename Items::const_iterator ItemsContainerConstIter;
-
     Items mItems;
     const T mEndSymbol;
     unsigned int mSize;
