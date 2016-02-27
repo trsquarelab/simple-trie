@@ -1,6 +1,8 @@
 simple-trie
 =======
 
+[![Travis-CI](https://travis-ci.org/chikkutechie/simple-trie.svg?branch=master)](https://travis-ci.org/chikkutechie/simple-trie)
+
 Introduction
 ------------
 This is an implementation of a generic prefix trie. The code is written in pure C++ template. The trie is very similar to STL associative container in its usage.
