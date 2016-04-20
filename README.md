@@ -1,7 +1,7 @@
 simple-trie
 =======
 
-[![Travis-CI](https://travis-ci.org/chikkutechie/simple-trie.svg?branch=master)](https://travis-ci.org/chikkutechie/simple-trie)
+[![Travis-CI](https://travis-ci.org/trsquarelab/simple-trie.svg?branch=master)](https://travis-ci.org/trsquarelab/simple-trie)
 
 Introduction
 ------------
